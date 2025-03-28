@@ -1,8 +1,8 @@
 /*
-02. Changes in Net Worth
+03. Most Frequent Item
 
-Writing a query to return the change in net worth for each user, 
-ordered by decreasing net change. */
+Writing a query to return the most frequent item
+ordered on each date. */
 
 
 /*Querying original data*/
@@ -55,7 +55,7 @@ FROM
     ITEMS_RANKING_P3;
 
 
-
+/*Querying most frequent items on each date*/
 SELECT
     DATES,
     ITEM
