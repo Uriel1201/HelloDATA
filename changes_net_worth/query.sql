@@ -5,6 +5,7 @@ Writing a query to return the change in net worth for each user,
 ordered by decreasing net change. */
 
 
+/* Querying original data*/
 SELECT * FROM TRANSACTIONS_P2; 
 
 
