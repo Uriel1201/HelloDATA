@@ -65,4 +65,4 @@ actions = (pd.get_dummies(users['action'])
           )
 
 
-actions[['user_id', 'publish_rate', 'cancel_rate']]
+print(actions[['user_id', 'publish_rate', 'cancel_rate']])
