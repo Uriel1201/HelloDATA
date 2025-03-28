@@ -1,1 +1,4 @@
-
+SELECT
+    *
+FROM
+    ITEMS_P3;
