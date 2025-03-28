@@ -12,7 +12,7 @@ FROM
     ITEMS_P3;
 
 
-/*Frequencies for each item by each date*/
+/*Frequencies for items on each date*/
 CREATE TABLE FREQUENCIES_P3
     AS
         SELECT
@@ -33,7 +33,7 @@ FROM
     FREQUENCIES_P3;
 
 
-/*rankings for each item by each date*/
+/*ranking items on each date*/
 CREATE TABLE ITEMS_RANKING_P3
     AS
         SELECT
