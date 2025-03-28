@@ -6,13 +6,41 @@ rate for each user. */
 
 select * from users_p1; 
 
-create table totals_p1 as
-    select user_id, sum(case when action ='start' then 1 else 0 end) as starts,
-        sum(case when action ='cancel' then 1 else 0 end) as cancels,
-        sum(case when action ='publish' then 1 else 0 end) as publishes
-        from users_p1
-        group by user_id
-        order by user_id;
+
+CREATE TABLE TOTALS_P1
+    AS
+        SELECT
+            USER_ID,
+            SUM(
+                CASE
+                    WHEN ACTION = 'start' THEN
+                        1
+                    ELSE
+                        0
+                END
+            ) AS STARTS,
+            SUM(
+                CASE
+                    WHEN ACTION = 'cancel' THEN
+                        1
+                    ELSE
+                        0
+                END
+            ) AS CANCELS,
+            SUM(
+                CASE
+                    WHEN ACTION = 'publish' THEN
+                        1
+                    ELSE
+                        0
+                END
+            ) AS PUBLISHES
+        FROM
+            USERS_P1
+        GROUP BY
+            USER_ID
+        ORDER BY
+            USER_ID;
 
 select * from totals_p1;
 
