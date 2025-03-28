@@ -6,7 +6,13 @@ ordered by decreasing net change. */
 
 SELECT * FROM TRANSACTIONS_P2; 
 
-CREATE TABLE sendings_p2 as 
-   SELECT sender, SUM(amount) as sendings_p2 
-      FROM TRANSACTIONS_P2
-      GROUP BY sender;
+
+CREATE TABLE SENDINGS_P2
+    AS
+        SELECT
+            SENDER,
+            SUM(AMOUNT) AS SENDING
+        FROM
+            TRANSACTIONS_P2
+        GROUP BY
+            SENDER;
