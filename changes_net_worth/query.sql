@@ -7,7 +7,7 @@ ordered by decreasing net change. */
 SELECT * FROM TRANSACTIONS_P2; 
 
 
-CREATE TABLE SENDINGS_P2
+CREATE TABLE SENDERS_P2
     AS
         SELECT
             SENDER,
