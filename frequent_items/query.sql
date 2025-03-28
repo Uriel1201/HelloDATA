@@ -46,3 +46,10 @@ CREATE TABLE ITEMS_RANKING_P3
             ) AS RANKING
         FROM
             FREQUENCIES_P3;
+
+
+/*Querying rankings*/
+SELECT
+    *
+FROM
+    ITEMS_RANKING_P3;
