@@ -46,7 +46,10 @@ CREATE TABLE TOTALS_P1
         ORDER BY
             USER_ID;
 
-select * from totals_p1;
 
-select user_id, 1.0*publishes/starts as publish_rate, 1.0*cancels/starts as cancel_rate
-    from totals_p1;
+SELECT
+    USER_ID,
+    1.0 * PUBLISHES / STARTS AS PUBLISH_RATE,
+    1.0 * CANCELS / STARTS   AS CANCEL_RATE
+FROM
+    TOTALS_P1;
