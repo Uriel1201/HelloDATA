@@ -1,6 +1,8 @@
 """
 # 01. Cancelation Rates
-*From the following table of user IDs, actions, and dates, write a query to       return the publication and cancellation rate for each user.*
+*From the following table of user IDs, actions, and dates, 
+write a query to return the publication and cancellation rate 
+for each user.*
 """
 
 
@@ -33,25 +35,7 @@ except SQLAlchemyError as e:
   print(e)
 '''
 
-# %%
-# !! {"metadata":{
-# !!   "colab": {
-# !!     "base_uri": "https://localhost:8080/",
-# !!     "height": 488
-# !!   },
-# !!   "id": "fFsYJ2qCI086",
-# !!   "executionInfo": {
-# !!     "status": "ok",
-# !!     "timestamp": 1742989395548,
-# !!     "user_tz": 360,
-# !!     "elapsed": 168,
-# !!     "user": {
-# !!       "displayName": "Uriel Garc\u00eda",
-# !!       "userId": "03386744220426758265"
-# !!     }
-# !!   },
-# !!   "outputId": "e68c9221-8a80-456d-dbaf-ce21ff950ccb"
-# !! }}
+
 data = {'user_id' :[1,1,2,1,1,2,3,3,4],
         'action'  :['start','cancel','start',
                     'start','publish','publish',
@@ -68,12 +52,8 @@ data = {'user_id' :[1,1,2,1,1,2,3,3,4],
         }
 
 users = pd.DataFrame(data)
-users
 
-# %%
-# !! {"metadata":{
-# !!   "id": "n4vwCAiPQ5D_"
-# !! }}
+
 actions = (pd.get_dummies(users['action'])
           .groupby(users['user_id'])
           .sum()
@@ -84,38 +64,5 @@ actions = (pd.get_dummies(users['action'])
           .reset_index()
           )
 
-# %%
-# !! {"metadata":{
-# !!   "colab": {
-# !!     "base_uri": "https://localhost:8080/",
-# !!     "height": 195
-# !!   },
-# !!   "id": "xVdh_O29RJQh",
-# !!   "executionInfo": {
-# !!     "status": "ok",
-# !!     "timestamp": 1742992368869,
-# !!     "user_tz": 360,
-# !!     "elapsed": 16,
-# !!     "user": {
-# !!       "displayName": "Uriel Garc\u00eda",
-# !!       "userId": "03386744220426758265"
-# !!     }
-# !!   },
-# !!   "outputId": "496dcd1b-4698-457f-ba00-a5bee620673a"
-# !! }}
-actions[['user_id', 'publish_rate', 'cancel_rate']]
 
-# %%
-# !! {"main_metadata":{
-# !!   "colab": {
-# !!     "provenance": [],
-# !!     "authorship_tag": "ABX9TyOs+hJVb2is8RdMi/ENpQE9"
-# !!   },
-# !!   "kernelspec": {
-# !!     "name": "python3",
-# !!     "display_name": "Python 3"
-# !!   },
-# !!   "language_info": {
-# !!     "name": "python"
-# !!   }
-# !! }}
+actions[['user_id', 'publish_rate', 'cancel_rate']]
