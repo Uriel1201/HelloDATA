@@ -34,7 +34,7 @@ FROM
 
 
 /*rankings for each item by each date*/
-CREATE TABLE ITEMS_RANKING
+CREATE TABLE ITEMS_RANKING_P3
     AS
         SELECT
             DATES,
