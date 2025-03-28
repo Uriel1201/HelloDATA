@@ -1,31 +1,9 @@
-# %%
-# !! {"metadata":{
-# !!   "id": "2b2hu8zjIJQW"
-# !! }}
 """
 # 01. Cancelation Rates
 *From the following table of user IDs, actions, and dates, write a query to       return the publication and cancellation rate for each user.*
 """
 
-# %%
-# !! {"metadata":{
-# !!   "id": "sELZZX6eILuD",
-# !!   "colab": {
-# !!     "base_uri": "https://localhost:8080/",
-# !!     "height": 226
-# !!   },
-# !!   "executionInfo": {
-# !!     "status": "ok",
-# !!     "timestamp": 1742988406025,
-# !!     "user_tz": 360,
-# !!     "elapsed": 513,
-# !!     "user": {
-# !!       "displayName": "Uriel Garc\u00eda",
-# !!       "userId": "03386744220426758265"
-# !!     }
-# !!   },
-# !!   "outputId": "d7d2f43e-15cc-489c-874c-d8b4590206da"
-# !! }}
+
 # pip install pandas
 # pip install numpy
 # pip install SQLAlchemy
