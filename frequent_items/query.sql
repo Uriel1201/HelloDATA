@@ -31,3 +31,18 @@ SELECT
     *
 FROM
     FREQUENCIES_P3;
+
+
+/*rankings for each item by each date*/
+CREATE TABLE ITEMS_RANKING
+    AS
+        SELECT
+            DATES,
+            ITEM,
+            RANK()
+            OVER(PARTITION BY DATES
+                 ORDER BY
+                     FREQUENCY DESC
+            ) AS RANKING
+        FROM
+            FREQUENCIES_P3;
