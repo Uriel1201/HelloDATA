@@ -4,7 +4,12 @@
 Writing a query to return the publication and cancellation 
 rate for each user. */
 
-create table users_p1 (user_id integer, action varchar(9), dates date);
+
+CREATE TABLE USERS_P1 (
+    USER_ID INTEGER,
+    ACTION  VARCHAR(9),
+    DATES   DATE
+);
 
 
 INSERT INTO USERS_P1
