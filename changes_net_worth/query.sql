@@ -27,3 +27,8 @@ CREATE TABLE RECEIVERS_P2
             TRANSACTIONS_P2
         GROUP BY
             RECEIVER;
+
+SELECT
+    *
+FROM
+    SENDINGS_P2;
