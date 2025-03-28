@@ -16,3 +16,14 @@ CREATE TABLE SENDINGS_P2
             TRANSACTIONS_P2
         GROUP BY
             SENDER;
+
+
+CREATE TABLE RECEIVERS_P2
+    AS
+        SELECT
+            RECEIVER,
+            SUM(AMOUNT) AS RECEIVING
+        FROM
+            TRANSACTIONS_P2
+        GROUP BY
+            RECEIVER;
