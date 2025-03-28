@@ -1,8 +1,8 @@
-/* 
-01. Cancellation Rates.
+/*
+02. Changes in Net Worth
 
-Writing a query to return the publication and cancellation 
-rate for each user. */
+Writing a query to return the change in net worth for each user, 
+ordered by decreasing net change. */
 
 
 CREATE TABLE TRANSACTIONS_P2 (
