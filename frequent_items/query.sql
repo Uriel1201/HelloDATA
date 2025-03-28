@@ -24,3 +24,10 @@ CREATE TABLE FREQUENCIES_P3
         GROUP BY
             DATES,
             ITEM;
+
+
+/*Querying frequencies*/
+SELECT
+    *
+FROM
+    FREQUENCIES_P3;
