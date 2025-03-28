@@ -4,9 +4,11 @@
 Writing a query to return the change in net worth for each user, 
 ordered by decreasing net change. */
 
+
 SELECT * FROM TRANSACTIONS_P2; 
 
 
+/* Table of Senders and their sended amounts*/
 CREATE TABLE SENDERS_P2
     AS
         SELECT
@@ -18,6 +20,7 @@ CREATE TABLE SENDERS_P2
             SENDER;
 
 
+/* Table of receivers and their received amounts*/
 CREATE TABLE RECEIVERS_P2
     AS
         SELECT
@@ -29,18 +32,21 @@ CREATE TABLE RECEIVERS_P2
             RECEIVER;
 
 
+/* Querying senders*/
 SELECT
     *
 FROM
     SENDERS_P2;
 
 
+/* Querying receivers*/
 SELECT
     *
 FROM
     RECEIVERS_P2;
 
 
+/* Querying the net change of each user*/
 SELECT
     COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
     COALESCE(R.RECEIVING, 0) - COALESCE(S.SENDING, 0) AS NET_CHANGE
