@@ -4,7 +4,11 @@
 Writing a query to return the publication and cancellation 
 rate for each user. */
 
-select * from users_p1; 
+
+SELECT
+    *
+FROM
+    USERS_P1;
 
 
 CREATE TABLE TOTALS_P1
