@@ -14,11 +14,11 @@ try:
     engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    tablename_sql = """SELECT * FROM tablename"""
+    table = """SELECT * FROM ITEMS_P3;"""
     
     # Leer datos en un DataFrame de pandas
-    df_tablename = pd.read_sql(tablename_sql, engine)
-    print(df_tablename)
+    items = pd.read_sql(table, engine)
+    print(items)
 
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
