@@ -37,7 +37,7 @@ CREATE TABLE RANKED1_P4
     AS
         SELECT
             ID,
-            RANKED_DATES AS RANKED_ONE
+            ACTION_DATE AS RANKED_ONE
         FROM
             RANKINGS_P4
         WHERE
