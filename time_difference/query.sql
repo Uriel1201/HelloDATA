@@ -31,3 +31,14 @@ SELECT
     *
 FROM
     RANKINGS_P4;
+
+
+CREATE TABLE RANKED1_P4
+    AS
+        SELECT
+            ID,
+            RANKED_DATES AS RANKED_ONE
+        FROM
+            RANKINGS_P4
+        WHERE
+            RANKED_DATES = 1;
