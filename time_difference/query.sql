@@ -48,3 +48,14 @@ SELECT
     *
 FROM
     RANKED1_P4;
+
+
+CREATE TABLE RANKED2_P4
+    AS
+        SELECT
+            ID,
+            ACTION_DATE AS RANKED_TWO
+        FROM
+            RANKINGS_P4
+        WHERE
+            RANKED_DATES = 2;
