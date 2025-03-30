@@ -59,3 +59,9 @@ CREATE TABLE RANKED2_P4
             RANKINGS_P4
         WHERE
             RANKED_DATES = 2;
+
+
+SELECT
+    *
+FROM
+    RANKED2_P4;
