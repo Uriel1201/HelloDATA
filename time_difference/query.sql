@@ -11,3 +11,17 @@ SELECT
     *
 FROM
     USERS_P4;
+
+
+CREATE TABLE RANKINGS_P4
+    AS
+        SELECT
+            ID,
+            ACTION_DATE,
+            ROW_NUMBER()
+            OVER(PARTITION BY ID
+                 ORDER BY
+                     ACTION_DATE DESC
+            ) AS RANKED_DATES
+        FROM
+            USERS_P4;
