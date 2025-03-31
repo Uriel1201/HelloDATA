@@ -16,3 +16,9 @@ CREATE TABLE RANKINGS_P5
             ) AS RANKED_DATE
         FROM
             USERS_P5;
+
+
+SELECT
+    *
+FROM
+    RANKINGS_P5;
