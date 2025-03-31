@@ -36,3 +36,14 @@ SELECT
     *
 FROM
     DIUSERS_P5;
+
+
+CREATE TABLE SUPERUSERS_P5
+    AS
+        SELECT
+            USER_ID,
+            TRANSACTION_DATE
+        FROM
+            RANKINGS_P5
+        WHERE
+            RANKED_DATE = 2
