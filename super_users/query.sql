@@ -47,3 +47,9 @@ CREATE TABLE SUPERUSERS_P5
             RANKINGS_P5
         WHERE
             RANKED_DATE = 2
+
+
+SELECT
+    *
+FROM
+    SUPERUSERS_P5;
