@@ -15,3 +15,67 @@ CREATE TABLE USERS_P5 (
     PRODUCT_ID       INTEGER,
     TRANSACTION_DATE DATE
 );
+
+
+INSERT INTO USERS_P5
+    WITH NAMES AS (
+        SELECT
+            1,
+            101,
+            '12-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            2,
+            105,
+            '13-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            1,
+            111,
+            '14-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            3,
+            121,
+            '15-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            1,
+            101,
+            '16-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            2,
+            105,
+            '17-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            4,
+            101,
+            '16-feb-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            3,
+            105,
+            '15-feb-20'
+        FROM
+            DUAL
+    )
+    SELECT
+        *
+    FROM
+        NAMES;
