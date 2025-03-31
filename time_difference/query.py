@@ -17,8 +17,8 @@ try:
     table = """SELECT * FROM USERS_P4;"""
     
     # Leer datos en un DataFrame de pandas
-    items = pd.read_sql(table, engine)
-    print(items)
+    users = pd.read_sql(table, engine)
+    print(users)
 
     
      
