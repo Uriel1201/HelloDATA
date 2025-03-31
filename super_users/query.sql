@@ -30,3 +30,9 @@ CREATE TABLE DIUSERS_P5
             ( USER_ID )
         FROM
             USERS_P5;
+
+
+SELECT
+    *
+FROM
+    DIUSERS_P5;
