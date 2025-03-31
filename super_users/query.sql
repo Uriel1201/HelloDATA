@@ -22,3 +22,11 @@ SELECT
     *
 FROM
     RANKINGS_P5;
+
+
+CREATE TABLE DIUSERS_P5
+    AS
+        SELECT DISTINCT
+            ( USER_ID )
+        FROM
+            USERS_P5;
