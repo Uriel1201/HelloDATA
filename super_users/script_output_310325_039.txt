@@ -1,0 +1,10 @@
+
+
+Table USERS_P5 created.
+
+Elapsed: 00:00:00.008
+
+
+8 rows inserted.
+
+Elapsed: 00:00:00.102
