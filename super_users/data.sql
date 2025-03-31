@@ -8,3 +8,10 @@ Writing a query to return, for each user, the
 date when they become a super user, ordered by oldest super users first.
 Users who are not super users should
 also be present in the table. */
+
+
+CREATE TABLE USERS_P5 (
+    USER_ID          INTEGER,
+    PRODUCT_ID       INTEGER,
+    TRANSACTION_DATE DATE
+);
