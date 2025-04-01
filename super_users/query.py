@@ -14,7 +14,7 @@ try:
     engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    table = """SELECT * FROM USERS_P4;"""
+    table = """SELECT * FROM USERS_P5;"""
     
     # Leer datos en un DataFrame de pandas
     users = pd.read_sql(table, engine)
