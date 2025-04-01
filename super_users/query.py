@@ -22,14 +22,14 @@ try:
 
     
     super_users=(users.sort_values(by=['user_id','transaction_date'])
-                  .groupby('user_id'
+                      .groupby('user_id'
                            ,as_index=False
-                   )
-                  .agg(super_date=('transaction_date'
+                       )
+                      .agg(super_date=('transaction_date'
                                    ,lambda x:
                                            x.iloc[1] if len(x)>1 else pd.NA
+                           )
                        )
-                   )
     )
     super_users
 
