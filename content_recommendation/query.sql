@@ -2,3 +2,9 @@ SELECT
     *
 FROM
     FRIENDS_P6;
+
+
+SELECT
+    *
+FROM
+    LIKES_P6;
