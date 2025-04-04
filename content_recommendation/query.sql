@@ -1,0 +1,4 @@
+SELECT
+    *
+FROM
+    FRIENDS_P6;
