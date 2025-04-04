@@ -73,3 +73,54 @@ INSERT INTO FRIENDS_P6
         *
     FROM
         NAMES;
+
+
+
+INSERT INTO LIKES_P6
+    WITH NAMES AS (
+        SELECT
+            1,
+            'A'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            1,
+            'B'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            1,
+            'C'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            2,
+            'A'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            3,
+            'B'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            3,
+            'C'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            4,
+            'B'
+        FROM
+            DUAL
+    )
+    SELECT
+        *
+    FROM
+        NAMES;
