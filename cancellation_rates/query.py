@@ -17,13 +17,6 @@ import numpy  as np
 # import sqlalchemy
 # from sqlalchemy.exc import SQLAlchemyError
 
-'''
-01. Cancellation Rates.
-
-Writing a query to return the publication and cancellation
-rate for each user
-'''
-
 try:
   engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
