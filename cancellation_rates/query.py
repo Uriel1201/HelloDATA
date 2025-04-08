@@ -22,7 +22,7 @@ try:
 
   table="""select * from users_p1;"""
   users=pd.read_sql(table, engine)
-  users
+  print(users)
   actions=(pd.get_dummies(users['action'])
              .groupby(users['user_id'])
              .sum()
