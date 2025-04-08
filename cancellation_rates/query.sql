@@ -47,6 +47,42 @@ CREATE TABLE TOTALS_P1
             USER_ID;
 
 
+
+with TOTALS_P1(user_id, starts, cancels, publishes)
+    AS(
+        SELECT
+            USER_ID,
+            SUM(
+                CASE
+                    WHEN ACTION = 'start' THEN
+                        1
+                    ELSE
+                        0
+                END
+            ) AS STARTS,
+            SUM(
+                CASE
+                    WHEN ACTION = 'cancel' THEN
+                        1
+                    ELSE
+                        0
+                END
+            ) AS CANCELS,
+            SUM(
+                CASE
+                    WHEN ACTION = 'publish' THEN
+                        1
+                    ELSE
+                        0
+                END
+            ) AS PUBLISHES
+        FROM
+            USERS_P1
+        GROUP BY
+            USER_ID
+        ORDER BY
+            USER_ID);
+
 SELECT
     USER_ID,
     1.0 * PUBLISHES / STARTS AS PUBLISH_RATE,
