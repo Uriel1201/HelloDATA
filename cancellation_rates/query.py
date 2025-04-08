@@ -1,8 +1,8 @@
 """
-# 01. Cancelation Rates
-*From the following table of user IDs, actions, and dates, 
+01. Cancelation Rates
+From the following table of user IDs, actions, and dates, 
 write a query to return the publication and cancellation rate 
-for each user.*
+for each user.
 """
 
 
