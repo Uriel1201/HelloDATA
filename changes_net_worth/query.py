@@ -15,36 +15,13 @@ import numpy  as np
 # import sqlalchemy
 # from sqlalchemy.exc import SQLAlchemyError
 
-'''
 try:
-  engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
-
-  table = """select * from transactions_p2""";
-  transactions = pd.read_sql(table, engine)
-  transactions
-
-except SQLAlchemyError as e:
-  print(e)
-'''
-
-
-data = {'Sender'            : [5, 1, 2, 2, 3, 3, 1],
-        'Receiver'          : [2, 3, 1, 3, 1, 2, 4],
-        'Amount'            : [10, 15, 20, 25, 20, 15, 5],
-        'Transaction_Date'  : ['12-FEB-20',
-                               '13-FEB-20',
-                               '13-FEB-20',
-                               '14-FEB-20',
-                               '15-FEB-20',
-                               '15-FEB-20',
-                               '16-FEB-20']
-        }
-
-transactions = pd.DataFrame(data)
-transactions['Transaction_Date'] = pd.to_datetime(transactions['Transaction_Date'])
-
-
-net_changes = (transactions.melt(id_vars=['Amount']
+  engine=sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
+  table="""select * from transactions_p2;"""
+  transactions=pd.read_sql(table,engine)
+  transactions['Transaction_Date']=pd.to_datetime(transactions['Transaction_Date'])
+  print(transactions)
+  net_changes=(transactions.melt(id_vars=['Amount']
                                  ,value_vars=['Sender', 'Receiver']
                                  ,var_name='Type'
                                  ,value_name='User_id'
@@ -59,5 +36,13 @@ net_changes = (transactions.melt(id_vars=['Amount']
                            .sort_values(by='Net_Changes'
                                         , ascending=False
                             )
-)
-net_changes
+  )
+  print(net_changes)
+except SQLAlchemyError as e:
+  print(e)
+
+
+
+
+
+
