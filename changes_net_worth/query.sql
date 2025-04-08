@@ -54,7 +54,7 @@ with
         FROM
             TRANSACTIONS_P2
         GROUP BY
-            SENDER)
+            SENDER),
     RECEIVERS_P2(receiver, receiving) as (SELECT
             RECEIVER,
             SUM(AMOUNT)
