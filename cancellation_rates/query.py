@@ -20,7 +20,7 @@ import numpy  as np
 try:
   engine=sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
-  table="""select * from users_p1""";
+  table="""select * from users_p1;"""
   users=pd.read_sql(table, engine)
   users
   actions=(pd.get_dummies(users['action'])
