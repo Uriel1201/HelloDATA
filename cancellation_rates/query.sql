@@ -47,8 +47,6 @@ WITH TOTALS_P1 (
         USERS_P1
     GROUP BY
         USER_ID
-    ORDER BY
-        USER_ID
 )
 SELECT
     USER_ID,
