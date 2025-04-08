@@ -22,7 +22,7 @@ try:
   transactions['Transaction_Date']=pd.to_datetime(transactions['Transaction_Date'])
   print(transactions)
   net_changes=(transactions.melt(id_vars=['Amount']
-                                 ,value_vars=['Sender', 'Receiver']
+                                 ,value_vars=['Sender','Receiver']
                                  ,var_name='Type'
                                  ,value_name='User_id'
                             )
