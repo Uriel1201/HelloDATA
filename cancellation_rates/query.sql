@@ -83,6 +83,10 @@ with TOTALS_P1(user_id, starts, cancels, publishes)
         ORDER BY
             USER_ID);
 
+
+
+WITH TOTALS_P1 (
+
 SELECT
     USER_ID,
     1.0 * PUBLISHES / STARTS AS PUBLISH_RATE,
