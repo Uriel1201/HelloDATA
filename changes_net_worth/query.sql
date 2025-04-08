@@ -10,79 +10,33 @@ SELECT * FROM TRANSACTIONS_P2;
 
 
 /* Table of Senders and their sended amounts*/
-CREATE TABLE SENDERS_P2
-    AS
-        SELECT
-            SENDER,
-            SUM(AMOUNT) AS SENDING
-        FROM
-            TRANSACTIONS_P2
-        GROUP BY
-            SENDER;
-
-
 /* Table of receivers and their received amounts*/
-CREATE TABLE RECEIVERS_P2
-    AS
-        SELECT
-            RECEIVER,
-            SUM(AMOUNT) AS RECEIVING
-        FROM
-            TRANSACTIONS_P2
-        GROUP BY
-            RECEIVER;
-
-
 /* Querying senders*/
-SELECT
-    *
-FROM
-    SENDERS_P2;
-
-
 /* Querying receivers*/
-SELECT
-    *
-FROM
-    RECEIVERS_P2;
-
-/*
-with 
-    SENDERS_P2(sender, sending) as (SELECT
-            SENDER,
-            SUM(AMOUNT)
-        FROM
-            TRANSACTIONS_P2
-        GROUP BY
-            SENDER),
-    RECEIVERS_P2(receiver, receiving) as (SELECT
-            RECEIVER,
-            SUM(AMOUNT)
-        FROM
-            TRANSACTIONS_P2
-        GROUP BY
-            RECEIVER
-    )
-SELECT
-    COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
-    COALESCE(R.RECEIVING, 0) - COALESCE(S.SENDING, 0) AS NET_CHANGE
-FROM
-    RECEIVERS_P2 R
-    FULL OUTER JOIN SENDERS_P2   S ON R.RECEIVER = S.SENDER
-ORDER BY
-    2 DESC;
- 
-    
-*/
-
-
-
-
-
-
-
-    
 /* Querying the net change of each user*/
+WITH SENDERS_P2 (
+    SENDER,
+    SENDING
+) AS (
+    SELECT
+        SENDER,
+        SUM(AMOUNT)
+    FROM
+        TRANSACTIONS_P2
+    GROUP BY
+        SENDER
+), RECEIVERS_P2 (
+    RECEIVER,
+    RECEIVING
+) AS (
+    SELECT
+        RECEIVER,
+        SUM(AMOUNT)
+    FROM
+        TRANSACTIONS_P2
+    GROUP BY
+        RECEIVER
+)
 SELECT
     COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
     COALESCE(R.RECEIVING, 0) - COALESCE(S.SENDING, 0) AS NET_CHANGE
