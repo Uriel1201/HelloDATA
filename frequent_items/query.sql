@@ -63,3 +63,38 @@ FROM
     ITEMS_RANKING_P3
 WHERE
     RANKING = 1;
+
+
+
+/*
+CREATE TABLE FREQUENCIES_P3
+    AS
+        SELECT
+            DATES,
+            ITEM,
+            COUNT(*) AS FREQUENCY
+        FROM
+            ITEMS_P3
+        GROUP BY
+            DATES,
+            ITEM;
+CREATE TABLE ITEMS_RANKING_P3
+    AS
+        SELECT
+            DATES,
+            ITEM,
+            RANK()
+            OVER(PARTITION BY DATES
+                 ORDER BY
+                     FREQUENCY DESC
+            ) AS RANKING
+        FROM
+            FREQUENCIES_P3;
+SELECT
+    DATES,
+    ITEM
+FROM
+    ITEMS_RANKING_P3
+WHERE
+    RANKING = 1;
+*/
