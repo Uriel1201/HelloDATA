@@ -46,7 +46,42 @@ SELECT
 FROM
     RECEIVERS_P2;
 
+/*
+with 
+    SENDERS_P2(sender, sending) as (SELECT
+            SENDER,
+            SUM(AMOUNT)
+        FROM
+            TRANSACTIONS_P2
+        GROUP BY
+            SENDER)
+    RECEIVERS_P2(receiver, receiving) as (SELECT
+            RECEIVER,
+            SUM(AMOUNT) AS RECEIVING
+        FROM
+            TRANSACTIONS_P2
+        GROUP BY
+            RECEIVER
+    )
+SELECT
+    COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
+    COALESCE(R.RECEIVING, 0) - COALESCE(S.SENDING, 0) AS NET_CHANGE
+FROM
+    RECEIVERS_P2 R
+    FULL OUTER JOIN SENDERS_P2   S ON R.RECEIVER = S.SENDER
+ORDER BY
+    2 DESC;
+ 
+    
+*/
 
+
+
+
+
+
+
+    
 /* Querying the net change of each user*/
 SELECT
     COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
