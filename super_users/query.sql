@@ -15,8 +15,8 @@ SELECT
 FROM
     USERS_P5;
 
-/*---------------*/
-WITH RANKINGS (
+/* Querying dates when users become superusers*/
+WITH RANKINGS ( -- identifying superuser dates
     USER_ID,
     TRANSACTION_DATE,
     RANKED_DATE
@@ -31,12 +31,13 @@ WITH RANKINGS (
         )
     FROM
         USERS_P5
-), USERS ( USER_ID ) AS (
+), USERS ( -- identifying unique users 
+   USER_ID ) AS (
     SELECT DISTINCT
         ( USER_ID )
     FROM
         USERS_P5
-), SUPERUSERS (
+), SUPERUSERS ( -- identifying superusers 
     USER_ID,
     DATE_AS_SUPER
 ) AS (
