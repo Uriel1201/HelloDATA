@@ -12,8 +12,8 @@ SELECT
 FROM
     USERS_P4;
 
-/* Time elapsed between the last action */
-and the second-to-last action
+/* Time elapsed between the last action 
+and the second-to-last action */
 WITH RANKINGS ( -- Ordering dates in descending order grouped by each user
     ID,
     ACTION_DATE,
