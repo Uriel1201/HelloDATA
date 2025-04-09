@@ -6,14 +6,14 @@ time elapsed between the last action
 and the second-to-last action, in
 ascending order by user ID. */ 
 
-
+/* Querying original data*/
 SELECT
     *
 FROM
     USERS_P4;
 
 
-WITH RANKINGS (
+WITH RANKINGS ( -- Ordering dates in descending order grouped by each user
     ID,
     ACTION_DATE,
     RANKED_DATES
@@ -28,9 +28,9 @@ WITH RANKINGS (
         )
     FROM
         USERS_P4
-), RANKED1 (
+), RANKED1 ( -- last date recorded for each user
     ID,
-    FIRST
+    LAST
 ) AS (
     SELECT
         ID,
@@ -41,7 +41,7 @@ WITH RANKINGS (
         RANKED_DATES = 1
 ), RANKED2 (
     ID,
-    SECOND
+    PENULTIMATE 
 ) AS (
     SELECT
         ID,
@@ -53,7 +53,7 @@ WITH RANKINGS (
 )
 SELECT
     A.ID,
-    ( A.FIRST - B.SECOND ) AS ELAPSED_TIME
+    ( A.LAST - B.PENULTIMATE ) AS ELAPSED_TIME
 FROM
     RANKED1 A
     LEFT JOIN RANKED2 B ON A.ID = B.ID
