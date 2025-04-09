@@ -12,8 +12,8 @@ FROM
     TRANSACTIONS_P2;
 
 /* Querying the net change of each user*/
-WITH SENDERS -- Table of Senders and their sended amounts
-    (
+WITH SENDERS ( -- Table of Senders and their sended amounts
+    
     SENDER,
     SENDING
 ) AS (
@@ -24,8 +24,8 @@ WITH SENDERS -- Table of Senders and their sended amounts
         TRANSACTIONS_P2
     GROUP BY
         SENDER
-), RECEIVERS -- Table of receivers and their received amounts
-    (
+), RECEIVERS ( -- Table of receivers and their received amounts
+   
     RECEIVER,
     RECEIVING
 ) AS (
