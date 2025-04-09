@@ -28,13 +28,13 @@ with RANKINGS (
             USER_ID,
             TRANSACTION_DATE
         FROM
-            RANKINGS_P5
+            RANKINGS
         WHERE
             RANKED_DATE = 2
   )
 SELECT
-    D.USER_ID,
+    U.USER_ID,
     S.TRANSACTION_DATE
 FROM
-    DIUSERS_P5    D
-    LEFT JOIN SUPERUSERS_P5 S ON D.USER_ID = S.USER_ID;
+    USERS   U
+    LEFT JOIN SUPERUSERS S ON U.USER_ID = S.USER_ID;
