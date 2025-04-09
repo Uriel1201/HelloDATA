@@ -1,7 +1,7 @@
 with RANKINGS (
-   id
-  ,action_date
-  ,ranked_dates
+   id,
+   action_date,
+   ranked_dates
 ) AS (
         SELECT
             ID,
@@ -14,47 +14,31 @@ with RANKINGS (
         FROM
             USERS_P4
   ), RANKED1 (
-  id
-  ,
+  id,
+  first
   )
-    AS
+    AS (
         SELECT
             ID,
-            ACTION_DATE AS RANKED_ONE
+            ACTION_DATE
         FROM
-            RANKINGS_P4
+            RANKINGS
         WHERE
-            RANKED_DATES = 1;
-
-
-SELECT
-    *
-FROM
-    RANKED1_P4;
-
-
-CREATE TABLE RANKED2_P4
-    AS
+            RANKED_DATES = 1
+   ), RANKED2 (id, second)
+    AS (
         SELECT
             ID,
-            ACTION_DATE AS RANKED_TWO
+            ACTION_DATE
         FROM
-            RANKINGS_P4
+            RANKINGS
         WHERE
-            RANKED_DATES = 2;
-
-
-SELECT
-    *
-FROM
-    RANKED2_P4;
-
-
-SELECT
+            RANKED_DATES = 2
+   ) SELECT
     A.ID,
-    ( A.RANKED_ONE - B.RANKED_TWO ) AS ELAPSED_TIME
+    ( A.first - B.second ) AS ELAPSED_TIME
 FROM
-    RANKED1_P4 A
-    LEFT JOIN RANKED2_P4 B ON A.ID = B.ID
+    RANKED1 A
+    LEFT JOIN RANKED2 B ON A.ID = B.ID
 ORDER BY
     A.ID;
