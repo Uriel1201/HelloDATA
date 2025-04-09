@@ -22,7 +22,7 @@ with RANKINGS (
             USERS_P5
   ), SUPERUSERS (
       user_id,
-      transaction_date
+      date_as_super
   ) AS (
         SELECT
             USER_ID,
@@ -34,7 +34,7 @@ with RANKINGS (
   )
 SELECT
     U.USER_ID,
-    S.TRANSACTION_DATE
+    S.date_as_super
 FROM
     USERS   U
     LEFT JOIN SUPERUSERS S ON U.USER_ID = S.USER_ID;
