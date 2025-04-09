@@ -19,14 +19,14 @@ with recommendations (
             LI.PAGE_LIKES
         FROM
             recommendations r
-            LEFT JOIN LIKES_P6         LI ON LF.USER_ID = LI.USER_ID
-                                     AND LF.RECOMMENDATION = LI.PAGE_LIKES
+            LEFT JOIN LIKES_P6         LI ON r.USER_ID = LI.USER_ID
+                                     AND r.RECOMMENDATION = LI.PAGE_LIKES
   )
 SELECT DISTINCT
     USER_ID,
     RECOMMENDATION
 FROM
-    RECOMMENDATION_P6
+    RECOMMENDATION
 WHERE
     PAGE_LIKES IS NULL
 ORDER BY
