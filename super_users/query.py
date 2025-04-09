@@ -20,7 +20,6 @@ try:
     users = pd.read_sql(table, engine)
     print(users)
 
-    
     super_users=(users.sort_values(by=['user_id','transaction_date'])
                       .groupby('user_id'
                            ,as_index=False
@@ -31,7 +30,7 @@ try:
                            )
                        )
     )
-    super_users
+    print(super_users)
 
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
