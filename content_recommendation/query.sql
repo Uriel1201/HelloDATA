@@ -6,7 +6,7 @@ to a social media user based on the
 pages that their friends have liked, but
 that they have not yet marked as liked. */
 
-
+/* Querying the original data*/
 SELECT
     *
 FROM
@@ -17,8 +17,9 @@ SELECT
 FROM
     LIKES_P6;
 
-/*----------------------*/
-WITH RECOMMENDATIONS (
+/* Querying pages recommendations for users 
+   based on pages liked by their friends */
+WITH RECOMMENDATIONS ( -- identifying possible recommendations for each user
     USER_ID,
     RECOMMENDATION
 ) AS (
@@ -28,7 +29,7 @@ WITH RECOMMENDATIONS (
     FROM
              FRIENDS_P6 F
         INNER JOIN LIKES_P6 LI ON F.FRIEND = LI.USER_ID
-), USER_LIKES (
+), USER_LIKES ( -- identifying recommendations that have already been marked as liked
     USER_ID,
     RECOMMENDATION,
     IS_MATCHED
