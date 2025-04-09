@@ -11,7 +11,7 @@ FROM
     USERS_P1;
 
 
-WITH TOTALS (
+WITH TOTALS ( -- Total numbers for each action 
     USER_ID,
     STARTS,
     CANCELS,
