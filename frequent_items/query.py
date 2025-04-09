@@ -11,13 +11,13 @@ from sqlalchemy.exc import SQLAlchemyError
 
 try:
     # Cadena de conexión a la base de datos (reemplaza con tus propios detalles)
-    engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
+    engine=sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    table = """SELECT * FROM ITEMS_P3;"""
+    table="""SELECT * FROM ITEMS_P3;"""
     
     # Leer datos en un DataFrame de pandas
-    items = pd.read_sql(table, engine)
+    items=pd.read_sql(table, engine)
     print(items)
 
     # m_f_i: "Most Frequent Item On Each Date"
