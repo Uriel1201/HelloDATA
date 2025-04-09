@@ -11,7 +11,7 @@ FROM
     ITEMS_P3;
 
 /*Querying most frequent items on each date*/
-WITH FREQUENCIES( --Frequencies for items on each date
+WITH FREQUENCIES ( --Frequencies for items on each date
     DATES,
     ITEM,
     FREQUENCY
@@ -25,7 +25,7 @@ WITH FREQUENCIES( --Frequencies for items on each date
     GROUP BY
         DATES,
         ITEM
-), ITEMS_RANKING( --ranking items on each date
+), ITEMS_RANKING ( --ranking items on each date
     DATES,
     ITEM,
     RANKING
