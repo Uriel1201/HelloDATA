@@ -1,6 +1,6 @@
 with RANKINGS (
   user_id,
-  transaction_date
+  transaction_date,
   ranked_date
 ) AS (
         SELECT
