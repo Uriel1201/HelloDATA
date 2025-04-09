@@ -10,8 +10,8 @@ SELECT * FROM TRANSACTIONS_P2;
 
 
 /* Querying the net change of each user*/
-WITH SENDERS_P2 
-/* Table of Senders and their sended amounts*/ (
+WITH SENDERS_P2 -- Table of Senders and their sended amounts
+    (
     SENDER,
     SENDING
 ) AS (
@@ -22,7 +22,8 @@ WITH SENDERS_P2
         TRANSACTIONS_P2
     GROUP BY
         SENDER
-), RECEIVERS_P2 /* Table of receivers and their received amounts*/ (
+), RECEIVERS_P2 -- Table of receivers and their received amounts
+    (
     RECEIVER,
     RECEIVING
 ) AS (
