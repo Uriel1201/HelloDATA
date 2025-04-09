@@ -1,7 +1,8 @@
 with RANKINGS (
-  id
-)
-    AS (
+   id
+  ,action_date
+  ,ranked_dates
+) AS (
         SELECT
             ID,
             ACTION_DATE,
@@ -9,19 +10,13 @@ with RANKINGS (
             OVER(PARTITION BY ID
                  ORDER BY
                      ACTION_DATE DESC
-            ) AS RANKED_DATES
+            )
         FROM
             USERS_P4
+  ), RANKED1 (
+  id
+  ,
   )
-
-
-SELECT
-    *
-FROM
-    RANKINGS_P4;
-
-
-CREATE TABLE RANKED1_P4
     AS
         SELECT
             ID,
