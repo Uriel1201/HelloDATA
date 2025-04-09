@@ -6,7 +6,10 @@ ordered by decreasing net change. */
 
 
 /* Querying original data*/
-SELECT * FROM TRANSACTIONS_P2; 
+SELECT
+    *
+FROM
+    TRANSACTIONS_P2;
 
 
 /* Querying the net change of each user*/
