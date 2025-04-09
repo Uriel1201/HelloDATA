@@ -11,7 +11,6 @@ SELECT
 FROM
     TRANSACTIONS_P2;
 
-
 /* Querying the net change of each user*/
 WITH SENDERS -- Table of Senders and their sended amounts
     (
