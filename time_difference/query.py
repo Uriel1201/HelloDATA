@@ -11,17 +11,17 @@ from sqlalchemy.exc import SQLAlchemyError
 
 try:
     # Cadena de conexión a la base de datos (reemplaza con tus propios detalles)
-    engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
+    engine=sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    table = """SELECT * FROM USERS_P4;"""
+    table="""SELECT * FROM USERS_P4;"""
     
     # Leer datos en un DataFrame de pandas
-    users = pd.read_sql(table, engine)
+    users=pd.read_sql(table, engine)
     print(users)
 
     
-    #e_t: 'Elapsed time between the last two actions'
+    # e_t: 'Elapsed time between the last two actions'
     e_t=(users.sort_values(by=['User_id', 'Action_date']
                            ,ascending=[True,False]
                )
@@ -40,10 +40,8 @@ try:
                                           x['Ranked_one']-x['Ranked_two']
                )
     )
-    e_t[['User_id','Elapsed_time']]
+    print(e_t[['User_id','Elapsed_time']])
     
-     
-
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
 
