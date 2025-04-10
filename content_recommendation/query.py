@@ -18,7 +18,10 @@ try:
     table2 = """SELECT * FROM LIKES_P6;"""
     
     # Leer datos en un DataFrame de pandas
-    
+    friends = pd.read_sql(table1, engine)
+    likes = pd.read_sql(table2, engine)
+    print(friends)
+    print(likes)
 
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
