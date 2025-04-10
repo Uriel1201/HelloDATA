@@ -6,6 +6,7 @@ fraction of users who only visited
 mobile, only visited web, and visited
 both. */
 
+/* Querying original data*/
 SELECT
     *
 FROM
@@ -15,7 +16,8 @@ SELECT
 FROM
     WEB_P7;
 
-WITH USERS (
+/* Querying fraction of users visiting web or mobile*/
+WITH USERS ( -- Querying mobile and web users
     MOBILE_USER,
     WEB_USER
 ) AS (
