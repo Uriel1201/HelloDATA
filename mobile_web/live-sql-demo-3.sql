@@ -2,8 +2,10 @@ SELECT
     *
 FROM
     MOBILE_P7;
-
-
+SELECT
+    *
+FROM
+    WEB_P7;
 
 WITH USERS (
     MOBILE_USER,
