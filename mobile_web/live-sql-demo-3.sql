@@ -1,3 +1,10 @@
+SELECT
+    *
+FROM
+    MOBILE_P7;
+
+
+
 WITH USERS (
     MOBILE_USER,
     WEB_USER
