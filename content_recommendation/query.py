@@ -22,6 +22,23 @@ try:
     likes = pd.read_sql(table2, engine)
     print(friends)
     print(likes)
+    df=(pd.merge(friends
+                 ,likes.rename(columns={'user_id':'friend'})
+                 ,on='friend'
+           )
+    )
+    recommendations=(pd.merge(df
+                              ,likes
+                              ,on=['user_id','page_likes']
+                              ,how='left'
+                              ,indicator=True
+                        )
+                       .rename(columns={'page_likes':'recommendation'})
+                       .query("_merge=='left_only'")[['user_id','recommendation']]
+                       .drop_duplicates()
+                       .sort_values(by='user_id')
+    )
+    print(recommendations)
 
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
