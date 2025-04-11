@@ -14,8 +14,8 @@ try:
     engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    table1 = """SELECT * ;"""
-    table2 = """SELECT * ;"""
+    table1 = """SELECT * MOBILE_P7;"""
+    table2 = """SELECT * WEB_P7;"""
     # Leer datos en un DataFrame de pandas
     mobile = pd.read_sql(table1, engine)
     web = pd.read_sql(table2, engine)
