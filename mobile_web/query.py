@@ -14,11 +14,31 @@ try:
     engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    table = """SELECT * FROM USERS_P5;"""
-    
+    table1 = """SELECT * ;"""
+    table2 = """SELECT * ;"""
     # Leer datos en un DataFrame de pandas
-    users = pd.read_sql(table, engine)
-    print(users)
+    mobile = pd.read_sql(table1, engine)
+    web = pd.read_sql(table2, engine)
+    print(mobile)
+    print(web)
+    
+    df=(pd.merge(mobile.drop(columns=['page_url']),
+                 web.drop(columns=['page_url']),
+                 on='user_id',
+                 how='outer',
+                 indicator=True
+           )
+          .drop_duplicates()
+    )
+    frequencies=(pd.get_dummies(df['_merge'])
+                   .rename(columns={'left_only':'mobile'
+                                    ,'right_only':'web'
+                           }
+                    )
+                   .mean()
+    )
+    print('fractions:')
+    print(frequencies)
 
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
