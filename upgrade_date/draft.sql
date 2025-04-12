@@ -12,6 +12,11 @@ SELECT
     *
 FROM
     USERS_P8;
+SELECT
+    *
+FROM
+    EVENTS_P8;
+
 
 WITH F2_USERS (
     USER_ID,
