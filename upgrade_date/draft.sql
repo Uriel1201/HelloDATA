@@ -7,6 +7,11 @@ two (type: F2 in events table) and
 upgraded to premium within the first 30
 days of signing up. */
 
+/* Querying original data.*/
+SELECT
+    *
+FROM
+    USERS_P8;
 
 WITH F2_USERS (
     USER_ID,
