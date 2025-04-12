@@ -17,8 +17,9 @@ SELECT
 FROM
     EVENTS_P8;
 
-
-WITH F2_USERS (
+/*Returning the fraction of F2 users who decided to upgrade to Premium 
+  within the first 30 days of signing up*/
+WITH F2_USERS ( -- join dates of F2 users
     USER_ID,
     JOIN_DATE
 ) AS (
@@ -30,7 +31,7 @@ WITH F2_USERS (
         INNER JOIN USERS_P8 U ON E.USER_ID = U.USER_ID
     WHERE
         E.TYPE = 'F2'
-), P_USERS (
+), P_USERS ( -- users who decided to upgrade to premium 
     USER_ID,
     ACCESS_DATE
 ) AS (
