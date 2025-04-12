@@ -35,8 +35,6 @@ WITH F2_USERS (
     FROM
         F2_USERS  F
         LEFT JOIN EVENTS_P8 E ON F.USER_ID = E.USER_ID
-    WHERE
-        E.TYPE = 'P'
 )
 SELECT
     *
