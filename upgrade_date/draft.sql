@@ -1,3 +1,13 @@
+/* 
+08. Upgrade Rate by Product Action
+
+Returning the fraction of users, rounded to two
+decimal places, who first accessed feature
+two (type: F2 in events table) and
+upgraded to premium within the first 30
+days of signing up. */
+
+
 WITH F2_USERS (
     USER_ID,
     JOIN_DATE
