@@ -14,10 +14,12 @@ try:
     engine = sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
 
     # Consulta SQL para obtener los datos
-    table1 = """SELECT * FROM USERS_P5;"""
+    table1 = """SELECT * FROM USERS_P8;"""
+    table2 = """SELECT * FROM EVENTS_P8;"""
     
     # Leer datos en un DataFrame de pandas
-    users = pd.read_sql(table, engine)
+    users = pd.read_sql(table1, engine)
+    events = pd.read_sql(table2, engine)
     print(users)
 
 except SQLAlchemyError as e:
