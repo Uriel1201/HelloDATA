@@ -19,6 +19,19 @@ try:
     # Leer datos en un DataFrame de pandas
     friends=pd.read_sql(table,engine)
     
+    most_friended=(pd.concat([friends['user_1']
+                              ,friends['user_2']
+                             ]
+                      )
+                     .reset_index()
+                     .drop(columns=['index'])
+                     .rename(columns={0:'friend_id'})
+                     .groupby('friend_id')
+                     .size()
+                     .sort_values(ascending=False)
+    )
+    print(f'number of friends by each user:\n')
+     
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
 
