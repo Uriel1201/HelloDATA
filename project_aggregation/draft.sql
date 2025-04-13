@@ -26,4 +26,5 @@ WHERE
         FROM
             PROJECTS_P10
     )
-  )
+  ) select start_project, end_project
+           from beginning, completion;
