@@ -6,7 +6,11 @@ users and their corresponding friend
 count. Assuming that only
 unique friendships are displayed. */
 
-WITH FRIENDSHIP ( FRIEND_ID ) AS (
+/* Querying original data.*/
+select* from friends_p9;
+
+/* Querying the number of friends by each user.*/
+WITH FRIENDSHIP ( FRIEND_ID ) AS ( -- number of repeats by each user
     SELECT
         USER_1
     FROM
