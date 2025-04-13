@@ -13,7 +13,7 @@ FROM
     FRIENDS_P9;
 
 /* Querying the number of friends by each user.*/
-WITH FRIENDSHIP ( FRIEND_ID ) AS ( -- number of repeats by each user
+WITH FRIENDSHIP ( FRIEND_ID ) AS ( -- number of repetitions by each user
     SELECT
         USER_1
     FROM
