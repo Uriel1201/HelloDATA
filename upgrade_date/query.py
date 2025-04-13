@@ -20,8 +20,8 @@ try:
     # Leer datos en un DataFrame de pandas
     users = pd.read_sql(table1, engine)
     events = pd.read_sql(table2, engine)
-    print(users)
-
+    users['join_date'] = pd.to_datetime(users['join_date'])
+    
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
 
