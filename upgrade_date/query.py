@@ -23,6 +23,23 @@ try:
     users['join_date'] = pd.to_datetime(users['join_date'])
     events['access_date'] = pd.to_datetime(events['access_date'])
     
+    premium_upgrade=(users.drop(columns=['name'])
+                          .merge(events.query("Type=='F2'")[['user_id']]
+                                 ,on='user_id'
+                                 ,how='inner'
+                           )
+                          .merge(events.query("Type=='P'")[['user_id','access_date']]
+                                 ,on='user_id'
+                                 ,how='left'
+                           )
+    )
+    premium_upgrade['WithinFirst30']=premium_upgrade['access_date']-premium_upgrade['join_date']<=pd.Timedelta(days=30)
+    print(f'Was upgraded within first 30 days:\n{premium_upgrade}\n')
+    upgrade_rate=round(premium_upgrade['WithinFirst30'].mean()
+                       ,2
+    )
+    print(f'upgrade_rate: {upgrade_rate}')
+    
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
 
