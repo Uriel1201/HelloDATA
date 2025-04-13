@@ -21,6 +21,7 @@ try:
     users = pd.read_sql(table1, engine)
     events = pd.read_sql(table2, engine)
     users['join_date'] = pd.to_datetime(users['join_date'])
+    events['access_date'] = pd.to_datetime(events['access_date'])
     
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
