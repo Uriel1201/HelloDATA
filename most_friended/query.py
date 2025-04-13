@@ -30,7 +30,7 @@ try:
                      .size()
                      .sort_values(ascending=False)
     )
-    print(f'number of friends by each user:\n')
+    print(f'number of friends by each user:\n{most_friended}')
      
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
