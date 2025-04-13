@@ -1,3 +1,11 @@
+/* 
+09. Most Friended.
+
+Returning a list of
+users and their corresponding friend
+count. Assuming that only
+unique friendships are displayed. */
+
 WITH FRIENDSHIP ( FRIEND_ID ) AS (
     SELECT
         USER_1
