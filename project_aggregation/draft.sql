@@ -22,10 +22,15 @@ WITH BEGINNING ( START_PROJECT ) AS (
             FROM
                 PROJECTS_P10
         )
+) timeline (
+    start_project,
+    end_project
 )
 SELECT
     START_PROJECT,
-    END_PROJECT
+    min(END_PROJECT)
 FROM
     BEGINNING,
-    COMPLETION;
+    COMPLETION
+where start_project < end_project
+group by start_project;
