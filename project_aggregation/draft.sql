@@ -1,4 +1,15 @@
-WITH BEGINNING ( START_PROJECT ) AS (
+/* 
+10. Project Aggregation 
+
+Writing a query to return the start and end
+dates of each project, and the number of
+days it took to complete. */
+
+/* Querying original data*/
+select * from projects_p10;
+
+/* Returning the duration of each different project.*/
+WITH BEGINNING ( START_PROJECT ) AS ( -- The start of each project 
     SELECT
         START_DATE
     FROM
@@ -10,7 +21,7 @@ WITH BEGINNING ( START_PROJECT ) AS (
             FROM
                 PROJECTS_P10
         )
-), COMPLETION ( END_PROJECT ) AS (
+), COMPLETION ( END_PROJECT ) AS ( -- The end of each project 
     SELECT
         END_DATE
     FROM
@@ -25,7 +36,7 @@ WITH BEGINNING ( START_PROJECT ) AS (
 ), TIMELINE (
     START_PROJECT,
     END_PROJECT
-) AS (
+) AS ( -- The timeline of each project 
     SELECT
         START_PROJECT,
         MIN(END_PROJECT)
