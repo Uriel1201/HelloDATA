@@ -20,17 +20,17 @@ try:
     users = pd.read_sql(table, engine)
     print(users)
 
-    super_users=(users.sort_values(by=['user_id','transaction_date'])
-                      .groupby('user_id'
-                           ,as_index=False
-                       )
-                      .agg(super_date=('transaction_date'
-                                   ,lambda x:
-                                           x.iloc[1] if len(x)>1 else pd.NA
-                           )
-                       )
+    super=(users.sort_values(by=['user_id','transaction_date'])
+                .groupby('user_id'
+                         ,as_index=False
+                        )
+                .agg(super_date=('transaction_date'
+                                 ,lambda x:
+                                         x.iloc[1] if len(x)>1 else pd.NA
+                                )
+                 )
     )
-    print(super_users)
+    print(super)
 
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
