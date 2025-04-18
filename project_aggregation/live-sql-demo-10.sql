@@ -13,8 +13,8 @@ FROM
 
 /*Querying the duration of each unique project.*/
 WITH SORTED ( -- ordering dates
-    _START,
-    _END,
+    S_d,
+    E_d,
     PREV_END
 ) AS (
     SELECT
@@ -28,33 +28,33 @@ WITH SORTED ( -- ordering dates
     FROM
         PROJECTS_P10
 ), PROJECT_FLAGS ( --- identifying unique projects 
-    _START,
-    _END,
+    S_d,
+    E_d,
     PROJECT_ID
 ) AS (
     SELECT
-        _START,
-        _END,
+        S_d,
+        e_d,
         SUM(
             CASE
-                WHEN _END IS NULL THEN
+                WHEN e_d IS NULL THEN
                     1
-                WHEN _END = _START THEN
+                WHEN e_d = s_d THEN
                     0
                 ELSE 1
             END
         )
         OVER(
             ORDER BY
-                _START
+                s_d
         ) AS PROJECT_ID
     FROM
         SORTED
 )
 SELECT
-    MIN(_START)             AS PROJECT_START,
-    MAX(_END)               AS PROJECT_END,
-    MAX(_END) - MIN(_START) AS DURATION
+    MIN(s_d)             AS PROJECT_START,
+    MAX(e_d)               AS PROJECT_END,
+    MAX(e_d) - MIN(s_d) AS DURATION
 FROM
     PROJECT_FLAGS
 GROUP BY
