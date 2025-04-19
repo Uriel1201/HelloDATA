@@ -46,4 +46,8 @@ SELECT
     ) over (order by s_d)
 FROM
     SORTED)
+select min(s_d) as project_start, max(e_d) as project_end, max(e_d)-min(s_d) as duration 
+from flags
+group by project_id
+order by 3,1;
 
