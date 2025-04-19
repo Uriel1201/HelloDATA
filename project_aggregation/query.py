@@ -18,7 +18,15 @@ try:
     
     # Leer datos en un DataFrame de pandas
     projects=pd.read_sql(table,engine)
-    
+    projects['start_date']=(pd.to_datetime(projects['start_date']
+                                           ,format="%d-%b-%y"
+                                          )
+                           )
+    projects['end_date']=(pd.to_datetime(projects['end_date']
+                                         ,format="%d-%b-%y"
+                                        )
+                         )
+                          
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
 
