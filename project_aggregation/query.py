@@ -26,6 +26,29 @@ try:
                                          ,format="%d-%b-%y"
                                         )
                          )
+    
+    timeline_projects=(projects.sort_values('start_date')
+                               .assign(project_id=lambda x:
+                                                         (
+                                                          x['start_date']!=
+                                                          x['end_date'].shift(1)
+                                                         ).cumsum()
+                                      )
+                               .groupby('project_id'
+                                        ,as_index=False
+                                       )
+                               .agg(project_start=('start_date',
+                                                   'min'
+                                                  ),
+                                    project_end=('end_date',
+                                                 'max'
+                                                )
+                                   )
+                               .assign(project_duration=lambda x:
+                                                               (x['project_end']-x['project_start']).dt.days
+                                      )
+    )
+    timeline_projects.sort_values(['project_duration','project_start'])
                           
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
