@@ -1,3 +1,18 @@
+/* 
+10. Project Aggregation 
+
+Writing a query to return the start and end
+dates of each project, and the number of
+days it took to complete. */
+
+/* Querying original data*/
+SELECT
+    *
+FROM
+    PROJECTS_P10;
+
+        /*Querying the duration of each unique project.*/
+
 WITH SORTED ( -- ordering dates
     S_D,
     E_D,
@@ -13,7 +28,7 @@ WITH SORTED ( -- ordering dates
         )
     FROM
         PROJECTS_P10
-)
+) 
 SELECT
     S_D,
     E_D,
@@ -30,4 +45,4 @@ FROM
 GROUP BY
     S_D,
     E_D,
-    PREV_END;
+    PREV_END
