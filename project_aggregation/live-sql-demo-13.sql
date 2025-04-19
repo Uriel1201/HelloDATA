@@ -50,3 +50,14 @@ GROUP BY
     S_D,
     E_D,
     PREV_END)
+SELECT
+    MIN(S_D)            AS PROJECT_START,
+    MAX(E_D)            AS PROJECT_END,
+    MAX(E_D) - MIN(S_D) AS DURATION
+FROM
+    PROJECT_FLAGS
+GROUP BY
+    PROJECT_ID
+ORDER BY
+    3,
+    1;
