@@ -26,7 +26,7 @@ WITH SORTED ( -- ordering dates
         )
     FROM
         PROJECTS_P10
-), flags(
+), flags( -- returning unique projects 
     s_d,
     e_d,
     project_id
