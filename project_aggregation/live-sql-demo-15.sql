@@ -26,10 +26,6 @@ SELECT
             ELSE
                 1
         END
-    )
+    ) over (order by s_d)
 FROM
-    SORTED
-GROUP BY
-    S_D,
-    E_D,
-    PREV_END;
+    SORTED;
