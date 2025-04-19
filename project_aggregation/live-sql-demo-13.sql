@@ -28,21 +28,25 @@ WITH SORTED ( -- ordering dates
         )
     FROM
         PROJECTS_P10
-) 
+), project_flags(
+   s_d, 
+   e_d,
+   project_id
+) as (
 SELECT
     S_D,
     E_D,
-    CASE
+    sum(CASE
         WHEN PREV_END IS NULL THEN
             1
         WHEN PREV_END = S_D THEN
             0
         ELSE
             1
-    END AS FLAG
+    END)
 FROM
     SORTED
 GROUP BY
     S_D,
     E_D,
-    PREV_END
+    PREV_END)
