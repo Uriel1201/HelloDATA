@@ -11,6 +11,7 @@ SELECT
 FROM
     PROJECTS_P10;
 
+/* Returning the duration of each project*/
 WITH SORTED ( -- ordering dates
     S_D,
     E_D,
