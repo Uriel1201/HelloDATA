@@ -28,7 +28,7 @@ WITH SORTED ( -- ordering dates
         )
     FROM
         PROJECTS_P10
-), project_flags(
+), project_flags( -- identifying unique projects
    s_d, 
    e_d,
    project_id
