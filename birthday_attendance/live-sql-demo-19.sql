@@ -11,5 +11,5 @@ FROM
                                   AND EXTRACT(MONTH FROM A.SCHOOL_DATE) = EXTRACT(MONTH FROM S.DATE_BIRTH)
                                   AND EXTRACT(DAY FROM A.SCHOOL_DATE) = EXTRACT(DAY FROM S.DATE_BIRTH)
     ) 
-select round(avg(attendance),2)
+select round(avg(case when attendance='T' then 1 when attendance='F' then 0 end),2)
 from birthday_attendance;
