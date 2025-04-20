@@ -1,4 +1,3 @@
-/* 
 /*
 11. Birthday Attendance.
 
@@ -6,7 +5,12 @@ Writing a query to return the fraction of students,
 rounded to two decimal places, who
 attended school on their birthday. */
 
-with birthday_attendance(
+/* Querying original data. */
+select * from STUDENTS_P11;
+select * from ATTENDANCE_P11;
+
+/*Returning the fraction of students who attended on their birthday. */
+with birthday_attendance( -- Attendance on birthday dates
     student_id,
     attendance
 ) as (
