@@ -1,3 +1,11 @@
+/* 
+/*
+11. Birthday Attendance.
+
+Writing a query to return the fraction of students,
+rounded to two decimal places, who
+attended school on their birthday. */
+
 with birthday_attendance(
     student_id,
     attendance
