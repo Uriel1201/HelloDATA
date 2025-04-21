@@ -1,14 +1,15 @@
 # pip install pandas
 # pip install numpy
-# pip install SQLAlchemy
-# pip install cx_Oracle
-
+python -m pip install oracledb
 import pandas as pd
 import numpy as np
-import cx_Oracle
-import sqlalchemy
-from sqlalchemy.exc import SQLAlchemyError
+import oracledb
 
+conn = oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
+with conn.cursor() as cur:
+   cur.execute("SELECT 'Hello World!' FROM dual")
+   res = cur.fetchall()
+   print(res)
 try:
     # Cadena de conexión a la base de datos (reemplaza con tus propios detalles)
     engine=sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
