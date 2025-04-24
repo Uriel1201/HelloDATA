@@ -5,20 +5,13 @@ import pandas as pd
 import numpy as np
 import oracledb
 
-conn = oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-with conn.cursor() as cur:
-   cur.execute("SELECT 'Hello World!' FROM dual")
-   res = cur.fetchall()
-   print(res)
 try:
-    # Cadena de conexión a la base de datos (reemplaza con tus propios detalles)
-    engine=sqlalchemy.create_engine("oracle+cx_oracle://usr:pswd@localhost/?service_name=orclpdb1", arraysize=1000)
-
+    conn = oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
     # Consulta SQL para obtener los datos
-    table="""SELECT * FROM PROJECTS_P10;"""
-    
-    # Leer datos en un DataFrame de pandas
-    projects=pd.read_sql(table,engine)
+    table1="SELECT * FROM ATTENDANCE_P11"
+    table2="SELECT * FROM STUDENTS_P11"
+    attendance=pd.read_sql(table1,conn)
+    students=pe.read_sql(table2,conn)
                           
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
