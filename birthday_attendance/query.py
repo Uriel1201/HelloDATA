@@ -11,7 +11,7 @@ try:
     table1="SELECT * FROM ATTENDANCE_P11"
     table2="SELECT * FROM STUDENTS_P11"
     attendance=pd.read_sql(table1,conn)
-    students=pe.read_sql(table2,conn)
+    students=pd.read_sql(table2,conn)
                           
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
