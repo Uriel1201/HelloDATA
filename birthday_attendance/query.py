@@ -12,6 +12,7 @@ try:
     table2="SELECT * FROM STUDENTS_P11"
     attendance=pd.read_sql(table1,conn)
     students=pd.read_sql(table2,conn)
+    attendance['school_date']=pd.to_datetime(attendance['school_date'],format="%d-%b-%y")
                           
 except SQLAlchemyError as e:
     print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
