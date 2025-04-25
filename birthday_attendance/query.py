@@ -1,4 +1,4 @@
-# python -m pip install oracledb numpy pandas pyarrow --updates
+# python -m pip install oracledb numpy pandas pyarrow --upgrade
 import pandas as pd
 import numpy as np
 import oracledb
