@@ -2,6 +2,7 @@
 import pandas as pd
 import numpy as np
 import oracledb
+import pyarrow 
 
 try:
     conn = oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
