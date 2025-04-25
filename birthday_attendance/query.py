@@ -31,9 +31,5 @@ try:
     fraction=attendance_on_birthday['attendance'].mean()
     print(f'fraction of birthday attendance:\n{round(fraction,2)}
                           
-except SQLAlchemyError as e:
-    print(f"Error al conectar a la base de datos o al ejecutar la consulta: {e}")
-
 finally:
-    if 'conn' in locals():
-        conn.dispose()
+    conn.close()
