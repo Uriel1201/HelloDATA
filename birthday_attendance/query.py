@@ -13,9 +13,6 @@ try:
     attendance=pyarrow.Table.from_arrays(odf_attendance.column_arrays(),names=odf_attendance.column_names()).to_pandas()
     students=pyarrow.Table.from_arrays(odf_students.column_arrays(),names=odf_students.column_names()).to_pandas()
     
-    attendance['school_date']=pd.to_datetime(attendance['school_date'],format="%d-%b-%y")
-    students['date_birth']=pd.to_datetime(students['date_birth'],format="%d-%b-%y")
-    
     attendance_copy=attendance[['student_id','attendance']].copy()
     attendance_copy['month']=attendance['school_date'].dt.month
     attendance_copy['day']=attendance['school_date'].dt.day
