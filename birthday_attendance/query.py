@@ -29,7 +29,7 @@ try:
                                )
     )
     fraction=attendance_on_birthday['attendance'].mean()
-    print(f'fraction of birthday attendance:\n{round(fraction,2)}
+    print(f'fraction of birthday attendance:\n{round(fraction,2)}')
                           
 finally:
     conn.close()
