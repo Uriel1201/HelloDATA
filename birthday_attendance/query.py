@@ -1,6 +1,6 @@
 # pip install pandas
 # pip install numpy
-python -m pip install oracledb
+python -m pip install oracledb numpy pandas
 import pandas as pd
 import numpy as np
 import oracledb
