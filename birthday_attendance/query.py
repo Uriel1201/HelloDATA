@@ -5,19 +5,14 @@ import oracledb
 import pyarrow 
 
 try:
-    conn = oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-    import oracledb
-
-conn = oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-with conn.cursor() as cur:
-   cur.execute("SELECT 'Hello World!' FROM dual")
-   res = cur.fetchall()
-   print(res)
-
+    conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
     table1="SELECT * FROM ATTENDANCE_P11"
     table2="SELECT * FROM STUDENTS_P11"
-    attendance=pd.read_sql(table1,conn)
-    students=pd.read_sql(table2,conn)
+    odf_attendance=conn.fetch_df_all(statement=table1,arraysize=100)
+    odf_students=conn.fetch_df_all(statement=table2,arraysize=100)
+    attendance=pyarrow.Table.from_arrays(odf_attendance.column_arrays(),names=odf.column_names()).to_pandas()
+    students=pyarrow.Table.from_arrays(odf_students.column_arrays(),names=odf_students.column_names()).to_pandas()
+    
     attendance['school_date']=pd.to_datetime(attendance['school_date'],format="%d-%b-%y")
     students['date_birth']=pd.to_datetime(students['date_birth'],format="%d-%b-%y")
     
