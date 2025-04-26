@@ -10,21 +10,21 @@ try:
     odf=conn.fetch_df_all(statement=table,arraysize=100)
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
     transactions=pl.from_arrow(pyarrow_table)
-    changes=(transactions.unpivot(on=['Sender','Receiver']
-                                  ,index='Amount'
-                                  ,variable_name='Type'
-                                  ,value_name='User_id'
+    changes=(transactions.unpivot(on=['SENDER','RECEIVER']
+                                  ,index='AMOUNT' 
+                                  ,variable_name='TYPE' 
+                                  ,value_name='USER_ID'
                           )
-                         .with_columns(pl.when(pl.col('Type')=='Sender')
-                                         .then(pl.col('Amount')*-1)
-                                         .otherwise(pl.col('Amount'))
-                                         .alias('Amount')
+                         .with_columns(pl.when(pl.col('TYPE')=='SENDER')
+                                         .then(pl.col('AMOUNT')*-1)
+                                         .otherwise(pl.col('AMOUNT'))
+                                         .alias('AMOUNT')
                           )
-                         .group_by('User_id')
-                         .agg(pl.col('Amount')
+                         .group_by('USER_ID')
+                         .agg(pl.col('AMOUNT')
                                 .sum()
                           )
-                         .sort(by='Amount'
+                         .sort(by='AMOUNT' 
                                ,descending=True
                           )
     )
