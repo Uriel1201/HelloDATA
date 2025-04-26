@@ -6,10 +6,10 @@ import pyarrow
 
 try:
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-    table="SELECT * FROM USERS_P1"
+    table="SELECT * FROM TRANSACTIONS_P2"
     odf=conn.fetch_df_all(statement=table,arraysize=100)
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
-    users=pl.from_arrow(pyarrow_table)
+    transactions=pl.from_arrow(pyarrow_table)
     rates=(users.to_dummies(columns='ACTION')
                 .drop('DATES')
                 .group_by('USER_ID')
