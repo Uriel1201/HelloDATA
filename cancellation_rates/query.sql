@@ -4,18 +4,18 @@
 Writing a query to return the publication and cancellation 
 rate for each user. */
 
-
+/*Querying original data. */
 SELECT
     *
 FROM
     USERS_P1;
 
-
+/*Returning rates for each user. */
 WITH TOTALS ( -- Totals for each action 
     USER_ID,
-    STARTS,
-    CANCELS,
-    PUBLISHES
+    total_STARTS,
+    total_CANCELS,
+    total_PUBLISHES
 ) AS (
     SELECT
         USER_ID,
@@ -50,9 +50,9 @@ WITH TOTALS ( -- Totals for each action
 )
 SELECT
     USER_ID,
-    ROUND(PUBLISHES / NULLIF(STARTS, 0),
+    ROUND(total_PUBLISHES / NULLIF(total_STARTS, 0),
           2) AS PUBLISH_RATE,
-    ROUND(CANCELS / NULLIF(STARTS, 0),
+    ROUND(total_CANCELS / NULLIF(total_STARTS, 0),
           2) AS CANCEL_RATE
 FROM
     TOTALS;
