@@ -1,5 +1,4 @@
-# python -m pip install oracledb numpy pandas pyarrow polars --upgrade
-import pandas as pd
+# python -m pip install oracledb numpy pyarrow polars --upgrade
 import numpy as np
 import polars as pl
 import oracledb
