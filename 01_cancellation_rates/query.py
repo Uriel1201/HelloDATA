@@ -7,10 +7,8 @@ import pyarrow
 
 try:
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-    table1="SELECT * FROM ATTENDANCE_P11"
-    table2="SELECT * FROM STUDENTS_P11"
-    odf_attendance=conn.fetch_df_all(statement=table1,arraysize=100)
-    odf_students=conn.fetch_df_all(statement=table2,arraysize=100)
+    table="SELECT * FROM USERS_P1"
+    odf_users=conn.fetch_df_all(statement=table,arraysize=100)
     attendance=pyarrow.Table.from_arrays(odf_attendance.column_arrays(),names=odf_attendance.column_names()).to_pandas()
     students=pyarrow.Table.from_arrays(odf_students.column_arrays(),names=odf_students.column_names()).to_pandas()
     
