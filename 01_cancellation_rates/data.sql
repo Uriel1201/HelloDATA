@@ -36,20 +36,6 @@ INSERT INTO USERS_P1
             DUAL
         UNION ALL
         SELECT
-            1,
-            'start',
-            '03-jan-20'
-        FROM
-            DUAL
-        UNION ALL
-        SELECT
-            1,
-            'publish',
-            '04-jan-20'
-        FROM
-            DUAL
-        UNION ALL
-        SELECT
             2,
             'publish',
             '04-jan-20'
@@ -71,9 +57,16 @@ INSERT INTO USERS_P1
             DUAL
         UNION ALL
         SELECT
-            4,
+            1,
             'start',
             '07-jan-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            1,
+            'publish',
+            '08-jan-20'
         FROM
             DUAL
     )
