@@ -10,16 +10,25 @@ try:
     odf=conn.fetch_df_all(statement=table,arraysize=100)
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
     transactions=pl.from_arrow(pyarrow_table)
-    rates=(users.to_dummies(columns='ACTION')
-                .drop('DATES')
-                .group_by('USER_ID')
-                .agg(pl.col('*').sum())
-                .select(pl.col('USER_ID'),
-                        publish_rate=pl.col('ACTION_PUBLISH')/pl.col('ACTION_START'),
-                        cancel_rate=pl.col('ACTION_CANCEL')/pl.col('ACTION_START')
-                 )
+    changes=(transactions.unpivot(on=['Sender','Receiver']
+                                  ,index='Amount'
+                                  ,variable_name='Type'
+                                  ,value_name='User_id'
+                          )
+                         .with_columns(pl.when(pl.col('Type')=='Sender')
+                                         .then(pl.col('Amount')*-1)
+                                         .otherwise(pl.col('Amount'))
+                                         .alias('Amount')
+                          )
+                         .group_by('User_id')
+                         .agg(pl.col('Amount')
+                                .sum()
+                          )
+                         .sort(by='Amount'
+                               ,descending=True
+                          )
     )
-    print(f'Rates for each user using Polars:{rates}')                 
+    print(f'Net changes using Polars:\n{changes}')                 
 
 finally:
     conn.close()
