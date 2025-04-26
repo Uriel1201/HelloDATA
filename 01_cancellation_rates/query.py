@@ -10,13 +10,13 @@ try:
     odf=conn.fetch_df_all(statement=table,arraysize=100)
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
     users=pl.from_arrow(pyarrow_table)
-    rates=(users.to_dummies(columns='action')
-                .drop('dates')
-                .group_by('user_id')
+    rates=(users.to_dummies(columns='ACTION')
+                .drop('DATES')
+                .group_by('USER_ID')
                 .agg(pl.col('*').sum())
-                .select(pl.col('user_id'),
-                        publish_rate=pl.col('action_publish')/pl.col('action_start'),
-                        cancel_rate=pl.col('action_cancel')/pl.col('action_start')
+                .select(pl.col('USER_ID'),
+                        publish_rate=pl.col('ACTION_PUBLISH')/pl.col('ACTION_START'),
+                        cancel_rate=pl.col('ACTION_CANCEL')/pl.col('ACTION_START')
                  )
     )
     print(f'Rates for each user using Polars:{rates}')                 
