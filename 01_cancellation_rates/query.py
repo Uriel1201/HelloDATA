@@ -1,8 +1,9 @@
-# python -m pip install oracledb numpy pandas pyarrow --upgrade
+# python -m pip install oracledb numpy pandas pyarrow polars --upgrade
 import pandas as pd
 import numpy as np
+import polars as pl
 import oracledb
-import pyarrow 
+import pyarrow
 
 try:
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
