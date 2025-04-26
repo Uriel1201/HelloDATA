@@ -15,12 +15,11 @@ try:
                 .group_by('user_id')
                 .agg(pl.col('*').sum())
                 .select(pl.col('user_id'),
-                        pl.col('action_publish')/pl.col('action_start'),
-                                  pl.col('action_cancel')/pl.col('action_start')
-                           )
-)
-print(f'Rates for each user using Polars:')
-polars_rates
-                          
+                        publish_rate=pl.col('action_publish')/pl.col('action_start'),
+                        cancel_rate=pl.col('action_cancel')/pl.col('action_start')
+                 )
+    )
+    print(f'Rates for each user using Polars:{rates}')                 
+
 finally:
     conn.close()
