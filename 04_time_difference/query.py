@@ -10,7 +10,21 @@ try:
     odf=conn.fetch_df_all(statement=table,arraysize=100)
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
     users=pl.from_arrow(pyarrow_table)
-    
-    print(f'item most frequented for each date using Polars:\n{polars_counts}')          
+    durations=(polars_users.sort(by=['User_id','Action_date']
+                                     ,descending=[False,True]
+                            )
+                           .with_columns(Elapsed_time=pl.col('Action_date')
+                                                        .diff(-1)
+                                                        .dt
+                                                        .total_days()
+                                                        .over(partition_by='User_id')
+                            )
+                           .group_by('User_id')
+                           .first()
+                           .select(pl.col('User_id'),
+                                   pl.col('Elapsed_time')
+                            )
+    )
+    print(f'item most frequented for each date using Polars:\n{durations}')          
 finally:
     conn.close()
