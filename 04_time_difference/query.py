@@ -25,6 +25,6 @@ try:
                                    pl.col('Elapsed_time')
                             )
     )
-    print(f'item most frequented for each date using Polars:\n{durations}')          
+    print(f'Returning time elapsed using Polars:\n{durations}')          
 finally:
     conn.close()
