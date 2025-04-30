@@ -21,6 +21,6 @@ try:
                              ,pl.col('SUPERUSER_DATE')
                       )
     )
-    print(f'Convertion date to spuerusers using Polars:\n{superusers}')          
+    print(f'Convertion date to superusers using Polars:\n{superusers}')          
 finally:
     conn.close()
