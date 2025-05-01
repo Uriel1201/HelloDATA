@@ -14,7 +14,41 @@ try:
     pyarrow_table2=pyarrow.Table.from_arrays(odf2.column_arrays(),names=odf2.column_names())
     mobile=pl.from_arrow(pyarrow_table1).lazy()
     web=pl.from_arrow(pyarrow_table2).lazy()
-  
-    print(f'Recommendations:\n{recommendations}')          
+    fractions=(mobile.select(pl.col('user_id'),
+                             pl.col('user_id')
+                               .alias('web_user')
+                      )
+                     .unique()
+                     .join(web.select(pl.col('user_id'),
+                                      pl.col('user_id')
+                                        .alias('mobile_user')
+
+                               )
+                              .unique(),
+                           on='user_id',
+                           how='full',
+                           coalesce=True
+                      )
+                     .with_columns(mobile_user=pl.when(pl.col('mobile_user')
+                                                         .is_null()
+                                                  )
+                                                 .then(1)
+                                                 .otherwise(0),
+                                   web_user=pl.when(pl.col('web_user')
+                                                      .is_null()
+                                                 )
+                                                .then(1)
+                                                .otherwise(0),
+                                     both=pl.when(pl.col('mobile_user')==pl.col('web_user'))
+                                            .then(1)
+                                            .otherwise(0)
+                       )
+                      .select(pl.mean('web_user',
+                                      'mobile_user',
+                                      'both'
+                                 )
+                       )
+).collect()
+    print(f'Fractions:{fractions}')          
 finally:
     conn.close()
