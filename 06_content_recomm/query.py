@@ -14,27 +14,27 @@ try:
     pyarrow_table2=pyarrow.Table.from_arrays(odf2.column_arrays(),names=odf2.column_names())
     friends=pl.from_arrow(pyarrow_table1).lazy()
     likes=pl.from_arrow(pyarrow_table2).lazy()
-    lf=(friends.join(likes.select(pl.col('user_id')
-                                    .alias('friend'),
-                                  pl.col('page_likes')
+    lf=(friends.join(likes.select(pl.col('USER_ID')
+                                    .alias('FRIEND'),
+                                  pl.col('PAGE_LIKES')
                            )
-                     ,on='friend'
+                     ,on='FRIEND'
                      ,how='right'
                 )
-               .select(pl.col('user_id'),
-                       pl.col('page_likes')
+               .select(pl.col('USER_ID'),
+                       pl.col('PAGE_LIKES')
                 )
     )
     recommendations=(lf.join(likes,
-                             on=['user_id','page_likes'],
+                             on=['USER_ID','PAGE_LIKES'],
                              how='anti'
                         )
                        .unique()
-                       .select(pl.col('user_id'),
-                               pl.col('page_likes')
-                                 .alias('recommendation')
+                       .select(pl.col('USER_ID'),
+                               pl.col('PAGE_LIKES')
+                                 .alias('RECOMMENDATION')
                         )
-                       .sort(by='user_id')
+                       .sort(by='USER_ID')
 
     ).collect()
     print(f'Recommendations:\n{recommendations}')          
