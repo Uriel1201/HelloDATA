@@ -36,19 +36,19 @@ try:
                                                  .otherwise(0),
                                    web_user=pl.when(pl.col('web_user')
                                                       .is_null()
-                                                 )
-                                                .then(1)
-                                                .otherwise(0),
-                                     both=pl.when(pl.col('mobile_user')==pl.col('web_user'))
-                                            .then(1)
-                                            .otherwise(0)
+                                               )
+                                              .then(1)
+                                              .otherwise(0),
+                                   both=pl.when(pl.col('mobile_user')==pl.col('web_user'))
+                                          .then(1)
+                                          .otherwise(0)
                        )
                       .select(pl.mean('web_user',
                                       'mobile_user',
                                       'both'
                                  )
                        )
-).collect()
+    ).collect()
     print(f'Fractions:{fractions}')          
 finally:
     conn.close()
