@@ -14,38 +14,38 @@ try:
     pyarrow_table2=pyarrow.Table.from_arrays(odf2.column_arrays(),names=odf2.column_names())
     mobile=pl.from_arrow(pyarrow_table1).lazy()
     web=pl.from_arrow(pyarrow_table2).lazy()
-    fractions=(mobile.select(pl.col('user_id'),
-                             pl.col('user_id')
-                               .alias('web_user')
+    fractions=(mobile.select(pl.col('USER_ID'),
+                             pl.col('USER_ID')
+                               .alias('WEB_USER')
                       )
                      .unique()
-                     .join(web.select(pl.col('user_id'),
-                                      pl.col('user_id')
-                                        .alias('mobile_user')
+                     .join(web.select(pl.col('USER_ID'),
+                                      pl.col('USER_ID')
+                                        .alias('MOBILE_USER')
 
                                )
                               .unique(),
-                           on='user_id',
+                           on='USER_ID',
                            how='full',
                            coalesce=True
                       )
-                     .with_columns(mobile_user=pl.when(pl.col('mobile_user')
+                     .with_columns(MOBILE_USER=pl.when(pl.col('MOBILE_USER')
                                                          .is_null()
                                                   )
                                                  .then(1)
                                                  .otherwise(0),
-                                   web_user=pl.when(pl.col('web_user')
+                                   WEB_USER=pl.when(pl.col('WEB_USER')
                                                       .is_null()
                                                )
                                               .then(1)
                                               .otherwise(0),
-                                   both=pl.when(pl.col('mobile_user')==pl.col('web_user'))
+                                   BOTH=pl.when(pl.col('MOBILE_USER')==pl.col('WEB_USER'))
                                           .then(1)
                                           .otherwise(0)
                        )
-                      .select(pl.mean('web_user',
-                                      'mobile_user',
-                                      'both'
+                      .select(pl.mean('WEB_USER',
+                                      'MOBILE_USER',
+                                      'BOTH'
                                  )
                        )
     ).collect()
