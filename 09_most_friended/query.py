@@ -11,9 +11,9 @@ try:
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
     friends=pl.from_arrow(pyarrow_table).lazy()
     friendship=(pl.sql("""
-                       SELECT user_1 as user_id FROM pl_friends
+                       SELECT user_1 as user_id FROM friends
                        UNION ALL
-                       SELECT user_2 as user_id FROM pl_friends
+                       SELECT user_2 as user_id FROM friends
                        """
                    )
                   .group_by('*')
