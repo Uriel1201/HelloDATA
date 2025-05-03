@@ -11,16 +11,16 @@ try:
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
     friends=pl.from_arrow(pyarrow_table).lazy()
     friendship=(pl.sql("""
-                       SELECT user_1 as user_id FROM friends
+                       SELECT USER_1 as USER_ID FROM friends
                        UNION ALL
-                       SELECT user_2 as user_id FROM friends
+                       SELECT USER_2 as USER_ID FROM friends
                        """
                    )
                   .group_by('*')
                   .agg(pl.len()
-                         .alias('number_of_friends')
+                         .alias('NUMBER_OF_FRIENDS')
                    )
-                  .sort(by='number_of_friends',
+                  .sort(by='NUMBER_OF_FRIENDS',
                         descending=True
                    )
     ).collect()
