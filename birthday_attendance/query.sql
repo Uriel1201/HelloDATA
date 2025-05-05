@@ -22,14 +22,7 @@ WITH BIRTHDAY_ATTENDANCE ( -- Attendance on birthday dates
 )
 SELECT
     ROUND(
-        AVG(
-            CASE
-                WHEN ATTENDANCE = 'T' THEN
-                    1
-                WHEN ATTENDANCE = 'F' THEN
-                    0
-            END
-        ),
+        AVG(attendance),
         2
     ) AS FRACTION
 FROM
