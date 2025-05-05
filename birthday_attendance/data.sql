@@ -8,7 +8,7 @@ attended school on their birthday. */
 CREATE TABLE ATTENDANCE_P11 (
     STUDENT_ID  INTEGER,
     SCHOOL_DATE DATE,
-    ATTENDANCE  CHAR
+    ATTENDANCE  integer 
 );
 
 CREATE TABLE STUDENTS_P11 (
@@ -62,70 +62,70 @@ INSERT INTO ATTENDANCE_P11
         SELECT
             1,
             '3-Apr-20',
-            'F'
+            0
         FROM
             DUAL
         UNION ALL
         SELECT
             2,
             '3-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             3,
             '3-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             1,
             '4-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             2,
             '4-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             3,
             '4-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             1,
             '5-Apr-20',
-            'F'
+            0
         FROM
             DUAL
         UNION ALL
         SELECT
             2,
             '5-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             3,
             '5-Apr-20',
-            'T'
+            1
         FROM
             DUAL
         UNION ALL
         SELECT
             4,
             '5-Apr-20',
-            'T'
+            1
         FROM
             DUAL
     )
