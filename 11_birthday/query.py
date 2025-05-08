@@ -18,10 +18,10 @@ try:
                                 ,pl.col('ATTENDANCE')
                                 ,pl.col('SCHOOL_DATE')
                          )
-                        .with_columns(birthday_day=pl.col('SCHOOL_DATE')
+                        .with_columns(BIRTHDAY_DAY=pl.col('SCHOOL_DATE')
                                                      .dt
                                                      .day(),
-                                      birthday_month=pl.col('SCHOOL_DATE')
+                                      BIRTHDAY_MONTH=pl.col('SCHOOL_DATE')
                                                        .dt
                                                        .month()
                          )
