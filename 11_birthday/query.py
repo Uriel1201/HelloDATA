@@ -42,11 +42,12 @@ try:
                                    ,pl.col('attendance')
                             )
     ).collect()
-    fraction=(pl_birthday.select(pl.col('attendance')
-                                   .mean()
-                                   .round(2)
-                          )
+    fraction=(birthday.select(pl.col('attendance')
+                                .mean()
+                                .round(2)
+                       )
     )
-    print(f'\nfraction of users that updated\nwithin the first 30 days:\n{ratio}')
+    print(f'{birthday.head(5)}\nfraction of attendances in birthday dates:\n{fraction}')
+     
 finally:
     conn.close()
