@@ -1,5 +1,15 @@
-/***********************************/
-WITH TOTAL_SCORES (
+/* 
+12. Hacker Scores.
+
+Writing a query to return the hacker ID, name, and
+total score (the sum of maximum scores
+for each challenge completed) ordered by descending score, 
+and by ascending hacker ID in the case of score tie.
+Do not display entries for hackers with a score
+of zero. */
+
+/* Returning Names of users who achieved non zero scores. */
+WITH TOTAL_SCORES ( -- Retrieving the total scores by each user
     HACKER_ID,
     SCORE
 ) AS (
