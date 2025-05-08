@@ -14,7 +14,39 @@ try:
     pyarrow_table2=pyarrow.Table.from_arrays(odf2.column_arrays(),names=odf2.column_names())
     attendance=pl.from_arrow(pyarrow_table1).lazy()
     students=pl.from_arrow(pyarrow_table2).lazy()
-    
+    birthday=(pl_attendance.select(pl.col('student_id')
+                                   ,pl.col('attendance')
+                                   ,pl.col('school_date')
+                            )
+                           .with_columns(birthday_day=pl.col('school_date')
+                                                        .dt
+                                                        .day(),
+                                         birthday_month=pl.col('school_date')
+                                                          .dt
+                                                          .month()
+                            )
+                           .join(students.select(pl.col('student_id')
+                                                 ,pl.col('date_birth')
+                                          )
+                                         .with_columns(birthday_day=pl.col('date_birth')
+                                                                      .dt
+                                                                      .day(),
+                                                       birthday_month=pl.col('date_birth')
+                                                                        .dt
+                                                                        .month()
+                                          ),
+                                 on=['student_id','birthday_day','birthday_month'],
+                                 how='right'
+                            )
+                           .select(pl.col('student_id')
+                                   ,pl.col('attendance')
+                            )
+    ).collect()
+    fraction=(pl_birthday.select(pl.col('attendance')
+                                   .mean()
+                                   .round(2)
+                          )
+    )
     print(f'\nfraction of users that updated\nwithin the first 30 days:\n{ratio}')
 finally:
     conn.close()
