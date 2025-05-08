@@ -1,3 +1,4 @@
+with total_scores(hacker_id, total) as (
 SELECT
     HACKER_ID,
     SUM(MAX_SCORE) AS SUMA
@@ -14,4 +15,5 @@ FROM
             CHALLENGE_ID
     )
 GROUP BY
-    HACKER_ID;
+    HACKER_ID)
+
