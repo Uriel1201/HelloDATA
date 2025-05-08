@@ -14,35 +14,35 @@ try:
     pyarrow_table2=pyarrow.Table.from_arrays(odf2.column_arrays(),names=odf2.column_names())
     attendance=pl.from_arrow(pyarrow_table1).lazy()
     students=pl.from_arrow(pyarrow_table2).lazy()
-    birthday=(attendance.select(pl.col('student_id')
-                                ,pl.col('attendance')
-                                ,pl.col('school_date')
+    birthday=(attendance.select(pl.col('STUDENT_ID')
+                                ,pl.col('ATTENDANCE')
+                                ,pl.col('SCHOOL_DATE')
                          )
-                        .with_columns(birthday_day=pl.col('school_date')
+                        .with_columns(birthday_day=pl.col('SCHOOL_DATE')
                                                      .dt
                                                      .day(),
-                                      birthday_month=pl.col('school_date')
+                                      birthday_month=pl.col('SCHOOL_DATE')
                                                        .dt
                                                        .month()
                          )
-                        .join(students.select(pl.col('student_id')
-                                              ,pl.col('date_birth')
+                        .join(students.select(pl.col('STUDENT_ID')
+                                              ,pl.col('DATE_BIRTH')
                                        )
-                                      .with_columns(birthday_day=pl.col('date_birth')
+                                      .with_columns(BIRTHDAY_DAY=pl.col('DATE_BIRTH')
                                                                    .dt
                                                                    .day(),
-                                                    birthday_month=pl.col('date_birth')
+                                                    BIRTHDAY_MONTH=pl.col('DATE_BIRTH')
                                                                      .dt
                                                                      .month()
                                        ),
-                               on=['student_id','birthday_day','birthday_month'],
+                               on=['STUDENT_ID','BIRTHDAY_DAY','BIRTHDAY_MONTH'],
                                how='right'
                          )
-                        .select(pl.col('student_id')
-                                ,pl.col('attendance')
+                        .select(pl.col('STUDENT_ID')
+                                ,pl.col('ATTENDANCE')
                          )
     ).collect()
-    fraction=(birthday.select(pl.col('attendance')
+    fraction=(birthday.select(pl.col('ATTENDANCE')
                                 .mean()
                                 .round(2)
                        )
