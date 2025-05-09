@@ -14,7 +14,26 @@ try:
     pyarrow_table2=pyarrow.Table.from_arrays(odf2.column_arrays(),names=odf2.column_names())
     hackers=pl.from_arrow(pyarrow_table1).lazy()
     submissions=pl.from_arrow(pyarrow_table2).lazy()
-    print(f'{birthday.head(5)}\nfraction of attendances in birthday dates:\n{fraction}')
+    scores=(submissions.select(pl.col('HACKER_ID'),
+                               pl.col('CHALLENGE_ID'),
+                               pl.col('SCORE')
+                        )
+                       .group_by(['HACKER_ID','CHALLENGE_ID'])
+                       .agg(MAX_SCORE=pl.max('SCORE')
+                        )
+                       .group_by('HACKER_ID')
+                       .agg(TOTAL_SCORE=pl.sum('MAX_SCORE')
+                        )
+                       .join(hackers,
+                             on='HACKER_ID',
+                             how='right'
+                        )
+                       .filter(pl.col('TOTAL_SCORE')>0)
+                       .sort(by=['TOTAL_SCORE','HACKER_ID'],
+                             descending=[True,False]
+                        )
+    ).collect()
+    print(f"Querying users who don't have score equal to zero:\n{scores.head(5)}")
 
 finally:
     conn.close()
