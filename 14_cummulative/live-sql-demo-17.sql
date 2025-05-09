@@ -32,4 +32,4 @@ SELECT
 FROM
     RANKINGS
 WHERE
-    RANKING > 1;
+    RANKING > 1 and ranking <=4;
