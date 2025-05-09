@@ -1,0 +1,11 @@
+SELECT
+    ID,
+    PAY_MONTH,
+    SALARY,
+    SUM(SALARY)
+    OVER(PARTITION BY ID
+         ORDER BY
+             PAY_MONTH
+    ) AS CUMM
+FROM
+    EMPLOYEE_P14;
