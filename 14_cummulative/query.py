@@ -6,10 +6,10 @@ import pyarrow
 
 try:
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-    table="SELECT * FROM PROJECTS_P10"
+    table="SELECT * FROM EMPLOYEE_P14"
     odf=conn.fetch_df_all(statement=table,arraysize=100)
     pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
-    projects=pl.from_arrow(pyarrow_table).lazy()
+    employee=pl.from_arrow(pyarrow_table).lazy()
 
 finally:
     conn.close()
