@@ -1,4 +1,16 @@
-WITH HOSTS (
+/*
+15. Team Standings.
+
+Write a query to return the scores of
+each team in the teams table after all
+matches displayed in the matches table.
+The result should include team name and points, 
+and be ordered by decreasing points. In case of
+a tie, order by alphabetized team name.
+*/
+
+/* Returning scores by each team 
+WITH HOSTS ( -- scores as host team
     TEAM_ID,
     SCORE
 ) AS (
@@ -18,7 +30,7 @@ WITH HOSTS (
         MATCHES_P15
     GROUP BY
         HOST_TEAM
-), GUESTS (
+), GUESTS ( -- scores as guest team
     TEAM_ID,
     SCORE
 ) AS (
