@@ -9,7 +9,7 @@ and be ordered by decreasing points. In case of
 a tie, order by alphabetized team name.
 */
 
-/* Returning scores by each team 
+/* Returning scores by each team. */ 
 WITH HOSTS ( -- scores as host team
     TEAM_ID,
     SCORE
