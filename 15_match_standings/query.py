@@ -66,7 +66,7 @@ try:
                            descending=[True,False]
                       )
     )
-    print(f'scores achieved by each teams:\n{teams_rank.collect()}')
+    print(f'scores achieved by each team:\n{teams_rank.collect()}')
     
 finally:
     conn.close()
