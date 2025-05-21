@@ -1,5 +1,5 @@
-url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/01_cancellation_rates/data.tsv";
-download(url, "users.tsv")
+url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/02_changes_net_worth/data.tsv";
+download(url, "transactions.tsv")
 
 begin
     using Pkg
