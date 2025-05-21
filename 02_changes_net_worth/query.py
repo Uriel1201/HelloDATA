@@ -22,7 +22,8 @@ try:
                                ignore_errors = False
                       )
     '''
-    
+    sample = transactions.head(5)
+    print(f'Transactions table SAMPLE(5):\n{sample.collect()}')
     changes = (transactions.unpivot(on=['SENDER','RECEIVER']
                                     ,index='AMOUNT' 
                                     ,variable_name='TYPE' 
