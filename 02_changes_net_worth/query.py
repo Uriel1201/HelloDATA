@@ -6,11 +6,24 @@
 
 try:
     # You need to write your credentials in the following connection.
-    conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
-    table="SELECT * FROM TRANSACTIONS_P2"
-    odf=conn.fetch_df_all(statement=table,arraysize=100)
-    pyarrow_table=pyarrow.Table.from_arrays(odf.column_arrays(),names=odf.column_names())
-    transactions=pl.from_arrow(pyarrow_table)
+    conn = oracledb.connect(user = "[Username]", password = "[Password]", dsn = "localhost:1521/FREEPDB1")
+    table = "SELECT * FROM TRANSACTIONS_P2"
+    odf = conn.fetch_df_all(statement = table, arraysize = 100)
+    pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
+    transactions = pl.from_arrow(pyarrow_table)
+
+    '''
+    Alternative 2: Querying directly from this repository 
+    url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/01_cancellation_rates/data.tsv"
+    users = pl.scan_csv(url,
+                        separator="\t",
+                        has_header=True,
+                        infer_schema_length=1000,
+                        ignore_errors=False
+    )
+    users = users.collect()
+    '''
+    
     changes=(transactions.unpivot(on=['SENDER','RECEIVER']
                                   ,index='AMOUNT' 
                                   ,variable_name='TYPE' 
