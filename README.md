@@ -1,13 +1,13 @@
-#Basic SQL/Dataframes Practice
+# Basic SQL-Dataframes practices
 
-##Platforms 
+## Platforms 
 [Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024)
 
 [live SQL v2](https://livesql.oracle.com/ords/f?p=590:1000)
 
 [Colab](https://colab.research.google.com/)
 
-##Documentation 
+## Documentation 
 [Polars](https://pola.rs/)
 
 [Julia DataFrames](https://dataframes.juliadata.org/stable/)
