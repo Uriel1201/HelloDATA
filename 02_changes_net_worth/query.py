@@ -30,6 +30,11 @@ try:
                             variable_name = 'TYPE',
                             value_name = 'USER_ID'
                     )
+                   .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
+                                           .then(pl.col('AMOUNT') * -1)
+                                           .otherwise(pl.col('AMOUNT'))
+                                           .alias('AMOUNT')
+                                )
             )
     print(f'\nType of transaction made by each user:\n{_type.collect()}')
     
@@ -37,11 +42,6 @@ try:
                                     ,index = 'AMOUNT' 
                                     ,variable_name = 'TYPE' 
                                     ,value_name = 'USER_ID'
-                            )
-                           .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
-                                           .then(pl.col('AMOUNT') * -1)
-                                           .otherwise(pl.col('AMOUNT'))
-                                           .alias('AMOUNT')
                             )
                            .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
                                            .then(pl.col('AMOUNT') * -1)
