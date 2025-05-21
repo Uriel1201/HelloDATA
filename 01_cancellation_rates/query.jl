@@ -9,12 +9,11 @@ begin
     using StatsModels
     using MLBase
 end
-
 df=CSV.read("users.tsv", DataFrame; delim = '\t')
 dummy=select(df, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(df.ACTION)])
 totals=combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
-totals.cancel_rate = @. if totals.start_sum != 0 totals.cancel_sum ./ totals.start_sum else 0
-totals.publish_rate = @ if totals.start_sum != 0 totals.publish_sum ./ totals.start_sum else 0
+totals.cancel_rate = @.ifelse(totals.start_sum != 0, totals.cancel_sum ./ totals.start_sum, 0.0)
+totals.publish_rate = @.ifelse(totals.start_sum != 0, totals.publish_sum ./ totals.start_sum, 0.0)
 result = select(
     totals,
     :USER_ID,
