@@ -30,3 +30,5 @@
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
+
+[Oracle SQL](https://www.oracle.com/database/technologies/appdev/sql.html)
