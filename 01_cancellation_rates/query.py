@@ -1,8 +1,8 @@
 # python -m pip install oracledb numpy pyarrow polars --upgrade
-import numpy as np
-import polars as pl
-import oracledb
-import pyarrow
+# import numpy as np
+# import polars as pl
+# import oracledb
+# import pyarrow
 
 try:
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
@@ -15,8 +15,8 @@ try:
                 .group_by('USER_ID')
                 .agg(pl.col('*').sum())
                 .select(pl.col('USER_ID'),
-                        publish_rate=pl.col('ACTION_PUBLISH')/pl.col('ACTION_START'),
-                        cancel_rate=pl.col('ACTION_CANCEL')/pl.col('ACTION_START')
+                        publish_rate=pl.col('ACTION_publish')/pl.col('ACTION_start'),
+                        cancel_rate=pl.col('ACTION_cancel')/pl.col('ACTION_start')
                  )
     )
     print(f'Rates for each user using Polars:{rates}')                 
