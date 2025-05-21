@@ -7,3 +7,5 @@
 [Oracle Database 23c](https://livesql.oracle.com/ords/f?p=590:1000)
 
 [Polars library](https://pola.rs/)
+
+[Julia DataFrames](https://dataframes.juliadata.org/stable/)
