@@ -3,11 +3,9 @@ download(url, "users.tsv")
 
 begin
     using Pkg
-    Pkg.add(["CSV", "DataFrames", "StatsModels", "MLBase"])
+    Pkg.add(["CSV", "DataFrames"])
     using CSV
     using DataFrames
-    using StatsModels
-    using MLBase
 end
 
 users = CSV.read("users.tsv", DataFrame; delim = '\t')
