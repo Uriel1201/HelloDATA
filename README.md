@@ -4,7 +4,7 @@
 
 [Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024)
 
-[Oracle Database 23c with live SQL v2](https://livesql.oracle.com/ords/f?p=590:1000)
+[live SQL v2](https://livesql.oracle.com/ords/f?p=590:1000)
 
 [Polars](https://pola.rs/)
 
@@ -13,3 +13,5 @@
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
+
+[Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/index.html)
