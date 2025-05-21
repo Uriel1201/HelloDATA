@@ -10,4 +10,6 @@
 
 [Julia DataFrames](https://dataframes.juliadata.org/stable/)
 
-[oracledb documentation](https://python-oracledb.readthedocs.io/en/latest/)
+[oracledb](https://python-oracledb.readthedocs.io/en/latest/)
+
+[rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
