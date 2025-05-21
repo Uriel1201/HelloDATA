@@ -5,6 +5,7 @@
 # import pyarrow
 
 try:
+    # You have to write your credentials in the following connection object
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
     table="SELECT * FROM USERS_P1"
     odf=conn.fetch_df_all(statement=table,arraysize=100)
