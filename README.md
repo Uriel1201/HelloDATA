@@ -7,6 +7,8 @@
 
 [Colab](https://colab.research.google.com/)
 
+[VSC](https://code.visualstudio.com/docs/languages/rust) 
+
 ## Data Manipulation Documents 
 [Polars](https://pola.rs/)
 
