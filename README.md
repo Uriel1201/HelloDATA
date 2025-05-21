@@ -5,3 +5,5 @@ Getting a bit of expertise with SQL basics by running the assignments on an Orac
 > *'Oracle Database 23c is the current long term release, and it provides the highest level of release stability and longest time-frame for support and bug fixes'.*
 
 I think if you gain some expertise with sql basics you'll have it going for you when facing off with datasets and his data cleaning process which is commonly maked with the use of pandas libraries. 😑
+
+[Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024)
