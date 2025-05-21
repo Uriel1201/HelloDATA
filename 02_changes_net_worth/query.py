@@ -1,10 +1,11 @@
 # python -m pip install oracledb numpy pyarrow polars --upgrade
-import numpy as np
-import polars as pl
-import oracledb
-import pyarrow
+# import numpy as np
+# import polars as pl
+# import oracledb
+# import pyarrow
 
 try:
+    # You need to write your credentials in the following connection.
     conn=oracledb.connect(user="[Username]", password="[Password]", dsn="localhost:1521/FREEPDB1")
     table="SELECT * FROM TRANSACTIONS_P2"
     odf=conn.fetch_df_all(statement=table,arraysize=100)
