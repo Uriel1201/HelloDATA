@@ -2,5 +2,6 @@
 
 > *'Oracle Database 23c is the current long term release, and it provides the highest level of release stability and longest time-frame for support and bug fixes'.*
 
-[Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024)
+[Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024).
+
 [Oracle Database 23c](https://livesql.oracle.com/ords/f?p=590:1000)
