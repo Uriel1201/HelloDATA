@@ -1,8 +1,10 @@
 /*
 02. Changes in Net Worth
 
-Writing a query to return the change in net worth for each user, 
-ordered by decreasing net change. */
+From the following table of transactions
+between two users, write a query to
+return the change in net worth for each
+user, ordered by decreasing net change. */
 
 CREATE TABLE TRANSACTIONS_P2 (
     SENDER           INTEGER,
