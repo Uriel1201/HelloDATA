@@ -14,6 +14,7 @@
 
 [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/index.html)
 
+[Arrow](https://arrow.apache.org/)
 
 ## Connection 
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
