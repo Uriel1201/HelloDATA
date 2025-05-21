@@ -22,7 +22,7 @@ try:
     )
     users=users.collect()
     '''
-    
+    print(f'users table SAMPLE(5):\n{users.head(5)')
     rates=(users.to_dummies(columns='ACTION')
                 .drop('DATES')
                 .group_by('USER_ID')
