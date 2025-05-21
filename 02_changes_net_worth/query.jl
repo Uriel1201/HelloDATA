@@ -8,5 +8,5 @@ begin
     using DataFrames
 end
 
-users = CSV.read("users.tsv", DataFrame; delim = '\t')
-println("$users")
+transactions = CSV.read("transactions.tsv", DataFrame; delim = '\t')
+println("transactions table SAMPLE:\n$first(transactions, 5)")
