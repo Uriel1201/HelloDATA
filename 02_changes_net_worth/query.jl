@@ -9,4 +9,5 @@ begin
 end
 
 transactions = CSV.read("transactions.tsv", DataFrame; delim = '\t')
-println("transactions table SAMPLE:\n$first(transactions, 5)")
+sample = first(transactions, 5)
+println("transactions table SAMPLE:\n$sample")
