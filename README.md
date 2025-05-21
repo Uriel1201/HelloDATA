@@ -24,6 +24,8 @@
 
 [Python](https://www.python.org/)
 
+[Julia](https://julialang.org/)
+
 ## Connection 
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
