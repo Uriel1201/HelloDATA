@@ -10,7 +10,7 @@
 [VSC](https://code.visualstudio.com/docs/languages/rust) 
 
 ## Data Manipulation Documents 
-[Polars](https://pola.rs/)
+[Polars](https://docs.pola.rs/)
 
 [DataFrames](https://dataframes.juliadata.org/stable/)
 
