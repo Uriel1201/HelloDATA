@@ -25,13 +25,13 @@ try:
     sample = transactions.head(5)
     print(f'Transactions table SAMPLE(5):\n{sample.collect()}')
 
-    type = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
-                           index = 'AMOUNT',
-                           variable_name = 'TYPE',
-                           value_name = 'USER_ID'
-                   )
-           )
-    print('Type of transaction made by each user SAMPLE(5):\n{type.collect()}')
+    type_ = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
+                            index = 'AMOUNT',
+                            variable_name = 'TYPE',
+                            value_name = 'USER_ID'
+                    )
+            )
+    print('Type of transaction made by each user SAMPLE(5):\n{type_.collect()}')
     
     changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
                                     ,index = 'AMOUNT' 
