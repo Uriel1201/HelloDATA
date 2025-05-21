@@ -4,6 +4,8 @@
 
 [live SQL v2](https://livesql.oracle.com/ords/f?p=590:1000)
 
+[Colab](https://colab.research.google.com/)
+
 [Polars](https://pola.rs/)
 
 [Julia DataFrames](https://dataframes.juliadata.org/stable/)
