@@ -26,9 +26,11 @@
 
 [Julia](https://julialang.org/)
 
-[SQLite](https://sqlite.org/docs.html)
+SQL
 
-[Oracle SQL](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/toc.htm)
+>[SQLite](https://sqlite.org/docs.html)
+
+>[Oracle SQL](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/toc.htm)
 
 ## Connection 
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
