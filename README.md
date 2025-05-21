@@ -16,9 +16,6 @@
 
 [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/cncpt/introduction-to-oracle-database.html#GUID-A42A6EF0-20F8-4F4B-AFF7-09C100AE581E)
 
-[PyArrow](https://arrow.apache.org/docs/python/)
-
-
 ## Languages 
 [Rust](https://www.rust-lang.org/learn/get-started)
 
@@ -35,3 +32,5 @@ SQL:
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
+
+[PyArrow](https://arrow.apache.org/docs/python/)
