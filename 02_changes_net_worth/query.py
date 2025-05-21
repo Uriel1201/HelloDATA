@@ -14,7 +14,7 @@ try:
 
     '''
     Alternative 2: Querying directly from this repository 
-    url = ""
+    url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/02_changes_net_worth/data.tsv"
     transactions = pl.scan_csv(url,
                                separator = "\t",
                                has_header = True,
@@ -23,25 +23,25 @@ try:
                       )
     '''
     
-    changes=(transactions.unpivot(on=['SENDER','RECEIVER']
-                                  ,index='AMOUNT' 
-                                  ,variable_name='TYPE' 
-                                  ,value_name='USER_ID'
-                          )
-                         .with_columns(pl.when(pl.col('TYPE')=='SENDER')
-                                         .then(pl.col('AMOUNT')*-1)
-                                         .otherwise(pl.col('AMOUNT'))
-                                         .alias('AMOUNT')
-                          )
-                         .group_by('USER_ID')
-                         .agg(pl.col('AMOUNT')
-                                .sum()
-                          )
-                         .sort(by='AMOUNT' 
-                               ,descending=True
-                          )
-    )
-    print(f'Net changes using Polars:\n{changes}')                 
+    changes = (transactions.unpivot(on=['SENDER','RECEIVER']
+                                    ,index='AMOUNT' 
+                                    ,variable_name='TYPE' 
+                                    ,value_name='USER_ID'
+                            )
+                           .with_columns(pl.when(pl.col('TYPE')=='SENDER')
+                                           .then(pl.col('AMOUNT')*-1)
+                                           .otherwise(pl.col('AMOUNT'))
+                                           .alias('AMOUNT')
+                            )
+                           .group_by('USER_ID')
+                           .agg(pl.col('AMOUNT')
+                                  .sum()
+                            )
+                           .sort(by='AMOUNT' 
+                                 ,descending=True
+                            )
+    ).collect()
+    print(f'Net changes:\n{changes}')                 
 
 finally:
     conn.close()
