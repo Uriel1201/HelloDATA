@@ -25,13 +25,13 @@ try:
     sample = transactions.head(5)
     print(f'Transactions table SAMPLE(5):\n{sample.collect()}')
 
-    type_ = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
+    _type = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
                             index = 'AMOUNT',
                             variable_name = 'TYPE',
                             value_name = 'USER_ID'
                     )
             )
-    print('Type of transaction made by each user SAMPLE(5):\n{type_.collect()}')
+    print('\nType of transaction made by each user:\n{_type.collect()}')
     
     changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
                                     ,index = 'AMOUNT' 
@@ -56,7 +56,7 @@ try:
                                  ,descending = True
                             )
               )
-    print(f'Net changes:\n{changes.collect()}')                 
+    print(f'\nNet changes:\n{changes.collect()}')                 
 
 finally:
     conn.close()
