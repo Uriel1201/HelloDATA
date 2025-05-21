@@ -1,7 +1,9 @@
 /* 
 01. Cancellation Rates.
 
-Writing a query to return the publication and cancellation 
+From the following table of user IDs,
+actions, and dates, write a query to
+return the publication and cancellation
 rate for each user. */
 
 CREATE TABLE USERS_P1 (
