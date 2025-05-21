@@ -1,6 +1,4 @@
-# Basic SQL/polars -exercises
-
-> *'Oracle Database 23c is the current long term release, and it provides the highest level of release stability and longest time-frame for support and bug fixes'.*
+# Basic SQL/Dataframes Practice
 
 [Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024)
 
@@ -10,8 +8,8 @@
 
 [Julia DataFrames](https://dataframes.juliadata.org/stable/)
 
+[Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/index.html)
+
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
-
-[Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/index.html)
