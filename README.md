@@ -14,6 +14,8 @@
 
 [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/index.html)
 
+
+## Connection 
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
