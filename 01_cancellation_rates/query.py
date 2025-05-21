@@ -23,7 +23,7 @@ try:
     )
     users = users.collect()
     '''
-    print(f'users table SAMPLE(5):\n{users.head(5)')
+    print(f'users table SAMPLE(5):\n{users.head(5)}')
     rates = (users.to_dummies(columns = 'ACTION')
                   .drop('DATES')
                   .group_by('USER_ID')
@@ -33,7 +33,7 @@ try:
                           cancel_rate = pl.col('ACTION_cancel') / pl.col('ACTION_start')
                    )
     )
-    print(f'Rates for each user using Polars:\n{rates}')                 
+    print(f'Rates for each user:\n{rates}')                 
 
 finally:
     conn.close()
