@@ -15,7 +15,7 @@ FROM
         /* Querying the net change of each user*/
 WITH SENDERS ( -- Table of Senders and their sended amounts
     SENDER,
-    SENDING
+    SENDED
 ) AS (
     SELECT
         SENDER,
@@ -26,7 +26,7 @@ WITH SENDERS ( -- Table of Senders and their sended amounts
         SENDER
 ), RECEIVERS ( -- Table of receivers and their received amounts
     RECEIVER,
-    RECEIVING
+    RECEIVED 
 ) AS (
     SELECT
         RECEIVER,
@@ -38,7 +38,7 @@ WITH SENDERS ( -- Table of Senders and their sended amounts
 )
 SELECT
     COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
-    COALESCE(R.RECEIVING, 0) - COALESCE(S.SENDING, 0) AS NET_CHANGE
+    COALESCE(R.RECEIVED, 0) - COALESCE(S.SENDED, 0) AS NET_CHANGE
 FROM
     RECEIVERS R
     FULL OUTER JOIN SENDERS   S ON R.RECEIVER = S.SENDER
