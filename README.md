@@ -14,6 +14,8 @@
 
 [DataFrames](https://dataframes.juliadata.org/stable/)
 
+[Arrow](https://arrow.apache.org/cookbook/py/)
+
 [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/cncpt/introduction-to-oracle-database.html#GUID-A42A6EF0-20F8-4F4B-AFF7-09C100AE581E)
 
 ## Languages 
