@@ -31,7 +31,7 @@ try:
                             value_name = 'USER_ID'
                     )
             )
-    print('\nType of transaction made by each user:\n{_type.collect()}')
+    print(f'\nType of transaction made by each user:\n{_type.collect()}')
     
     changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
                                     ,index = 'AMOUNT' 
