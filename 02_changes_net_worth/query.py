@@ -36,7 +36,7 @@ try:
                                            .alias('AMOUNT')
                                 )
             )
-    print(f'\nType of transaction made by each user:\n{_type.collect()}')
+    print(f'\nType of transaction made by each user SAMPLE:\n{_type.collect()}')
     
     changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
                                     ,index = 'AMOUNT' 
