@@ -1,5 +1,5 @@
 url="https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/01_cancellation_rates/data.tsv";
-download(url, "users.csv")
+download(url, "users.tsv")
 
 begin
     using Pkg
@@ -10,14 +10,11 @@ begin
     using MLBase
 end
 
-df=CSV.read("users.csv",DataFrame)
-sample=first(df,5)
-println(sample)
-
+df=CSV.read("users.tsv", DataFrame; delim = '\t')
 dummy=select(df, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(df.ACTION)])
 totals=combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
-totals.cancel_rate = totals.cancel_sum ./ totals.start_sum
-totals.publish_rate = totals.publish_sum ./ totals.start_sum
+totals.cancel_rate = @. if totals.start_sum != 0 totals.cancel_sum ./ totals.start_sum else 0
+totals.publish_rate = @ if totals.start_sum != 0 totals.publish_sum ./ totals.start_sum else 0
 result = select(
     totals,
     :USER_ID,
