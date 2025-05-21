@@ -5,3 +5,5 @@
 [Rust playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2024)
 
 [Oracle Database 23c](https://livesql.oracle.com/ords/f?p=590:1000)
+
+[Polars library](https://pola.rs/)
