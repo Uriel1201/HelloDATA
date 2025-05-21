@@ -9,3 +9,5 @@
 [Polars library](https://pola.rs/)
 
 [Julia DataFrames](https://dataframes.juliadata.org/stable/)
+
+[oracledb documentation](https://python-oracledb.readthedocs.io/en/latest/)
