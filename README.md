@@ -16,6 +16,8 @@
 
 [Arrow](https://arrow.apache.org/)
 
+[Rust](https://www.rust-lang.org/learn/get-started)
+
 ## Connection 
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
