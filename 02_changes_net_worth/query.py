@@ -24,13 +24,27 @@ try:
     '''
     sample = transactions.head(5)
     print(f'Transactions table SAMPLE(5):\n{sample.collect()}')
-    changes = (transactions.unpivot(on=['SENDER','RECEIVER']
-                                    ,index='AMOUNT' 
-                                    ,variable_name='TYPE' 
-                                    ,value_name='USER_ID'
+
+    type = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
+                           index = 'AMOUNT',
+                           variable_name = 'TYPE',
+                           value_name = 'USER_ID'
+                   )
+           )
+    print('Type of transaction made by each user:\n{type.collect()}')
+    
+    changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
+                                    ,index = 'AMOUNT' 
+                                    ,variable_name = 'TYPE' 
+                                    ,value_name = 'USER_ID'
                             )
-                           .with_columns(pl.when(pl.col('TYPE')=='SENDER')
-                                           .then(pl.col('AMOUNT')*-1)
+                           .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
+                                           .then(pl.col('AMOUNT') * -1)
+                                           .otherwise(pl.col('AMOUNT'))
+                                           .alias('AMOUNT')
+                            )
+                           .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
+                                           .then(pl.col('AMOUNT') * -1)
                                            .otherwise(pl.col('AMOUNT'))
                                            .alias('AMOUNT')
                             )
@@ -38,11 +52,11 @@ try:
                            .agg(pl.col('AMOUNT')
                                   .sum()
                             )
-                           .sort(by='AMOUNT' 
-                                 ,descending=True
+                           .sort(by = 'AMOUNT' 
+                                 ,descending = True
                             )
-    ).collect()
-    print(f'Net changes:\n{changes}')                 
+              )
+    print(f'Net changes:\n{changes.collect()}')                 
 
 finally:
     conn.close()
