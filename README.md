@@ -6,7 +6,7 @@
 
 [Oracle Database 23c with live SQL v2](https://livesql.oracle.com/ords/f?p=590:1000)
 
-[Polars library](https://pola.rs/)
+[Polars](https://pola.rs/)
 
 [Julia DataFrames](https://dataframes.juliadata.org/stable/)
 
