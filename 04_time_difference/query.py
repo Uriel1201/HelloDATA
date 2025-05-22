@@ -36,7 +36,7 @@ try:
                                                .over(partition_by = 'ID')
                  )
          )
-    print(f'\nQuerying differences between consecutive dates:\n{df.collect()}')
+    print(f'\nQuerying differences between consecutive dates (SAMPLE -> 5:\n{df.collect()}')
     
     durations = (users.sort(by = ['ID','ACTION_DATE']
                             ,descending=[False,True]
