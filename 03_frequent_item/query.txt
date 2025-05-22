@@ -1,0 +1,18 @@
+Execution
+Close
+Standard Error
+   Compiling playground v0.0.1 (/playground)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.25s
+     Running `target/debug/playground`
+Standard Output
+ITEMS SAMPLE(5):
+Found: Items { item: "apple", dates: Some(2020-01-01) }
+Found: Items { item: "apple", dates: Some(2020-01-01) }
+Found: Items { item: "pear", dates: Some(2020-01-01) }
+Found: Items { item: "pear", dates: Some(2020-01-01) }
+Found: Items { item: "pear", dates: Some(2020-01-02) }
+
+MOST FREQUENTED ITEMS:
+Item: "apple" -> in date: Some(2020-01-01)
+Item: "pear" -> in date: Some(2020-01-01)
+Item: "pear" -> in date: Some(2020-01-02)
