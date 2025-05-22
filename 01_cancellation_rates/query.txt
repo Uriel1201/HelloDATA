@@ -1,0 +1,16 @@
+Standard Error
+   Compiling playground v0.0.1 (/playground)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.29s
+     Running `target/debug/playground`
+Standard Output
+USERS TABLE SAMPLE(5):
+Found user UserAction { user_id: 1, action: "start", dates: Some(2020-01-01) }
+Found user UserAction { user_id: 1, action: "cancel", dates: Some(2020-01-02) }
+Found user UserAction { user_id: 2, action: "start", dates: Some(2020-01-03) }
+Found user UserAction { user_id: 2, action: "publish", dates: Some(2020-01-04) }
+Found user UserAction { user_id: 3, action: "start", dates: Some(2020-01-05) }
+
+USER STATISTICS:
+User 1 -> Publish: 50%, Cancel: 50%
+User 2 -> Publish: 100%, Cancel: 0%
+User 3 -> Publish: 0%, Cancel: 100%
