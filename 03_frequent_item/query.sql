@@ -1,8 +1,11 @@
 /*
 03. Most Frequent Item
 
-Writing a query to return the most frequent item
-ordered on each date. */
+From the following table containing a list
+of dates and items ordered, write a
+query to return the most frequent item
+ordered on each date. Return multiple
+items in the case of a tie. */
 
 /*Querying original data*/
 SELECT
