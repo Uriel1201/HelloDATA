@@ -23,6 +23,21 @@ try:
                )
     '''
     
+    sample = users.head(5)
+    print(f'Users table (SAMPLE: 5):\n{sample.collect()}')
+
+    df = (sample.sort(by = ['ID','ACTION_DATE']
+                      ,descending=[False,True]
+                 )
+                .with_columns(ELAPSED_TIME = pl.col('ACTION_DATE')
+                                               .diff(-1)
+                                               .dt
+                                               .total_days()
+                                               .over(partition_by = 'ID')
+                 )
+         )
+    print(f'\nQuerying differences between consecutive dates:\n{df.collect()}')
+    
     durations = (users.sort(by = ['ID','ACTION_DATE']
                             ,descending=[False,True]
                        )
@@ -38,6 +53,6 @@ try:
                               pl.col('ELAPSED_TIME')
                        )
                 )
-    print(f'Returning time elapsed:\n{durations}')          
+    print(f'\nReturning time elapsed between the two last actions:\n{durations.collect()}')          
 finally:
     conn.close()
