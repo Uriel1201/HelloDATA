@@ -10,9 +10,9 @@ end
 url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/05_super_users/data.tsv"
 download(url, "users.tsv")
 users = CSV.read("users.tsv", DataFrame; delim = '\t')
-
+users[!, :TRANSACTION_DATE] = Date.(split.(users.TRANSACTION_DATE, "T") .|> first)
 
 sample = first(users, 
                5
               )
-println("\n")
+println("\nUSERS TABLE -> SAMPLE:\n$sample")
