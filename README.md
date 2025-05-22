@@ -36,3 +36,5 @@ SQL:
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
 
 [PyArrow](https://arrow.apache.org/docs/python/)
+
+[tsv](format]https://www.imf.org/external/help/tsv.htm)
