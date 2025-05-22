@@ -16,3 +16,16 @@ sample = first(users,
                5
               )
 println("\nUSERS TABLE -> SAMPLE:\n$sample")
+
+a = groupby(sort(sample,
+                 :USER_ID,
+                 :TRANSACTION_DATE
+                ),
+            :USER_ID
+           )
+transform!(a,
+           :TRANSACTIONDATE => (x -> ShiftedArrays.lead(x,
+                                                        1
+                                                       )
+                               ) => :SUPERDATE
+          )
