@@ -1,0 +1,18 @@
+Standard Error
+   Compiling playground v0.0.1 (/playground)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.83s
+     Running `target/debug/playground`
+Standard Output
+TRANSACTIONS SAMPLE(5):
+Found: Transaction { sender: 5, receiver: 2, amount: 10.0, dates: Some(2020-02-12) }
+Found: Transaction { sender: 1, receiver: 3, amount: 15.0, dates: Some(2020-02-13) }
+Found: Transaction { sender: 2, receiver: 1, amount: 20.0, dates: Some(2020-02-13) }
+Found: Transaction { sender: 2, receiver: 3, amount: 25.0, dates: Some(2020-02-14) }
+Found: Transaction { sender: 3, receiver: 1, amount: 20.0, dates: Some(2020-02-15) }
+
+NET CHANGES:
+User Some(1) -> Net_Change: Some(20.0)
+User Some(3) -> Net_Change: Some(5.0)
+User Some(4) -> Net_Change: Some(5.0)
+User Some(5) -> Net_Change: Some(-10.0)
+User Some(2) -> Net_Change: Some(-20.0)
