@@ -10,7 +10,7 @@ try:
     table = "SELECT * FROM USERS_P5"
     odf = conn.fetch_df_all(statement = table, arraysize=100)
     pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
-    users = pl.from_arrow(pyarrow_table)
+    users = pl.from_arrow(pyarrow_table).lazy()
 
     '''
     Alternative 2: Querying directly from this repository 
@@ -23,6 +23,16 @@ try:
                )
     '''
     
+    sample = users.head(5)
+    print(f'\nUSERS TABLE (SAMPLE): \n{sample.collect()}')
+
+    df = (sample.sort(by=['USER_ID','TRANSACTION_DATE'])
+                .with_columns(SUPERUSER_DATE = pl.col('TRANSACTION_DATE')
+                                                 .shift(-1)
+                                                 .over(partition_by = 'USER_ID')
+                 )
+         )
+    print(f'\nIDENTIFYING DATES AS SUPER (SAMPLE):\n{df.collect()}')
     superusers = (users.sort(by=['USER_ID','TRANSACTION_DATE'])
                        .with_columns(SUPERUSER_DATE = pl.col('TRANSACTION_DATE')
                                                         .shift(-1)
@@ -34,6 +44,6 @@ try:
                                ,pl.col('SUPERUSER_DATE')
                         )
                  )
-    printF'RETURNING DATE WHEN USERS GOT AS SUPERUSERS:\n{superusers}')          
+    print(f'\nRETURNING DATE WHEN USERS GOT AS SUPERUSERS:\n{superusers.collect()}')          
 finally:
     conn.close()
