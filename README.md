@@ -30,7 +30,7 @@ SQL:
 >
 >[Oracle SQL](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/toc.htm)
 
-## Connection 
+## Connections
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
