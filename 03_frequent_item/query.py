@@ -46,6 +46,7 @@ try:
                    .select(pl.col('DATES'),
                            pl.col('ITEM')
                     )
+                   .sort(by = 'DATES')
              )
     print(f'\nMost frequented item by each date:\n{counts.collect()}')          
 finally:
