@@ -24,7 +24,7 @@ try:
     '''
     
     sample = users.head(5)
-    print(f'Users table (SAMPLE: 5):\n{sample.collect()}')
+    print(f'Users table (SAMPLE -> 5):\n{sample.collect()}')
 
     df = (sample.sort(by = ['ID','ACTION_DATE']
                       ,descending=[False,True]
@@ -36,7 +36,7 @@ try:
                                                .over(partition_by = 'ID')
                  )
          )
-    print(f'\nQuerying differences between consecutive dates (SAMPLE -> 5:\n{df.collect()}')
+    print(f'\nQuerying differences between consecutive dates (SAMPLE -> 5):\n{df.collect()}')
     
     durations = (users.sort(by = ['ID','ACTION_DATE']
                             ,descending=[False,True]
