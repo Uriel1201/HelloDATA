@@ -31,7 +31,7 @@ try:
                        .alias('COUNT')
                  )
          )
-    print(f'\nNumber of itemes by each date SAMPLE:\n{df}')
+    print(f'\nNumber of items by each date (SAMPLE):\n{df}')
     
     counts = (items.group_by(['DATES','ITEM'])
                    .agg(pl.len()
