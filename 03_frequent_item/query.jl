@@ -10,7 +10,7 @@ download(url, "items.tsv")
 items = CSV.read("items.tsv", DataFrame; delim = '\t')
 
 sample = first(items, 5)
-println(" Items tables (SAMPLE = 5):\n$sample")
+println(" Items table (SAMPLE = 5):\n$sample")
 
 df = combine(groupby(sample,
                      [:DATES, :ITEM]
