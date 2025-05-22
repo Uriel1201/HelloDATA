@@ -11,6 +11,17 @@ try:
     odf = conn.fetch_df_all(statement = table, arraysize = 100)
     pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
     users = pl.from_arrow(pyarrow_table).lazy()
+
+    '''
+    Alternative 2: Querying directly from this repository 
+    url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/04_time_difference/data.tsv"
+    users = pl.scan_csv(url,
+                        separator = "\t",
+                        has_header = True,
+                        infer_schema_length = 1000,
+                        ignore_errors = False
+               )
+    '''
     
     durations = (users.sort(by = ['ID','ACTION_DATE']
                             ,descending=[False,True]
