@@ -14,8 +14,6 @@
 
 [DataFrames](https://dataframes.juliadata.org/stable/)
 
-[Arrow](https://arrow.apache.org/cookbook/py/)
-
 [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/cncpt/introduction-to-oracle-database.html#GUID-A42A6EF0-20F8-4F4B-AFF7-09C100AE581E)
 
 ## Languages 
@@ -45,7 +43,10 @@ SQL:
 [DBInterface.jl](https://juliadatabases.org/DBInterface.jl/dev/)
 
 ## Formats 
-Binary Columnar Format (Arrow Apache):
-[PyArrow](https://arrow.apache.org/docs/python/)
+Binary Columnar Format (Apache Arrow):
+>[PyArrow](https://arrow.apache.org/docs/python/)
+>
+>[Crate Arrow](https://docs.rs/arrow/latest/arrow/)
 
-[Crate Arrow](https://docs.rs/arrow/latest/arrow/)
+Text Based Tabular Format:
+[CSV.jl](https://csv.juliadata.org/stable/)
