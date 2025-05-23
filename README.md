@@ -40,6 +40,7 @@ SQL:
 [SQLite.jl](https://juliadatabases.org/SQLite.jl/stable/#DBInterface.execute)
 
 ## Interfaces
+[PEP 249](https://peps.python.org/pep-0249/)
 [DBInterface.jl](https://juliadatabases.org/DBInterface.jl/dev/)
 
 ## Formats 
