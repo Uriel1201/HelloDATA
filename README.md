@@ -33,8 +33,6 @@ SQL:
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
 
-[Oracle.jl](https://felipenoris.github.io/Oracle.jl/stable/)
-
 [SQLite.jl](https://juliadatabases.org/SQLite.jl/stable/#DBInterface.execute)
 
 ## Interfaces
