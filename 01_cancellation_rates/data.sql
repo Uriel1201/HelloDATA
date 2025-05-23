@@ -1,5 +1,5 @@
 /* 
-01. Cancellation Rates
+01. Cancellation Rates.
 
 From the following table of user IDs,
 actions, and dates, write a query to
