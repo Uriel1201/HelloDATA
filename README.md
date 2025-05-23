@@ -48,6 +48,8 @@ SQL:
 Binary Columnar Format (Apache Arrow):
 >[PyArrow](https://arrow.apache.org/docs/python/)
 >
+>[OracleDataFrame](https://python-oracledb.readthedocs.io/en/latest/api_manual/dataframe.html)
+>
 >[Crate Arrow](https://docs.rs/arrow/latest/arrow/)
 >
 >[Arrow.jl](https://arrow.apache.org/julia/stable/)
