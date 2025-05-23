@@ -15,7 +15,23 @@ try:
     pyarrow_table2 = pyarrow.Table.from_arrays(odf2.column_arrays(), names = odf2.column_names())
     friends = pl.from_arrow(pyarrow_table1).lazy()
     likes = pl.from_arrow(pyarrow_table2).lazy()
-    
+
+    '''
+    Alternative 2: Querying directly from this repository 
+    url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/05_super_users/data.tsv"
+    users = pl.scan_csv(url,
+                        separator = "\t",
+                        has_header = True,
+                        infer_schema_length = 1000,
+                        ignore_errors = False
+               )
+    users = pl.scan_csv(url,
+                        separator = "\t",
+                        has_header = True,
+                        infer_schema_length = 1000,
+                        ignore_errors = False
+               )
+    '''
     lf = (friends.join(likes.select(pl.col('USER_ID')
                                       .alias('FRIEND'),
                                     pl.col('PAGE_LIKES')
