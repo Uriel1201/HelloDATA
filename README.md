@@ -28,7 +28,8 @@
 SQL:
 >
 >[Oracle SQL](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/toc.htm)
-
+>
+>[SQLite Syntax](https://www.sqlite.org/docs.html)
 ## Drivers
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
