@@ -37,6 +37,6 @@ SQL:
 
 [PyArrow](https://arrow.apache.org/docs/python/)
 
-[Julia;Oracle](https://felipenoris.github.io/Oracle.jl/stable/)
+[Oracle.jl](https://felipenoris.github.io/Oracle.jl/stable/)
 
-[Julia;SQLite](https://juliadatabases.org/SQLite.jl/stable/#DBInterface.execute)
+[SQLite.jl](https://juliadatabases.org/SQLite.jl/stable/#DBInterface.execute)
