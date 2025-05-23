@@ -47,6 +47,9 @@ Binary Columnar Format (Apache Arrow):
 >[PyArrow](https://arrow.apache.org/docs/python/)
 >
 >[Crate Arrow](https://docs.rs/arrow/latest/arrow/)
+>
+>[Arrow.jl](https://arrow.apache.org/julia/stable/)
 
 Text Based Tabular Format:
+
 [CSV.jl](https://csv.juliadata.org/stable/)
