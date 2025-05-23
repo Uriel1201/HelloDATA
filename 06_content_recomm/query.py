@@ -33,6 +33,20 @@ try:
                         ignore_errors = False
                )
     '''
+    s_friends = friends.head(5)
+    s_likes = likes.head(5)
+    print(f'\n FRIENDS TABLE (SAMPLE):\n{s_friends.collect()}')
+    print(f'\n LIKES TABLE (SAMPLE):\n{s_likes.collect()}')
+
+    s_lf = (s_friends.join(s_likes.select(pl.col('USER_ID')
+                                            .alias('FRIEND'),
+                                          pl.col('PAGE_LIKES')
+                                   )
+                           ,on = 'FRIEND'
+                           ,how = 'right'
+                      )
+           )
+    print(f'\n IDENTIFYING POTENTIAL RECOMMENDATIONS (SAMPLE):\n{s_lf.collect()}')
     
     lf = (friends.join(likes.select(pl.col('USER_ID')
                                       .alias('FRIEND'),
@@ -56,6 +70,6 @@ try:
                           )
                          .sort(by = 'USER_ID')
                       )
-    print(f'\nRecommendations:\n{recommendations.collect()}')          
+    print(f'\n Recommendations:\n{recommendations.collect()}')          
 finally:
     conn.close()
