@@ -44,6 +44,6 @@ try:
                                ,pl.col('SUPERUSER_DATE')
                         )
                  )
-    print(f'\nRETURNING DATE WHEN USERS GOT AS SUPERUSERS:\n{superusers.collect()}')          
+    print(f'\nRETURNING DATE WHEN USER GOT SUPERUSER MEMBERSHIP:\n{superusers.collect()}')          
 finally:
     conn.close()
