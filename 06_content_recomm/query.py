@@ -18,20 +18,22 @@ try:
 
     '''
     Alternative 2: Querying directly from this repository 
-    url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/05_super_users/data.tsv"
-    users = pl.scan_csv(url,
-                        separator = "\t",
-                        has_header = True,
-                        infer_schema_length = 1000,
-                        ignore_errors = False
-               )
-    users = pl.scan_csv(url,
+    url_1 = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/06_content_recomm/data_friends.tsv"
+    url_2 = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/06_content_recomm/data_likes.tsv"
+    friends = pl.scan_csv(url_1,
+                          separator = "\t",
+                          has_header = True,
+                          infer_schema_length = 1000,
+                          ignore_errors = False
+                 )
+    likes = pl.scan_csv(url_2,
                         separator = "\t",
                         has_header = True,
                         infer_schema_length = 1000,
                         ignore_errors = False
                )
     '''
+    
     lf = (friends.join(likes.select(pl.col('USER_ID')
                                       .alias('FRIEND'),
                                     pl.col('PAGE_LIKES')
