@@ -30,13 +30,15 @@ SQL:
 >
 >[Oracle SQL](https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/toc.htm)
 
-## Connections
+## Drivers
 [oracledb](https://python-oracledb.readthedocs.io/en/latest/)
 
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
 
-[PyArrow](https://arrow.apache.org/docs/python/)
-
 [SQLite.jl](https://juliadatabases.org/SQLite.jl/stable/#DBInterface.execute)
 
+## Interfaces
 [DBInterface.jl](https://juliadatabases.org/DBInterface.jl/dev/)
+
+## Formats 
+[PyArrow](https://arrow.apache.org/docs/python/)
