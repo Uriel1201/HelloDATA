@@ -53,3 +53,5 @@ Binary Columnar Format (Apache Arrow):
 Text Based Tabular Format:
 
 [CSV.jl](https://csv.juliadata.org/stable/)
+
+[Polars-IO](https://docs.pola.rs/user-guide/io/)
