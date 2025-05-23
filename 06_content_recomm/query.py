@@ -44,7 +44,7 @@ try:
                                             .alias('RECOMMENDATION?')
                                    )
                            ,on = 'FRIEND'
-                           ,how = 'right'
+                           ,how = 'left'
                       )
            )
     print(f'\n IDENTIFYING POTENTIAL RECOMMENDATIONS (SAMPLE):\n{s_lf.collect()}')
@@ -54,7 +54,7 @@ try:
                                     pl.col('PAGE_LIKES')
                              )
                        ,on = 'FRIEND'
-                       ,how = 'right'
+                       ,how = 'left'
                   )
                  .select(pl.col('USER_ID'),
                          pl.col('PAGE_LIKES')
