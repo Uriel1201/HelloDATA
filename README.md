@@ -46,9 +46,9 @@ SQL:
 
 ## Formats 
 Binary Columnar Format (Apache Arrow):
->[PyArrow (oracledb internal transfers)](https://arrow.apache.org/docs/python/)
+>[PyArrow](https://arrow.apache.org/docs/python/)
 >
->[Crate Arrow (Polars' internal dependency)](https://docs.rs/arrow/latest/arrow/)
+>[Crate Arrow](https://docs.rs/arrow/latest/arrow/)
 >
 >[Arrow.jl](https://arrow.apache.org/julia/stable/)
 
