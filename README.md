@@ -46,3 +46,5 @@ SQL:
 
 ## Formats 
 [PyArrow](https://arrow.apache.org/docs/python/)
+
+[Crate Arrow](https://docs.rs/arrow/latest/arrow/)
