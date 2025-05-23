@@ -41,6 +41,7 @@ try:
     s_lf = (s_friends.join(s_likes.select(pl.col('USER_ID')
                                             .alias('FRIEND'),
                                           pl.col('PAGE_LIKES')
+                                            .alias('RECOMMENDATION?')
                                    )
                            ,on = 'FRIEND'
                            ,how = 'right'
@@ -70,6 +71,6 @@ try:
                           )
                          .sort(by = 'USER_ID')
                       )
-    print(f'\n Recommendations:\n{recommendations.collect()}')          
+    print(f'\n RECOMMENDATIONS:\n{recommendations.collect()}')          
 finally:
     conn.close()
