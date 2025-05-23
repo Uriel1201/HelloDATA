@@ -42,6 +42,8 @@ SQL:
 
 [DBInterface.jl](https://juliadatabases.org/DBInterface.jl/dev/)
 
+[The Arrow Pycapsule interface](https://arrow.apache.org/docs/format/CDataInterface/PyCapsuleInterface.html)
+
 ## Formats 
 Binary Columnar Format (Apache Arrow):
 >[PyArrow (oracledb internal transfers)](https://arrow.apache.org/docs/python/)
