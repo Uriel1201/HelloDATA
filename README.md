@@ -36,3 +36,5 @@ SQL:
 [rusqlite](https://docs.rs/rusqlite/latest/rusqlite/)
 
 [PyArrow](https://arrow.apache.org/docs/python/)
+
+[Oracle.jl](https://felipenoris.github.io/Oracle.jl/stable/)
