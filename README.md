@@ -45,6 +45,7 @@ SQL:
 [DBInterface.jl](https://juliadatabases.org/DBInterface.jl/dev/)
 
 ## Formats 
+Binary Columnar Format (Arrow Apache):
 [PyArrow](https://arrow.apache.org/docs/python/)
 
 [Crate Arrow](https://docs.rs/arrow/latest/arrow/)
