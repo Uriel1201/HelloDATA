@@ -45,7 +45,7 @@ SQL:
 [The Arrow Pycapsule interface](https://arrow.apache.org/docs/format/CDataInterface/PyCapsuleInterface.html)
 
 ## Formats 
-Binary Columnar Format (Apache Arrow):
+Apache Arrow:
 >[PyArrow](https://arrow.apache.org/docs/python/)
 >
 >[OracleDataFrame](https://python-oracledb.readthedocs.io/en/latest/api_manual/dataframe.html)
