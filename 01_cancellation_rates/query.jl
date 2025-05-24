@@ -5,11 +5,35 @@ begin
     using SQLite
     using Dates
 end
+
 """
 Alternative 2: Querying directly from this repository 
 users = CSV.read("users.tsv", DataFrame; delim = '\t')
 println("$users")
 """
+
+db = SQLite.DB()
+schema = Tables.Schema((:USER_ID, :ACTION, :DATES), (Int32, String, String))
+SQLite.createtable!(db, "users", schema, temp = false)
+rows = [(1, "start", "01-jan-20"),
+        (1, "cancel", "02-jan-20"),
+        (2, "start", "03-jan-20"),
+        (2, "publish", "04-jan-20"),
+        (3, "start", "05-jan-20"),
+        (3, "cancel", "06-jan-20" ),
+        (1, "start", "07-jan-20"),
+        (1, "publish", "08-jan-20")]
+
+SQLite.execute(db, "BEGIN TRANSACTION")
+placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
+query = "INSERT INTO USERS (USER_ID, ACTION, DATES) VALUES $placeholders"
+stmt = SQLite.Stmt(db, query)
+params = collect(Iterators.flatten(rows))
+DBInterface.execute(stmt, params)
+SQLite.execute(db, "COMMIT")
+users = DBInterface.execute(db, "SELECT * FROM users") |> DataFrame
+println("$users")
+
 dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
 println("\n$dummy")
 totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
