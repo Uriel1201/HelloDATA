@@ -24,6 +24,7 @@ rows = [(1, "start", "01-jan-20"),
         (1, "start", "07-jan-20"),
         (1, "publish", "08-jan-20")]
 
+#*/_______________________________
 SQLite.execute(db, "BEGIN TRANSACTION")
 placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
 query = "INSERT INTO USERS (USER_ID, ACTION, DATES) VALUES $placeholders"
@@ -31,11 +32,14 @@ stmt = SQLite.Stmt(db, query)
 params = collect(Iterators.flatten(rows))
 DBInterface.execute(stmt, params)
 SQLite.execute(db, "COMMIT")
+#*/________________________________
+
 users = DBInterface.execute(db, "SELECT * FROM users") |> DataFrame
-println("$users")
+sample = first(users, 5)
+println("\n USERS TABLE -> SAMPLE:\n$sample")
 
 dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
-println("\n$dummy")
+println("\n WAS THIS ACTION DONE BY USER -> SAMPLE:\n$dummy")
 totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
 totals.cancel_rate = @.ifelse(totals.start_sum != 0, totals.cancel_sum ./ totals.start_sum, 0.0)
 totals.publish_rate = @.ifelse(totals.start_sum != 0, totals.publish_sum ./ totals.start_sum, 0.0)
@@ -45,4 +49,4 @@ result = select(
     :cancel_rate,
     :publish_rate
 )
-println("\n$result")
+println("\nUSER STATISTICS:\n$result")
