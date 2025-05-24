@@ -1,15 +1,15 @@
-url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/01_cancellation_rates/data.tsv";
-download(url, "users.tsv")
-
 begin
     using Pkg
-    Pkg.add(["CSV", "DataFrames"])
-    using CSV
+    Pkg.add(["DataFrames", "SQLite", "Dates"])
     using DataFrames
+    using SQLite
+    using Dates
 end
-
+"""
+Alternative 2: Querying directly from this repository 
 users = CSV.read("users.tsv", DataFrame; delim = '\t')
 println("$users")
+"""
 dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
 println("\n$dummy")
 totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
