@@ -6,14 +6,6 @@ begin
     using Dates
 end
 
-"""
-Alternative 2: Querying directly from this repository
-
-url = "https://github.com/Uriel1201/HelloDATA/blob/main/02_changes_net_worth/data.tsv"
-download(url, "transactions.tsv")
-transactions = CSV.read("transactions.tsv", DataFrame; delim = '\t')
-"""
-
 db = SQLite.DB()
 
 #*/________________________________
@@ -81,4 +73,4 @@ result = (sort(combine(groupby(df,
               )
 )
 print("\n$space")
-println("\nNet changes:\n$result")
+println("\n Net changes:\n$result")
