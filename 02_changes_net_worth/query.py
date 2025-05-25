@@ -28,7 +28,7 @@ try:
     space = "#---------------------------------------------------------"
     sample = transactions.head(5)
     print(f'\n {space}')
-    print(f'\n Transactions table SAMPLE(5):\n{sample.collect()}')
+    print(f'\n Transactions table -> SAMPLE:\n{sample.collect()}')
 
     _type = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
                             index = 'AMOUNT',
@@ -42,7 +42,7 @@ try:
                                 )
             )
     print(f'\n {space}')
-    print(f'\n Type of transaction made by each user SAMPLE:\n{_type.collect()}')
+    print(f'\n Type of transaction made by each user -> SAMPLE:\n{_type.collect()}')
     
     changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
                                     ,index = 'AMOUNT' 
@@ -63,7 +63,7 @@ try:
                             )
               )
     print(f'\n {space}')
-    print(f'\nNet changes:\n{changes.collect()}')                 
+    print(f'\n Net changes:\n{changes.collect()}')                 
 
 finally:
     conn.close()
