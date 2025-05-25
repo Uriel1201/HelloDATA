@@ -5,12 +5,14 @@
 # import pyarrow
 
 try:
+    #---------------------------------------------------------
     # You need to write your credentials in the following connection.
     conn = oracledb.connect(user = "[Username]", password = "[Password]", dsn = "localhost:1521/FREEPDB1")
     table = "SELECT * FROM TRANSACTIONS_P2"
     odf = conn.fetch_df_all(statement = table, arraysize = 100)
     pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
     transactions = pl.from_arrow(pyarrow_table).lazy()
+    #---------------------------------------------------------
 
     '''
     Alternative 2: Querying directly from this repository 
@@ -22,8 +24,11 @@ try:
                                ignore_errors = False
                       )
     '''
+    
+    space = "#---------------------------------------------------------"
     sample = transactions.head(5)
-    print(f'Transactions table SAMPLE(5):\n{sample.collect()}')
+    print(f'\n {space}')
+    print(f'\n Transactions table SAMPLE(5):\n{sample.collect()}')
 
     _type = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
                             index = 'AMOUNT',
@@ -36,7 +41,8 @@ try:
                                            .alias('AMOUNT')
                                 )
             )
-    print(f'\nType of transaction made by each user SAMPLE:\n{_type.collect()}')
+    print(f'\n {space}')
+    print(f'\n Type of transaction made by each user SAMPLE:\n{_type.collect()}')
     
     changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
                                     ,index = 'AMOUNT' 
@@ -56,6 +62,7 @@ try:
                                  ,descending = True
                             )
               )
+    print(f'\n {space}')
     print(f'\nNet changes:\n{changes.collect()}')                 
 
 finally:
