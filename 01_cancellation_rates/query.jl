@@ -7,7 +7,9 @@ begin
 end
 
 """
-Alternative 2: Querying directly from this repository 
+Alternative 2: Querying directly from this repository
+url = "https://github.com/Uriel1201/HelloDATA/blob/main/01_cancellation_rates/data.tsv"
+download(url, "users.tsv")
 users = CSV.read("users.tsv", DataFrame; delim = '\t')
 """
 
