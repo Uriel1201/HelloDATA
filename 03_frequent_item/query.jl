@@ -46,7 +46,7 @@ end
 function main(args = String())
 
     database = uppercase(args[1])
-    println("$SPACE\nWORKING WITH A $database DATABASE\n$SPACE")
+    println("$SPACE\nWORKING WITH $database DATABASE\n$SPACE")
     table = uppercase(args[2])
     items = DBInterface.execute(db, "SELECT * FROM $table") |> DataFrame
     items.DATES .= replace.(items.DATES, DATE_REGEX => format_date)
