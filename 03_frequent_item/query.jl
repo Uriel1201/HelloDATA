@@ -43,12 +43,12 @@ end
 
 #*/________________________________
 
-function main(args)
+function main(args = String())
 
-    database = uppercase(args)
+    database = uppercase(args[1])
     println("$SPACE\nWORKING WITH A $database DATABASE\n$SPACE")
-
-    items = DBInterface.execute(db, "SELECT * FROM ITEMS") |> DataFrame
+    table = uppercase(args[2])
+    items = DBInterface.execute(db, "SELECT * FROM $table") |> DataFrame
     items.DATES .= replace.(items.DATES, DATE_REGEX => format_date)
     items[!, :DATES] = Date.(items.DATES, "dd-u-yyyy")
 
@@ -91,5 +91,5 @@ end
 if abspath(PROGRAM_FILE) == @__FILE__
     main(ARGS)
 else
-    println("\n ARCHIVE LOADED AS MODULE, EXECUTE MAIN() MANUALLY WITH SQLITE AS ARG.")
+    println("\n ARCHIVE LOADED AS MODULE, EXECUTE MAIN() MANUALLY WITH SQLITE AND ITEMS AS ARGS.")
 end
