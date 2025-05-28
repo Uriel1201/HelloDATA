@@ -12,27 +12,19 @@ try:
     pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
     items = pl.from_arrow(pyarrow_table).lazy()
 
-    '''
-    Alternative 2: Querying directly from this repository 
-    url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/03_frequent_item/data.tsv"
-    items = pl.scan_csv(url,
-                        separator = "\t",
-                        has_header = True,
-                        infer_schema_length = 1000,
-                        ignore_errors = False
-               )
-    '''
-
+    space = "/*****************************************/"
     sample = items.head(5)
-    print(f'Items table SAMPLE(5):\n{sample.collect()}')
+    print(f'\n{space}')
+    print(f'ITEMS TABLE -> SAMPLE:\n{sample.collect()}')
 
     df = (sample.group_by(['DATES','ITEM'])
                 .agg(pl.len()
                        .alias('COUNT')
                  )
          )
-    print(f'\nNumber of items by each date (SAMPLE):\n{df.collect()}')
-    
+    print(f'\n{space}')
+    print(f'NUMBER OF ITEMS BY EACH DATE -> SAMPLE:\n{df.collect()}')
+
     counts = (items.group_by(['DATES','ITEM'])
                    .agg(pl.len()
                           .alias('COUNT')
@@ -48,6 +40,7 @@ try:
                     )
                    .sort(by = 'DATES')
              )
-    print(f'\nMost frequented item by each date:\n{counts.collect()}')          
+    print(f'\n{space}')
+    print(f'MOST FREQUENTED ITEM BY DATE:\n{counts.collect()}')
 finally:
     conn.close()
