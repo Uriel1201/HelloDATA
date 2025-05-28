@@ -1,54 +1,103 @@
 begin
     using Pkg
-    Pkg.add(["DataFrames", "SQLite", "Dates"])
+    Pkg.add(["DataFrames", "SQLite"])
     using DataFrames
     using SQLite
-    using Dates
 end
+#=
+**********************************************
+=#
+struct DatabaseConfig
 
-"""
-Alternative 2: Querying directly from this repository
-url = "https://github.com/Uriel1201/HelloDATA/blob/main/01_cancellation_rates/data.tsv"
-download(url, "users.tsv")
-users = CSV.read("users.tsv", DataFrame; delim = '\t')
-"""
+    db_path::String
 
-db = SQLite.DB()
+end
+#=
+**********************************************
+=#
+function database_connection(f::Function, config::DatabaseConfig)
 
-#*/________________________________
-schema = Tables.Schema((:USER_ID, :ACTION, :DATES), (Int32, String, String))
-SQLite.createtable!(db, "USERS", schema, temp = false)
-rows = [(1, "start", "01-jan-20"),
-        (1, "cancel", "02-jan-20"),
-        (2, "start", "03-jan-20"),
-        (2, "publish", "04-jan-20"),
-        (3, "start", "05-jan-20"),
-        (3, "cancel", "06-jan-20" ),
-        (1, "start", "07-jan-20"),
-        (1, "publish", "08-jan-20")]
+    db = SQLite.DB(config.db_path)
+    try
+        @info "Connection is established"
+        f(db)
+    catch e
+        @error "Error in operation" exception=(e, catch_backtrace())
+        rethrow()
+    finally
+        SQLite.close(db)
+        @info "Connection is closed"
+    end
 
-SQLite.execute(db, "BEGIN TRANSACTION")
-placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
-query = "INSERT INTO USERS (USER_ID, ACTION, DATES) VALUES $placeholders"
-stmt = SQLite.Stmt(db, query)
-params = collect(Iterators.flatten(rows))
-DBInterface.execute(stmt, params)
-SQLite.execute(db, "COMMIT")
-#*/________________________________
+end
+#=
+**********************************************
+=#
+function get_users(db::SQLite.DB)
 
-users = DBInterface.execute(db, "SELECT * FROM USERS") |> DataFrame
-sample = first(users, 5)
-println("\n USERS TABLE -> SAMPLE:\n$sample")
+    schema = Tables.Schema((:USER_ID, :ACTION, :DATES), (Int32, String, String))
+    SQLite.createtable!(db, "USERS", schema, temp = false)
 
-dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
-println("\n WAS THIS ACTION DONE BY USER -> SAMPLE:\n$dummy")
-totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
-totals.cancel_rate = @.ifelse(totals.start_sum != 0, totals.cancel_sum ./ totals.start_sum, 0.0)
-totals.publish_rate = @.ifelse(totals.start_sum != 0, totals.publish_sum ./ totals.start_sum, 0.0)
-result = select(
-    totals,
-    :USER_ID,
-    :cancel_rate,
-    :publish_rate
-)
-println("\nUSER STATISTICS:\n$result")
+    rows = [(1, "start", "01-jan-20"),
+            (1, "cancel", "02-jan-20"),
+            (2, "start", "03-jan-20"),
+            (2, "publish", "04-jan-20"),
+            (3, "start", "05-jan-20"),
+            (3, "cancel", "06-jan-20" ),
+            (1, "start", "07-jan-20"),
+            (1, "publish", "08-jan-20")]
+
+    SQLite.execute(db, "BEGIN TRANSACTION")
+    placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
+    query = "INSERT INTO USERS (USER_ID, ACTION, DATES) VALUES $placeholders"
+    stmt = SQLite.Stmt(db, query)
+    params = collect(Iterators.flatten(rows))
+    DBInterface.execute(stmt, params)
+    SQLite.execute(db, "COMMIT")
+    @info "users table is available"
+end
+#=
+**********************************************
+=#
+const SPACE = "********************************"
+
+function main(args)
+
+    database = uppercase(args)
+    println("$SPACE\nWORKING WITH $database\n$SPACE\n")
+    
+    config = DatabaseConfig(":memory:")
+    database_connection(config) do db
+
+        get_users(db)
+        users = DBInterface.execute(db, "SELECT * FROM USERS") |> DataFrame
+        sample = first(users, 5)
+        println("\n$SPACE")
+        println("\n USERS TABLE -> SAMPLE:\n$sample")
+
+        dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
+        println("\n$SPACE")
+        println("\n WAS THIS ACTION DONE BY USER -> SAMPLE:\n$dummy")
+
+        totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
+        totals.cancel_rate = @.ifelse(totals.start_sum != 0, totals.cancel_sum ./ totals.start_sum, 0.0)
+        totals.publish_rate = @.ifelse(totals.start_sum != 0, totals.publish_sum ./ totals.start_sum, 0.0)
+        result = select(totals, :USER_ID, :cancel_rate, :publish_rate)
+        println("\n$SPACE")
+        println("\n USER STATISTICS:\n$result\n")
+
+    end
+
+end
+#=
+**********************************************
+=#
+if abspath(PROGRAM_FILE) == @__FILE__
+
+    main(ARGS)
+
+else
+
+    println("\n ARCHIVE LOADED AS MODULE, EXECUTE MAIN() MANUALLY WITH 'SQLITE'AS ARG.")
+
+end
