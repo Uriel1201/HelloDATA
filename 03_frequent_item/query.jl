@@ -1,9 +1,8 @@
 begin
     using Pkg
-    Pkg.add(["DataFrames", "SQLite", "Dates"])
+    Pkg.add(["DataFrames", "SQLite"])
     using DataFrames
     using SQLite
-    using Dates
 end
 #=
 **********************************************
@@ -34,88 +33,58 @@ end
 #=
 **********************************************
 =#
-function get_items(db::SQLite.DB)
+function get_users(db::SQLite.DB)
 
-    schema = Tables.Schema((:ITEM, :DATES), (String, String))
-    SQLite.createtable!(db, "ITEMS", schema, temp = false)
-    rows = [("apple", "01-jan-20"),
-            ("apple", "01-jan-20"),
-            ("pear", "01-jan-20"),
-            ("pear", "01-jan-20"),
-            ("pear", "02-jan-20"),
-            ("pear", "02-jan-20"),
-            ("pear", "02-jan-20"),
-            ("orange", "02-jan-20")]
+    schema = Tables.Schema((:USER_ID, :ACTION, :DATES), (Int32, String, String))
+    SQLite.createtable!(db, "USERS", schema, temp = false)
+
+    rows = [(1, "start", "01-jan-20"),
+            (1, "cancel", "02-jan-20"),
+            (2, "start", "03-jan-20"),
+            (2, "publish", "04-jan-20"),
+            (3, "start", "05-jan-20"),
+            (3, "cancel", "06-jan-20" ),
+            (1, "start", "07-jan-20"),
+            (1, "publish", "08-jan-20")]
+
     SQLite.execute(db, "BEGIN TRANSACTION")
-    placeholders = join(["(?, ?)" for _ in rows], ", ")
-    query = "INSERT INTO ITEMS (ITEM, DATES) VALUES $placeholders"
+    placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
+    query = "INSERT INTO USERS (USER_ID, ACTION, DATES) VALUES $placeholders"
     stmt = SQLite.Stmt(db, query)
     params = collect(Iterators.flatten(rows))
     DBInterface.execute(stmt, params)
     SQLite.execute(db, "COMMIT")
-    @info "items is available"
-
+    @info "users table is available"
 end
 #=
 **********************************************
 =#
-function format_date(match)
-    year = "20" * match[2:3]
-    return "-" * year
-end
-#=
-**********************************************
-=#
-const DATE_REGEX = r"-(\d{2})"i
 const SPACE = "********************************"
-#=
-**********************************************
-=#
+
 function main(args)
 
     database = uppercase(args)
-    println("$SPACE\nWORKING WITH $database DATABASE\n$SPACE\n")
+    println("$SPACE\nWORKING WITH $database\n$SPACE\n")
+    
     config = DatabaseConfig(":memory:")
-
     database_connection(config) do db
 
-        get_items(db)
-        items = DBInterface.execute(db, "SELECT * FROM ITEMS") |> DataFrame
-        items.DATES .= replace.(items.DATES, DATE_REGEX => format_date)
-        items[!, :DATES] = Date.(items.DATES, "dd-u-yyyy")
-
-        sample = first(items, 5)
+        get_users(db)
+        users = DBInterface.execute(db, "SELECT * FROM USERS") |> DataFrame
+        sample = first(users, 5)
         println("\n$SPACE")
-        println("ITEMS TABLE -> SAMPLE:\n$sample")
+        println("\n USERS TABLE -> SAMPLE:\n$sample")
 
-        df = combine(groupby(sample,
-                             [:DATES, :ITEM]
-                            ),
-                     :ITEM => length => :COUNT
-                    )
+        dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
         println("\n$SPACE")
-        println("Number of items by each date -> SAMPLE:\n$df")
+        println("\n WAS THIS ACTION DONE BY USER -> SAMPLE:\n$dummy")
 
-        max_items = combine(groupby(items,
-                                    [:DATES, :ITEM]
-                                   ),
-                            :ITEM => length => :COUNT
-                           )
-        transform!(groupby(max_items,
-                           :DATES
-                          ),
-                   :COUNT => maximum => :MAX_COUNT
-                  )
-        result = sort(select(filter(row -> row.COUNT == row.MAX_COUNT,
-                                    max_items
-                                   ),
-                             :DATES,
-                             :ITEM
-                            ),
-                      :DATES
-                     )
+        totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
+        totals.cancel_rate = @.ifelse(totals.start_sum != 0, totals.cancel_sum ./ totals.start_sum, 0.0)
+        totals.publish_rate = @.ifelse(totals.start_sum != 0, totals.publish_sum ./ totals.start_sum, 0.0)
+        result = select(totals, :USER_ID, :cancel_rate, :publish_rate)
         println("\n$SPACE")
-        println("Most frequented item by each date:\n$result\n")
+        println("\n USER STATISTICS:\n$result\n")
 
     end
 
@@ -124,7 +93,11 @@ end
 **********************************************
 =#
 if abspath(PROGRAM_FILE) == @__FILE__
+
     main(ARGS)
+
 else
+
     println("\n ARCHIVE LOADED AS MODULE, EXECUTE MAIN() MANUALLY WITH 'SQLITE'AS ARG.")
+
 end
