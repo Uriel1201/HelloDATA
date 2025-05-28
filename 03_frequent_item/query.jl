@@ -8,8 +8,6 @@ end
 
 db = SQLite.DB()
 
-#*/________________________________
-
 schema = Tables.Schema((:ITEM, :DATES), (String, String))
 SQLite.createtable!(db, "ITEMS", schema, temp = false)
 rows = [("apple", "01-jan-20"),
@@ -29,22 +27,15 @@ params = collect(Iterators.flatten(rows))
 DBInterface.execute(stmt, params)
 SQLite.execute(db, "COMMIT")
 
-#*/________________________________
-
 const DATE_REGEX = r"-(\d{2})"i
 const SPACE = "********************************"
-
-#*/________________________________
 
 function format_date(match)
     year = "20" * match[2:3]
     return "-" * year
 end
 
-#*/________________________________
-
 function main(args = String())
-
     database = uppercase(args[1])
     println("$SPACE\nWORKING WITH $database DATABASE\n$SPACE")
     table = uppercase(args[2])
@@ -85,8 +76,6 @@ function main(args = String())
     println("\n$SPACE")
     println("Most frequented item by each date:\n$result")
 end
-
-#*/________________________________
 
 if abspath(PROGRAM_FILE) == @__FILE__
     main(ARGS)
