@@ -1,13 +1,18 @@
 begin
 
     using Pkg
-    Pkg.add(["DataFrames", "Arrow", "DuckDB", "SQLite"])
+    Pkg.add(["DataFrames", "Arrow", "DuckDB", "SQLite", "Downloads"])
     using DataFrames
     using Arrow
     using DuckDB
     using SQLite
+    using Downloads
 
 end
+
+url = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.db"
+db_path = "my_SQLite.db"
+Downloads.download(url, db_path)
 #=
 **********************************************
 =#
@@ -47,53 +52,20 @@ end
 function is_available(db::SQLite.DB, table::String)::Bool
 
     name = uppercase(table)
-    only = ["USERS"]
     list_tables = collect(SQLite.tables(db))
     names = [t.name for t in list_tables]
 
-    if name in names
-
-        return true
-
-    elseif name in only
-
-        schema = Tables.Schema((:USER_ID, :ACTION, :DATES), (Int32, String, String))
-        SQLite.createtable!(db, "USERS", schema, temp = false)
-
-        rows = [(1, "start", "01-jan-20"),
-                (1, "cancel", "02-jan-20"),
-                (2, "start", "03-jan-20"),
-                (2, "publish", "04-jan-20"),
-                (3, "start", "05-jan-20"),
-                (3, "cancel", "06-jan-20" ),
-                (1, "start", "07-jan-20"),
-                (1, "publish", "08-jan-20")]
-
-        placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
-        query = "INSERT INTO USERS (USER_ID, ACTION, DATES) VALUES $placeholders"
-        stmt = SQLite.Stmt(db, query)
-        params = collect(Iterators.flatten(rows))
-        DBInterface.execute(stmt, params)
-
-
-        return true
-
-    else
-
-        return false
-
-    end
+        return name in names
 
 end
 #=
 **********************************************
 =#
-function get_Arrow(db::SQLite.DB, table::String)::Arrow.Table
+function get_ArrowTable(db::SQLite.DB, table::String)::Arrow.Table
 
     name = uppercase(table)
-    query = DBInterface.execute(db, "SELECT * FROM $name")
     io = IOBuffer()
-    Arrow.write(io, query)
+    Arrow.write(io, DBInterface.execute(db, "SELECT * FROM $name"))
     seekstart(io)
     arrow_table = Arrow.Table(io)
 
@@ -104,23 +76,33 @@ end
 #=
 **********************************************
 =#
+function get_DataFrame(db::SQLite.DB, table::String)::DataFrame
+
+    name = uppercase(table)
+
+    return DBInterface.execute(db, "SELECT * FROM $name") |> DataFrame
+
+end
+#=
+**********************************************
+=#
 function main(args)
 
-    datab = "my_SQLite.db"
-    db = SQLite.DB(datab)
+    db = SQLite.DB(db_path)
 
     if is_available(db, args)
 
+        df_users = get_DataFrame(db, args)
         SQLite.close(db)
         duck = nothing
 
         try
 
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
-            config = DatabaseConfig("my_SQLite.db")
+            config = DatabaseConfig(db_path)
             arrow_users = sqlite_connection(config) do db
 
-                get_Arrow(db, args)
+                get_ArrowTable(db, args)
 
             end
 
@@ -164,13 +146,12 @@ function main(args)
             println("\n", "*"^40)
             println("\nUSER STATISTICS USING DUCKDB QUERIES:\n EXECUTION TIME: $elapsed_duck\n$duck_result\n")
 
-            users = arrow_users |> DataFrame
-            sample = first(users, 5)
+            sample = first(df_users, 5)
             println("\n", "*"^40)
-            println("\nARROW_USERS AS A DATAFRAME LECTURE -> SAMPLE:\n$sample")
+            println("\nUSERS DATAFRAME -> SAMPLE:\n$sample")
 
             start_df = time()
-            dummy = select(users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(users.ACTION)])
+            dummy = select(df_users, :USER_ID, [:ACTION => ByRow(isequal(v)) => Symbol(v) for v in unique(df_users.ACTION)])
             totals = combine(groupby(dummy, :USER_ID), names(dummy, Not(:USER_ID)) .=> sum)
             totals.CANCEL_RATE = @.ifelse(totals.start_sum != 0, totals.cancel_sum ./ totals.start_sum, 0.0)
             totals.PUBLISH_RATE = @.ifelse(totals.start_sum != 0, totals.publish_sum ./ totals.start_sum, 0.0)
@@ -188,7 +169,7 @@ function main(args)
 
     else
 
-        println("$args TABLE NOT AVAILABLE")
+        println("$args TABLE NOT AVAILABLE IN $db_path")
 
     end
 
