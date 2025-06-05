@@ -82,16 +82,22 @@ INSERT INTO TRANSACTIONS_P2
 /* DUCKDB. */
 
 /********************************************************************/
-CREATE TABLE TRANSACTIONS (SENDER           INTEGER,
-                           RECEIVER         INTEGER,
-                           AMOUNT           DECIMAL,
-                           TRANSACTION_DATE DATE
-                          );
+CREATE TABLE TRANSACTIONS (
+    SENDER           INTEGER,
+    RECEIVER         INTEGER,
+    AMOUNT           DECIMAL,
+    TRANSACTION_DATE DATE
+    );
 
-INSERT INTO TRANSACTIONS  BY POSITION VALUES (5, 2, 10.0, "2020-02-12"),
-                                             (1, 3, 15.0, "2020-02-13"),
-                                             (2, 1, 20.0, "2020-02-13"),
-                                             (2, 3, 25.0, "2020-02-14"),
-                                             (3, 1, 20.0, "2020-02-15"),
-                                             (3, 2, 15.0, "2020-02-15"),
-                                             (1, 4, 5.0, "2020-02-16");
+INSERT INTO 
+    TRANSACTIONS  
+BY 
+    POSITION 
+VALUES 
+    (5, 2, 10.0, "2020-02-12"),
+    (1, 3, 15.0, "2020-02-13"),
+    (2, 1, 20.0, "2020-02-13"),
+    (2, 3, 25.0, "2020-02-14"),
+    (3, 1, 20.0, "2020-02-15"),
+    (3, 2, 15.0, "2020-02-15"),
+    (1, 4, 5.0, "2020-02-16");
