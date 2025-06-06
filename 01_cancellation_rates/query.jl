@@ -55,7 +55,7 @@ function is_available(db::SQLite.DB, table::String)::Bool
     list_tables = collect(SQLite.tables(db))
     names = [t.name for t in list_tables]
 
-        return name in names
+    return name in names
 
 end
 #=
