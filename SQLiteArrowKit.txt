@@ -1,0 +1,14 @@
+CSV FILE => SQLite: 9.870316982269287
+ARROW FILE => SQLite: 2.6791601181030273
+[ Info: SQLite: Connection is Open
+
+SQLITE TABLE => DataFrame:
+1.6888558864593506
+[ Info: arrow table created
+
+ARROW TABLE => DataFrame:
+0.35585999488830566
+[ Info: SQLite: Connection is Closed
+
+CSV FILE => DataFrame:
+0.5660459995269775
