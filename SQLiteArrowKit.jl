@@ -1,7 +1,6 @@
-#=
 using Pkg
 Pkg.add(["DataFrames", "Arrow", "SQLite", "Downloads", "CSV", "DuckDB"])
-=#
+
 
 module SQLiteArrowKit
 
