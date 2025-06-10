@@ -1,6 +1,6 @@
-using SQLite, Tables
-
 module MyDataBase
+
+using SQLite, Tables
 #=
 **********************************************
 =#
