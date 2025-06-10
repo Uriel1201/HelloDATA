@@ -50,10 +50,10 @@ function get_DataFrame(db::SQLite.DB, table::String)::DataFrame
 end
 #=
 **********************************************
+THIS FUNCTION IS ONLY A TEST AND IT MUSTN'T BE EXECUTED
 =#
 function main(args = ARGS)
-
-# THIS main() IS ONLY A TEST AND IT MUSTN'T BE EXECUTED 
+    
     println("DATA SIZE ~ 82 MB")
     println("\n", "*"^40)
 
