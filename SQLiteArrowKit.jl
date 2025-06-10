@@ -1,4 +1,4 @@
-#using DataFrames, Arrow, SQLite, Downloads, CSV, DuckDB
+using DataFrames, Arrow, SQLite, Downloads, CSV, DuckDB
 
 module SQLiteArrowKit
 
