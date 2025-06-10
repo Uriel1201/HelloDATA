@@ -1,9 +1,6 @@
-using Pkg
-Pkg.add(["DataFrames", "Arrow", "SQLite", "Downloads", "CSV", "DuckDB"])
+#using DataFrames, Arrow, SQLite, Downloads, CSV, DuckDB
 
 module SQLiteArrowKit
-
-using DataFrames, Arrow, SQLite, Downloads, CSV, DuckDB
 
 export is_available, get_ArrowTable, get_DataFrame
 
