@@ -83,17 +83,22 @@ INSERT INTO USERS_P1
 
 /********************************************************************/
 
-CREATE TABLE USERS(USER_ID INTEGER,
-                   ACTION VARCHAR,
-                   DATES DATE,
-                   PRIMARY KEY(USER_ID, DATES)
-                  );
+CREATE TABLE 
+    USERS(USER_ID INTEGER,
+          ACTION  VARCHAR,
+          DATES   DATE,
+          PRIMARY KEY(USER_ID, DATES)
+         );
 
-INSERT INTO USERS BY POSITION VALUES (1, "start", "2020-01-01"),
-                                     (1, "cancel", "2020-01-02"),
-                                     (2, "start", "2020-01-03"),
-                                     (2, "publish", "2020-01-04"),
-                                     (3, "start", "2020-01-05"),
-                                     (3, "cancel", "2020-01-06" ),
-                                     (1, "start", "2020-01-07"),
-                                     (1, "publish", "2020-01-08");
+INSERT INTO 
+    USERS 
+BY 
+    POSITION 
+VALUES (1, "start", "2020-01-01"),
+       (1, "cancel", "2020-01-02"),
+       (2, "start", "2020-01-03"),
+       (2, "publish", "2020-01-04"),
+       (3, "start", "2020-01-05"),
+       (3, "cancel", "2020-01-06" ),
+       (1, "start", "2020-01-07"),
+       (1, "publish", "2020-01-08");
