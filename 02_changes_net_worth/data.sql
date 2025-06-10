@@ -82,11 +82,12 @@ INSERT INTO TRANSACTIONS_P2
 /* DUCKDB. */
 
 /********************************************************************/
-CREATE TABLE TRANSACTIONS (
-    SENDER           INTEGER,
-    RECEIVER         INTEGER,
-    AMOUNT           DECIMAL,
-    TRANSACTION_DATE DATE
+CREATE TABLE 
+    TRANSACTIONS (
+                  SENDER           INTEGER,
+                  RECEIVER         INTEGER,
+                  AMOUNT           DECIMAL,
+                  TRANSACTION_DATE DATE
     );
 
 INSERT INTO 
