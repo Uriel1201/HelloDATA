@@ -70,14 +70,23 @@ function main(args = ARGS)
     sample_1 = first(heart_state, 10)
     sample_2 = first(sex_state, 10)
     csv_end = time()
-    import_csv = round(csvend - csvstart, digits = 4)
+    lecture_csv = round(csvend - csvstart, digits = 4)
     exec_csv = round(csv_end - csvend, digits = 4)
     println("\n", "*"^40)
-    println("TIME READING CSV: $import_csv\nPROCESSING TIME (DATAFRAMES): $exec_csv")
+    println("LECTURE TIME, 'CSV TO DATAFRAME': $lecture_csv")
     println("\n$heart_sex\n")
     println("\n$sample_1\n")
     println("\n$sample_2\n")
 
+    println("\n", "*"^40)
+    start_cursor = time()
+    cursor_df = get_DataFrame(db, "heart_2022")
+    end_cursor = time()
+    lecture_cursor = end_cursor - start_cursor
+    println("LECTURE TIME, 'DBInterface.Cursor() TO DATAFRAMES': $lecture_cursor")
+    println("\n", "*"^40)
+    println("PROCESSING TIME (DATAFRAMES): $exec_csv")
+    
         if is_available(db, "heart_2022")
 
             duck = nothing
@@ -155,25 +164,28 @@ if Base.@isdefined(PROGRAM_FILE) &&
 
 end
 
-function main(args)
+
+module CancellationRates
+
+url = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.db"
+db_path = "my_SQLite.db"
+Downloads.download(url, db_path)
+#=
+**********************************************
+=#
+function main(args = ARGS)
 
     db = SQLite.DB(db_path)
 
     if is_available(db, args)
 
         df_users = get_DataFrame(db, args)
-        SQLite.close(db)
         duck = nothing
 
         try
 
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
-            config = DatabaseConfig(db_path)
-            arrow_users = sqlite_connection(config) do db
-
-                get_ArrowTable(db, args)
-
-            end
+            arrow_users = get_ArrowTable(db, args)
 
             DuckDB.register_data_frame(duck, arrow_users, "duck_users")
             duck_users = DBInterface.execute(duck, "SELECT * FROM 'duck_users' USING SAMPLE 50% (bernoulli)") |> DataFrame
@@ -242,4 +254,8 @@ function main(args)
 
     end
 
+end
+#=
+**********************************************
+=#
 end
