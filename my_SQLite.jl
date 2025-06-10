@@ -122,6 +122,8 @@ end
 #=
 **********************************************
 =#
+module my_database
+
 function main()
 
     config = DatabaseConfig("my_SQLite.db")
@@ -132,5 +134,7 @@ function main()
         items_03(db)
 
     end
+
+end
 
 end
