@@ -5,7 +5,7 @@ module SQLiteArrowKit
 
 using DataFrames, Arrow, SQLite, Downloads, CSV, DuckDB
 
-export sqlite_connection, is_available, get_ArrowTable, get_DataFrame
+export is_available, get_ArrowTable, get_DataFrame
 
 const DB_PATH = "heart.db"
 #=
