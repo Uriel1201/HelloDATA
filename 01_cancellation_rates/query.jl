@@ -62,30 +62,11 @@ function main(args = ARGS)
     csv_path = "heart_2022_no_nans.csv"
 
     csvstart = time()
-    heart_df = CSV.read(csv_path, DataFrame)
+    heart_csv = CSV.read(csv_path, DataFrame)
     csvend = time()
-    heart_state = combine(groupby(heart_df, :State), nrow => :Persons)
-    heart_sex = combine(groupby(heart_df, :Sex), nrow => :Persons)
-    sex_state = combine(groupby(heart_df, [:State, :Sex]), nrow => :Persons)
-    sample_1 = first(heart_state, 10)
-    sample_2 = first(sex_state, 10)
-    csv_end = time()
     lecture_csv = round(csvend - csvstart, digits = 4)
-    exec_csv = round(csv_end - csvend, digits = 4)
     println("\n", "*"^40)
     println("LECTURE TIME, 'CSV TO DATAFRAME': $lecture_csv")
-    println("\n$heart_sex\n")
-    println("\n$sample_1\n")
-    println("\n$sample_2\n")
-
-    println("\n", "*"^40)
-    start_cursor = time()
-    cursor_df = get_DataFrame(db, "heart_2022")
-    end_cursor = time()
-    lecture_cursor = end_cursor - start_cursor
-    println("LECTURE TIME, 'DBInterface.Cursor() TO DATAFRAMES': $lecture_cursor")
-    println("\n", "*"^40)
-    println("PROCESSING TIME (DATAFRAMES): $exec_csv")
     
         if is_available(db, "heart_2022")
 
@@ -94,6 +75,14 @@ function main(args = ARGS)
             try
 
                 duck = DBInterface.connect(DuckDB.DB, ":memory:")
+
+                println("\n", "*"^40)
+                start_cursor = time()
+                cursor_df = get_DataFrame(db, "heart_2022")
+                end_cursor = time()
+                lecture_cursor = end_cursor - start_cursor
+                println("LECTURE TIME, 'DBInterface.Cursor() TO DATAFRAMES': $lecture_cursor")
+            
                 arrowstart = time()
                 duck_heart = get_ArrowTable(db, "heart_2022")
                 arrowend = time()
@@ -133,13 +122,27 @@ function main(args = ARGS)
                 sex_duck = DBInterface.execute(duck, sex) |> DataFrame
                 statesex_duck = DBInterface.execute(duck, sex_state) |> DataFrame
                 arrow_end = time()
-                import_arrow = round(arrowend - arrowstart, digits = 4)
+                lecture_arrow = round(arrowend - arrowstart, digits = 4)
                 exec_arrow = round(arrow_end - arrowend, digits = 4)
                 println("\n", "*"^40)
-                println("TIME READING AND WRITING DataBaseTable => ArrowTable: $import_arrow\nPROCESSING TIME (DUCKDB QUERIES): $exec_arrow")
+                println("TIME READING AND WRITING DBInterface.Cursor() => DOC.ARROW => ArrowTable: $lecture_arrow\nPROCESSING TIME (DUCKDB QUERIES): $exec_arrow")
                 println("\n$sex_duck\n")
                 println("\n$state_duck\n")
                 println("\n$statesex_duck\n")
+
+                df_start = time()
+                heart_state = combine(groupby(heart_csv, :State), nrow => :Persons)
+                heart_sex = combine(groupby(heart_csv, :Sex), nrow => :Persons)
+                sex_state = combine(groupby(heart_csv, [:State, :Sex]), nrow => :Persons)
+                sample_1 = first(heart_state, 10)
+                sample_2 = first(sex_state, 10)
+                df_end = time()
+                exec_df = df_end - df_start
+                println("\n", "*"^40)
+                println("PROCESSING TIME (DATAFRAMES): $exec_df")
+                println("\n$heart_sex\n")
+                println("\n$sample_1\n")
+                println("\n$sample_2\n")
 
             finally
 
