@@ -32,12 +32,11 @@ function get_ArrowTable(db::SQLite.DB, table::String)::Arrow.Table
     start_write = time()
     Arrow.write(io, query)
     end_write = time()
-    start_arrow = time()
     seekstart(io)
     arrow_table = Arrow.Table(io)
     end_arrow = time()
     conversion_time = round(end_write - start_write, digits = 4)
-    lecture_time = round(end_arrow - start_arrow, digits = 4)
+    lecture_time = round(end_arrow - end_write, digits = 4)
     @info "arrow table created:" conversion_time lecture_time
     return arrow_table
 
