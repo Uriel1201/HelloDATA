@@ -106,3 +106,12 @@ function main(args = ARGS)
     end
 
 end
+#=
+**********************************************
+=#
+if Base.@isdefined(PROGRAM_FILE) &&
+   abspath(PROGRAM_FILE) == abspath(@__FILE__)
+
+    main()
+
+end
