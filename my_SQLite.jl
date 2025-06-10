@@ -1,11 +1,3 @@
-begin
-
-    using Pkg
-    Pkg.add(["SQLite", "Tables"])
-    using SQLite
-    using Tables
-
-end
 #=
 **********************************************
 =#
