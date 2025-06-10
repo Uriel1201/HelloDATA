@@ -58,7 +58,8 @@ function users_01(db::SQLite.DB)
     DBInterface.execute(stmt, params)
 
     columns = join(schema.names, " | ")
-    @info "TABLE USERS_01 CREATED:" columns
+    _type = join(schema.types, " | ")
+    @info "TABLE USERS_01 CREATED:" columns _type
 
 end
 #=
@@ -84,7 +85,8 @@ function transactions_02(db::SQLite.DB)
     DBInterface.execute(stmt, params)
 
     columns = join(schema.names, " | ")
-    @info "TABLE TRANSACTIONS_02 CREATED:" columns
+    _type = join(schema.types, " | ")
+    @info "TABLE TRANSACTIONS_02 CREATED:" columns _type
 
 end
 #=
@@ -119,7 +121,8 @@ function items_03(db::SQLite.DB)
     DBInterface.execute(stmt, params)
     
     columns = join(schema.names, " | ")
-    @info "TABLE ITEMS_03 CREATED:" columns
+    _type = join(schema.types, " | ")
+    @info "TABLE ITEMS_03 CREATED:" columns _type
 
 end
 #=
