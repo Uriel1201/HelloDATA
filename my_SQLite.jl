@@ -1,4 +1,6 @@
 using SQLite, Tables
+
+module MyDataBase
 #=
 **********************************************
 =#
@@ -123,8 +125,6 @@ end
 #=
 **********************************************
 =#
-module my_database
-
 function main()
 
     config = DatabaseConfig("my_SQLite.db")
@@ -137,5 +137,7 @@ function main()
     end
 
 end
-
+#=
+**********************************************
+=#
 end
