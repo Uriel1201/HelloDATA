@@ -73,7 +73,12 @@ WITH
             DATES, ITEM),
     RANKS AS (
         SELECT
-            DATES, ITEM, RANK OVER (PARTITION BY DATES ORDER BY FREQUENCY DESC) AS RANKED 
+            DATES, 
+            ITEM, 
+            RANK OVER (PARTITION BY 
+                           DATES 
+                       ORDER BY 
+                           FREQUENCY DESC) AS RANKED 
         FROM FREQUENCIES) 
 SELECT 
     DATES, ITEM
