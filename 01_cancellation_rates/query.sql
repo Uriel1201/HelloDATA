@@ -67,7 +67,10 @@ FROM
 
 /********************************************************************/
 
-SELECT * FROM USERS;
+SELECT 
+   * 
+FROM 
+   USERS;
 
 WITH TOTALS AS (
     SELECT
