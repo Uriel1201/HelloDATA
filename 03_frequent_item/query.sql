@@ -66,7 +66,9 @@ FROM
 WITH 
     FREQUENCIES AS (
         SELECT
-            DATES, ITEM, COUNT(*) AS FREQUENCY 
+            DATES, 
+            ITEM, 
+            COUNT(*) AS FREQUENCY 
         FROM 
             ITEMS
         GROUP BY 
