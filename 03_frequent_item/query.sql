@@ -7,13 +7,16 @@ query to return the most frequent item
 ordered on each date. Return multiple
 items in the case of a tie. */
 
-/*Querying original data*/
+/* ORACLE. */
+
+/********************************************************************/
+-- Querying original data
 SELECT
     *
 FROM
     ITEMS_P3;
 
-        /*Querying most frequent items on each date*/
+      -- Querying most frequent items on each date
 WITH FREQUENCIES ( --Frequencies for items on each date
     DATES,
     ITEM,
@@ -51,3 +54,30 @@ FROM
     ITEMS_RANKING
 WHERE
     RANKING = 1;
+
+/* DUCKDB. */
+
+/********************************************************************/
+SELECT 
+    *
+FROM
+    ITEMS;
+
+WITH 
+    FREQUENCIES AS (
+        SELECT
+            DATES, ITEM, COUNT(*) AS FREQUENCY 
+        FROM 
+            ITEMS
+        GROUP BY 
+            DATES, ITEM),
+    RANKS AS (
+        SELECT
+            DATES, ITEM, RANK OVER (PARTITION BY DATES ORDER BY FREQUENCY DESC) AS RANKED 
+        FROM FREQUENCIES) 
+SELECT 
+    DATES, ITEM
+FROM 
+    RANKS
+WHERE 
+    RANKED = 1;
