@@ -72,19 +72,24 @@ WITH
         FROM 
             ITEMS
         GROUP BY 
-            DATES, ITEM),
+            DATES, 
+            ITEM),
     RANKS AS (
         SELECT
             DATES, 
             ITEM, 
-            RANK OVER (PARTITION BY 
-                           DATES 
-                       ORDER BY 
-                           FREQUENCY DESC) AS RANKED 
-        FROM FREQUENCIES) 
+            RANK() OVER (PARTITION BY 
+                             DATES 
+                         ORDER BY 
+                             FREQUENCY DESC) AS RANKED 
+        FROM 
+            FREQUENCIES) 
 SELECT 
-    DATES, ITEM
+    DATES, 
+    ITEM
 FROM 
     RANKS
 WHERE 
-    RANKED = 1;
+    RANKED = 1
+ORDER BY
+    1;
