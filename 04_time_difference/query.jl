@@ -1,55 +1,179 @@
-begin
-    using Pkg
-    Pkg.add(["CSV", "DataFrames", "Dates", "ShiftedArrays"])
-    using CSV
-    using DataFrames
-    using Dates
-    using ShiftedArrays
+#=using Pkg
+
+packages = ["SQLite", "Tables", "DataFrames",
+            "Arrow", "Downloads", "DuckDB",
+            "ShiftedArrays"]
+
+for pkg in packages
+
+    Pkg.add(pkg)
+
+end=#
+
+DB_PATH = "my_SQLite.db"
+
+using Downloads
+
+arrowkit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.jl"
+Downloads.download(arrowkit,"arrowkit.jl")
+db_url = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.jl"
+Downloads.download(db_url, "database.jl")
+
+include("database.jl")
+include("arrowkit.jl")
+
+using .MyDataBase, DataFrames, ShiftedArrays, Dates, Arrow, SQLite, DuckDB, .SQLiteArrowKit
+
+MyDataBase.main()
+#=
+**********************************************
+=#
+function year_format(my_date::String)::String
+ 
+    parts = split(my_date, "-")
+    if length(parts) != 3
+
+        return my_date
+
+    end
+
+    my_year = parts[end]
+    if length(my_year) != 2
+
+        return my_date
+
+    end
+
+    try
+    
+        year_2d = parse(Int, my_year)
+        year_4d = year_2d >= 70 ? 1900 + year_2d : 2000 + year_2d
+
+        return join([parts[1], parts[2], string(year_4d)], "-") 
+
+    catch
+
+        return my_date
+
+    end
+
 end
+#=
+**********************************************
+=#
+function main(args = ARGS)
 
-url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/04_time_difference/data.tsv"
-download(url, "users.tsv")
-users = CSV.read("users.tsv", DataFrame; delim = '\t')
+    db = SQLite.DB(DB_PATH)
 
-users[!, :ACTION_DATE] = Date.(split.(users.ACTION_DATE, "T") .|> first)
-sample = sort(first(users,
-                    5
-                   ),
-              [:ID, :ACTION_DATE],
-              rev = [false,true]
-             )
-println("USERS TABLE (SAMPLE -> 5):\n$sample")
+    if is_available(db, args) && (args == "users_04")
 
-transform!(groupby(sample, 
-                   :ID
-                  ),
-           :ACTION_DATE =>
-           (x -> (x .- ShiftedArrays.lead(x, 1))
-           ) => :ELAPSED_DAYS
-          )
-println("\nDIFFERENCE BETWEEN CONSECUTIVE ACTIONS (SAMPLE -> 5):\n$sample")
+        duck = nothing
 
-users = sort(users,
-             [:ID, :ACTION_DATE],
-             rev = [false,true]
+        try
+
+            duck = DBInterface.connect(DuckDB.DB, ":memory:")
+
+            arrow_users = SQLiteArrowKit.get_ArrowTable(db, args)
+            DuckDB.register_data_frame(duck, arrow_users, "USERS")
+            duck_users = DBInterface.execute(duck, "SELECT * FROM USERS USING SAMPLE 50% (bernoulli)") |> DataFrame
+            println("\n", "*"^40)
+            println("USERS TABLE USING DUCKDB QUERIES -> SAMPLE:\n$duck_users")
+
+            query = """
+            WITH
+                FORMATTED AS (
+                    SELECT
+                        ID,
+                        ACTIONS,
+                        STRFTIME(STRPTIME(ACTION_DATE, '%d-%b-%y'), '%Y-%m-%d')::DATE AS ACTION_DATE
+                    FROM
+                        USERS),
+                ORDERED_DATES AS (
+                    SELECT
+                        ID,
+                        ACTION_DATE,
+                        ROW_NUMBER() OVER (PARTITION BY
+                                               ID
+                                           ORDER BY
+                                               ACTION_DATE
+                                           DESC
+                        ) AS ORDERED
+                    FROM
+                        FORMATTED),
+                LAST_DATES AS (
+                    SELECT
+                        ID,
+                        ACTION_DATE AS LAST_DATE
+                    FROM
+                        ORDERED_DATES
+                    WHERE
+                        ORDERED = 1),
+                PENULTIMATE_DATES AS (
+                    SELECT
+                        ID,
+                        ACTION_DATE AS PENULTIMATE_DATE
+                    FROM
+                        ORDERED_DATES
+                    WHERE
+                        ORDERED = 2)
+            SELECT
+                L.ID,
+                (L.LAST_DATE - P.PENULTIMATE_DATE) AS ELAPSED_TIME
+            FROM
+                LAST_DATES L
+                LEFT JOIN
+                    PENULTIMATE_DATES P
+                USING (ID)
+            ORDER BY
+                1;
+            """
+            duck_result = DBInterface.execute(duck, query) |> DataFrame
+            println("\n", "*"^40)
+            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DUCKDB QUERIES:\n$duck_result")
+
+            users = arrow_users |> DataFrame
+            transform!(users, 
+                       :ACTION_DATE => (x -> Date.(year_format.(x), 
+                                                   Ref(dateformat"d-u-y")
+                                             )) => :ACTION_DATE
             )
+            users = sort(users,
+                         [:ID, :ACTION_DATE],
+                         rev = [false, true]
+                    )
+            transform!(groupby(users, 
+                               :ID
+                       ),
+                       :ACTION_DATE => (x -> (x .- ShiftedArrays.lead(x, 1))) => :ELAPSED_DAYS
+            )
+            users = combine(groupby(users, 
+                                    :ID
+                            ), 
+                            :ELAPSED_DAYS => first => :ELAPSED_DAYS
+                    )
+            users.ELAPSED_DAYS = passmissing(x -> x.value).(users.ELAPSED_DAYS)
+            println("\n", "*"^40)
+            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DATAFRAMES\n$users")
 
-transform!(groupby(users, 
-                   :ID
-                  ),
-           :ACTION_DATE =>
-           (x -> (x .- ShiftedArrays.lead(x, 1))
-           ) => :ELAPSED_DAYS
-          )
+        finally
 
-result = select(combine(groupby(users, 
-                                :ID
-                               ), 
-                        :ELAPSED_DAYS => first => :ELAPSED_DAYS
-                       ), 
-                :ID, 
-                :ELAPSED_DAYS
-               )
-result.ELAPSED_DAYS = passmissing(x -> x.value).(result.ELAPSED_DAYS)
+            DBInterface.close!(duck)
 
-println("\nRETURNING ELAPSED TIME BETWEEN THE TWO LAST ACTIVITIES:\n$result")
+        end
+
+    else
+
+        println("$args TABLE NOT VALID")
+
+    end
+
+end
+#=
+**********************************************
+=#
+if Base.@isdefined(PROGRAM_FILE) &&
+   abspath(PROGRAM_FILE) == abspath(@__FILE__)
+
+    main()
+
+end
