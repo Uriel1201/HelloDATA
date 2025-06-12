@@ -171,6 +171,9 @@ function users_04(db::SQLite.DB)
     params = collect(Iterators.flatten(rows))
     DBInterface.execute(stmt, params)
     
+    columns = join(schema.names, " | ")
+    _type = join(schema.types, " | ")
+    @info "TABLE USERS_04 CREATED:" columns _type
     
 end
 #=
