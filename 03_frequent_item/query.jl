@@ -34,7 +34,6 @@ function main(args = ARGS)
 
     if is_available(db, args) && (args == "items_03")
 
-        df_users = SQLiteArrowKit.get_DataFrame(db, args)
         duck = nothing
 
         try
