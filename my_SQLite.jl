@@ -147,7 +147,7 @@ function users_04(db::SQLite.DB)
         
             (2,
              "Publish",
-            "4-feb-20"),
+             "14-feb-20"),
         
             (3,
              "Start",
