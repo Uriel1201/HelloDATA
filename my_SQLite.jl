@@ -187,6 +187,7 @@ function main()
         users_01(db)
         transactions_02(db)
         items_03(db)
+        users_04(db)
 
     end
 
