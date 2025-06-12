@@ -128,6 +128,54 @@ end
 #=
 **********************************************
 =#
+function users_04(db::SQLite.DB)
+
+    schema = Tables.Schema((:ID, :ACTIONS, :ACTION_DATE), (Int32, String, String))
+    SQLite.createtable!(db, "USERS_04" , schema, temp = false)
+
+    rows = [(1,
+             "Start",
+             "13-feb-20"),
+        
+            (1,
+             "Cancel",
+             "13-feb-20"),
+        
+            (2,
+             "Start",
+             "11-feb-20"),
+        
+            (2,
+             "Publish",
+            "4-feb-20"),
+        
+            (3,
+             "Start",
+             "15-feb-20"),
+        
+            (3,
+             "Cancel",
+             "15-feb-20"),
+        
+            (4,
+             "Start",
+             "18-feb-20"),
+        
+            (1,
+             "Publish",
+             "19-feb-20")]
+
+    placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
+    query = "INSERT INTO USERS_04 (ID, ACTIONS, ACTION_DATE) VALUES $placeholders"
+    stmt = SQLite.Stmt(db, query)
+    params = collect(Iterators.flatten(rows))
+    DBInterface.execute(stmt, params)
+    
+    
+end
+#=
+**********************************************
+=#
 function main()
 
     config = DatabaseConfig("my_SQLite.db")
