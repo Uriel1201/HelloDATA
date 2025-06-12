@@ -59,7 +59,7 @@ function users_01(db::SQLite.DB)
 
     columns = join(schema.names, " | ")
     _type = join(schema.types, " | ")
-    @info "TABLE USERS_01 CREATED:" columns _type
+    @info "TABLE USERS_01 IS AVAILABLE:" columns _type
 
 end
 #=
@@ -86,7 +86,7 @@ function transactions_02(db::SQLite.DB)
 
     columns = join(schema.names, " | ")
     _type = join(schema.types, " | ")
-    @info "TABLE TRANSACTIONS_02 CREATED:" columns _type
+    @info "TABLE TRANSACTIONS_02 IS AVAILABLE:" columns _type
 
 end
 #=
@@ -122,7 +122,7 @@ function items_03(db::SQLite.DB)
     
     columns = join(schema.names, " | ")
     _type = join(schema.types, " | ")
-    @info "TABLE ITEMS_03 CREATED:" columns _type
+    @info "TABLE ITEMS_03 IS AVAILABLE:" columns _type
 
 end
 #=
@@ -173,7 +173,7 @@ function users_04(db::SQLite.DB)
     
     columns = join(schema.names, " | ")
     _type = join(schema.types, " | ")
-    @info "TABLE USERS_04 CREATED:" columns _type
+    @info "TABLE USERS_04 IS AVAILABLE:" columns _type
     
 end
 #=
