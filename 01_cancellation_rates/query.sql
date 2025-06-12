@@ -81,10 +81,12 @@ WITH TOTALS AS (
     FROM
         USERS
     GROUP BY
-        USER_ID) SELECT
-                     USER_ID,
-                     ROUND(TOTAL_PUBLISHES / NULLIF(TOTAL_STARTS, 0), 2) AS PUBLISH_RATE,
-                     ROUND(TOTAL_CANCELS / NULLIF(TOTAL_STARTS, 0), 2) AS CANCEL_RATE
-                 FROM
-                     TOTALS
-                 ORDER BY 1;
+        USER_ID) 
+SELECT
+    USER_ID,
+    ROUND(TOTAL_PUBLISHES / NULLIF(TOTAL_STARTS, 0), 2) AS PUBLISH_RATE,
+    ROUND(TOTAL_CANCELS / NULLIF(TOTAL_STARTS, 0), 2) AS CANCEL_RATE
+FROM
+    TOTALS
+ORDER BY 
+    1;
