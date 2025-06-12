@@ -106,7 +106,7 @@ function main(args = ARGS)
 
     else
 
-        println("$args TABLE NOT AVAILABLE IN $DB_PATH")
+        println("$TABLE $args NOT AVAILABLE")
 
     end
 
