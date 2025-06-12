@@ -70,3 +70,41 @@ SELECT
     *
 FROM
     USERS;
+
+WITH 
+    ORDERED_DATES AS (
+        SELECT
+            ID,
+            ACTION_DATE,
+            ROW_NUMBER() OVER (PARTITION BY 
+                                   ID
+                               ORDER BY
+                                   ACTION_DATE DESC) AS ORDERED
+        FROM
+            USERS), 
+    LAST_DATES AS (
+        SELECT
+            ID,
+            ACTION_DATE AS LAST_DATE
+        FROM
+            ORDERED_DATES
+        WHERE
+            ORDERED = 1), 
+    PENULTIMATE_DATES AS (
+        SELECT
+            ID,
+            ACTION_DATE AS PENULTIMATE_DATE
+        FROM
+            ORDERED_DATES
+        WHERE
+            ORDERED = 2)
+SELECT
+    L.ID,
+    (L.LAST_DATE - P.PENULTIMATE_DATE) AS ELAPSED_TIME
+FROM
+    LAST_DATES L
+    LEFT JOIN 
+        PENULTIMATE_DATES P 
+    USING (ID)
+ORDER BY
+    1;
