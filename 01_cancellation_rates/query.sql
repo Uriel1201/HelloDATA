@@ -72,16 +72,17 @@ SELECT
 FROM 
    USERS;
 
-WITH TOTALS AS (
-    SELECT
-        USER_ID,
-        SUM(IF(ACTION = 'start',1,0)) AS TOTAL_STARTS,
-        SUM(IF(ACTION = 'cancel',1,0)) AS TOTAL_CANCELS,
-        SUM(IF(ACTION = 'publish',1,0)) AS TOTAL_PUBLISHES
-    FROM
-        USERS
-    GROUP BY
-        USER_ID) 
+WITH 
+    TOTALS AS (
+        SELECT
+            USER_ID,
+            SUM(IF(ACTION = 'start',1,0)) AS TOTAL_STARTS,
+            SUM(IF(ACTION = 'cancel',1,0)) AS TOTAL_CANCELS,
+            SUM(IF(ACTION = 'publish',1,0)) AS TOTAL_PUBLISHES
+        FROM
+            USERS
+        GROUP BY
+            USER_ID) 
 SELECT
     USER_ID,
     ROUND(TOTAL_PUBLISHES / NULLIF(TOTAL_STARTS, 0), 2) AS PUBLISH_RATE,
