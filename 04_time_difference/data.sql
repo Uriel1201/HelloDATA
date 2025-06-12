@@ -6,6 +6,9 @@ time elapsed between the last action
 and the second-to-last action, in
 ascending order by user ID. */
 
+/* ORACLE. */
+
+/********************************************************************/
 CREATE TABLE USERS_P4 (
     ID          INTEGER,
     ACTIONS     VARCHAR(10),
@@ -74,3 +77,41 @@ INSERT INTO USERS_P4
         *
     FROM
         NAMES;
+
+/* DUCKDB. */
+
+/********************************************************************/
+CREATE TABLE 
+    USERS (
+           ID          INTEGER,
+           ACTIONS     VARCHAR,
+           ACTION_DATE DATE
+    );
+
+INSERT INTO
+    USERS
+BY POSITION VALUES 
+    (1,
+     "Start",
+     "2020-02-13"),
+    (1,
+     "Cancel",
+     "2020-02-13"),
+    (2,
+     "Start",
+     "2020-02-11"),
+    (2,
+     "Publish",
+     "2020-02-14"),
+    (3,
+     "Start",
+     "2020-02-15"),
+    (3,
+     "Cancel",
+     "2020-02-15"),
+    (4,
+     "Start",
+     "2020-02-18"),
+    (1,
+     "Publish",
+     "2020-02-19");
