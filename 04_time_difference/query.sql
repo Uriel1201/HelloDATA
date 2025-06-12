@@ -6,14 +6,16 @@ time elapsed between the last action
 and the second-to-last action, in
 ascending order by user ID. */ 
 
-/* Querying original data*/
+/* ORACLE. */
+
+/********************************************************************/
+-- Querying original data
 SELECT
     *
 FROM
     USERS_P4;
 
-                /* Time elapsed between the last action 
-                        and the second-to-last action */
+-- Time elapsed between the last action and the second-to-last action
 WITH RANKINGS ( -- Ordering dates in descending order grouped by each user
     ID,
     ACTION_DATE,
@@ -60,3 +62,11 @@ FROM
     LEFT JOIN RANKED2 B ON A.ID = B.ID
 ORDER BY
     A.ID;
+
+/* DUCKDB. */
+
+/********************************************************************/
+SELECT 
+    *
+FROM
+    USERS;
