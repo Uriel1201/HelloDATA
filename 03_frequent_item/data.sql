@@ -76,18 +76,17 @@ INSERT INTO ITEMS_P3
 CREATE TABLE 
     ITEMS (
            DATES DATE,
-           ITEM VARCHAR
+           ITEM  VARCHAR
     );
 
 INSERT INTO 
     ITEMS
-BY
-    POSITION 
-VALUES ("01-jan-20", "apple"),
-       ("01-jan-20", "apple"),
-       ("01-jan-20", "pear"),
-       ("01-jan-20", "pear"),
-       ("02-jan-20", "pear"),
-       ("02-jan-20", "pear"),
-       ("02-jan-20", "pear"),
-       ("02-jan-20", "orange");
+BY POSITION VALUES 
+    ("2020-01-01", "apple"),
+    ("2020-01-01", "apple"),
+    ("2020-01-01", "pear"),
+    ("2020-01-01", "pear"),
+    ("2020-01-02", "pear"),
+    ("2020-01-02", "pear"),
+    ("2020-01-02", "pear"),
+    ("2020-01-02", "orange");
