@@ -108,7 +108,7 @@ function main(args = ARGS)
 
     else
 
-        println("$args TABLE NOT AVAILABLE")
+        println(" TABLE $args not AVAILABLE")
 
     end
 
