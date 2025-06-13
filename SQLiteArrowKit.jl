@@ -25,9 +25,9 @@ function get_ArrowTable(db::SQLite.DB, table::String)::Arrow.Table
     name = uppercase(table)
     io = IOBuffer()
 
-    query = DBInterface.execute(db, "SELECT * FROM $name")
+    cursor = DBInterface.execute(db, "SELECT * FROM $name")
     start_write = time()
-    Arrow.write(io, query)
+    Arrow.write(io, cursor)
     end_write = time()
     seekstart(io)
     arrow_table = Arrow.Table(io)
