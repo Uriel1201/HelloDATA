@@ -9,7 +9,7 @@
 
 [VSC](https://code.visualstudio.com/docs/languages/rust) 
 
-## Data Manipulation/Access 
+## Data ANALYSIS 
 [Polars](https://docs.pola.rs/)
 
 [DataFrames](https://dataframes.juliadata.org/stable/)
@@ -17,6 +17,8 @@
 [Oracle Database](https://docs.oracle.com/en/database/oracle/oracle-database/23/cncpt/introduction-to-oracle-database.html#GUID-A42A6EF0-20F8-4F4B-AFF7-09C100AE581E)
 
 [SQLite](https://www.sqlite.org/)
+
+[DuckDB](https://duckdb.org/)
 
 ## Languages 
 [Rust](https://www.rust-lang.org/learn/get-started)
