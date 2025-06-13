@@ -37,6 +37,8 @@ SQL:
 
 [SQLite.jl](https://juliadatabases.org/SQLite.jl/stable/#DBInterface.execute)
 
+[ADBC_SQLite](https://arrow.apache.org/adbc/main/index.html)
+
 ## Interfaces
 [PEP 249](https://peps.python.org/pep-0249/)
 
