@@ -9,7 +9,7 @@
 
 [VSC](https://code.visualstudio.com/docs/languages/rust) 
 
-## Data ANALYSIS 
+## Data Analysis 
 [Polars](https://docs.pola.rs/)
 
 [DataFrames](https://dataframes.juliadata.org/stable/)
