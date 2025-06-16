@@ -1,0 +1,66 @@
+/* JULIA -> DATAFRAMES, DUCKDB */
+****************************************
+
+DATA SIZE~437 MB
+****************************************
+LECTURE TIME, FROM CSV TO DATAFRAMES: 27.3261
+PROCESSING TIME, USING DATAFRAMES:
+
+2×2 DataFrame
+ Row │ mode   frequency
+     │ Int64  Int64
+─────┼──────────────────
+   1 │     0     978222
+   2 │     1    1132094
+
+4×4 DataFrame
+ Row │ spotify_id              name                mode   persistenceInPopularity
+     │ String31                String              Int64  Int64
+─────┼────────────────────────────────────────────────────────────────────────────
+   1 │ 6dOtVTDdiauQNBQEDOtlAB  BIRDS OF A FEATHER      1                    14043
+   2 │ 2plbrEY59IikOBgBGLjaoe  Die With A Smile        0                    11238
+   3 │ 2qSkIjg1o9h3YT9RAgYN75  Espresso                1                     6597
+   4 │ 3rUGC1vUpkDG9CZFHMur1t  greedy                  0                     7658
+
+4×3 DataFrame
+ Row │ mode   is_explicit  frequency
+     │ Int64  Bool         Int64
+─────┼───────────────────────────────
+   1 │     0        false       5827
+   2 │     0         true       9885
+   3 │     1        false       6611
+   4 │     1         true       6783
+time~6.0994
+
+****************************************
+LECTURE TIME (EXPLICIT EXPORT), FROM CURSOR TO ARROW TABLE:
+100.3377
+┌ Info: arrow table created:
+│   conversion_time = 95.7074
+└   lecture_time = 3.6365
+PROCESSING TIME, USING DUCKDB QUERIES: 2.5294
+
+2×2 DataFrame
+ Row │ mode   frequency
+     │ Int64  Int64
+─────┼──────────────────
+   1 │     0     978222
+   2 │     1    1132094
+
+4×3 DataFrame
+ Row │ name                mode   persistenceInPopularity95
+     │ String              Int64  Int64
+─────┼──────────────────────────────────────────────────────
+   1 │ Die With A Smile        0                      11238
+   2 │ BIRDS OF A FEATHER      1                      14043
+   3 │ Espresso                1                       6597
+   4 │ greedy                  0                       7658
+
+4×3 DataFrame
+ Row │ mode   is_explicit  frequency
+     │ Int64  Int64        Int64
+─────┼───────────────────────────────
+   1 │     0            0       5827
+   2 │     1            0       6611
+   3 │     1            1       6783
+   4 │     0            1       9885
