@@ -4,7 +4,7 @@ using DataFrames, Arrow, SQLite, CSV, DuckDB
 
 export is_available, get_ArrowTable, get_DataFrame
 
-const DB_PATH = "popular.db"
+const DB_PATH = "/content/popular.db"
 #=
 **********************************************
 =#
@@ -52,13 +52,12 @@ end
 **********************************************
 THIS FUNCTION IS ONLY A TEST AND IT MUSTN'T BE EXECUTED
 =#
-function main(args = ARGS)
+function main(csv_path::String, db_table::String)
 
     println("DATA SIZE~437 MB")
-    println("*"^40)
+    println("\n", "*"^40)
 
     db = SQLite.DB(DB_PATH)
-    csv_path = "songs.csv"
 
     csvstart = time()
     songs_csv = CSV.read(csv_path, DataFrame; header = true, delim = ',')
@@ -84,18 +83,12 @@ function main(args = ARGS)
                        )
     result= first(filter(:persistenceInPopularity => x -> x > 5000, dfModePopularity), 10)
 
-    dfMexMode = combine(groupby(filter(:country => x -> x == "MX", songs_csv),
-                                [:mode, :is_explicit]
-                                ),
-                        nrow => :frequency
-                )
     end_df = time()
     elap_df = round(end_df - start_df, digits = 4)
     println("\n$dfMode")
-    println("\n$result")
-    println("\n$dfMexMode\ntime~$elap_df")
+    println("\n$result\ntime~$elap_df")
 
-    if is_available(db, "songs")
+    if is_available(db, db_table)
 
             duck = nothing
 
@@ -106,7 +99,7 @@ function main(args = ARGS)
                 println("\n", "*"^40)
 
                 arrow_start = time()
-                duck_songs = get_ArrowTable(db, "songs")
+                duck_songs = get_ArrowTable(db, db_table)
                 arrow_end = time()
                 elap_arrow = round(arrow_end - arrow_start, digits = 4)
                 println("LECTURE TIME (EXPLICIT EXPORT), FROM CURSOR TO ARROW TABLE:\n$elap_arrow")
@@ -142,28 +135,14 @@ function main(args = ARGS)
                                  WHERE
                                      persistenceInPopularity95 > 5000
                 """
-                mexMode = """
-                          SELECT
-                              mode,
-                              is_explicit,
-                              COUNT(*) AS frequency
-                          FROM
-                              SONGS
-                          WHERE
-                              country = 'MX'
-                          GROUP BY
-                              mode, is_explicit
-                """
                 modeDuck = DBInterface.execute(duck, mode) |> DataFrame
                 popularityDuck = DBInterface.execute(duck, modePopularity) |> DataFrame
-                mexDuck = DBInterface.execute(duck, mexMode) |> DataFrame
                 duck_end = time()
                 elap_duck = round(duck_end - duck_start, digits = 4)
 
                 println("PROCESSING TIME, USING DUCKDB QUERIES: $elap_duck")
                 println("\n$modeDuck")
                 println("\n$popularityDuck")
-                println("\n$mexDuck")
 
             finally
 
@@ -184,6 +163,8 @@ end
 if Base.@isdefined(PROGRAM_FILE) &&
    abspath(PROGRAM_FILE) == abspath(@__FILE__)
 
-    main()
+    a = ARGS[1]
+    b = ARGS[2]
+    main(a, b)
 
 end
