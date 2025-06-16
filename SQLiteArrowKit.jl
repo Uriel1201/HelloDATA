@@ -1,10 +1,10 @@
 module SQLiteArrowKit
 
-using DataFrames, Arrow, SQLite, Downloads, CSV, DuckDB
+using DataFrames, Arrow, SQLite, CSV, DuckDB
 
 export is_available, get_ArrowTable, get_DataFrame
 
-const DB_PATH = "heart.db"
+const DB_PATH = "popular.db"
 #=
 **********************************************
 =#
@@ -53,21 +53,49 @@ end
 THIS FUNCTION IS ONLY A TEST AND IT MUSTN'T BE EXECUTED
 =#
 function main(args = ARGS)
-    
-    println("DATA SIZE ~ 82 MB")
-    println("\n", "*"^40)
+
+    println("DATA SIZE~437 MB")
+    println("*"^40)
 
     db = SQLite.DB(DB_PATH)
-    csv_path = "heart_2022_no_nans.csv"
+    csv_path = "songs.csv"
 
     csvstart = time()
-    heart_csv = CSV.read(csv_path, DataFrame)
+    songs_csv = CSV.read(csv_path, DataFrame; header = true, delim = ',')
     csvend = time()
     lecture_csv = round(csvend - csvstart, digits = 4)
-    println("\n", "*"^40)
-    println("LECTURE TIME, 'CSV TO DATAFRAME': $lecture_csv")
-    
-        if is_available(db, "heart_2022")
+    println("LECTURE TIME, FROM CSV TO DATAFRAMES: $lecture_csv")
+    println("PROCESSING TIME, USING DATAFRAMES:")
+
+    start_df = time()
+    dfMode = combine(groupby(songs_csv,
+                             "mode"
+                     ),
+                     nrow => :frequency
+             )
+    dfModePopularity = combine(groupby(filter(:popularity => x -> x > 95,
+                                       songs_csv
+                                       ),
+                                       [:spotify_id,
+                                        :name,
+                                        :mode]
+                               ),
+                               nrow => :persistenceInPopularity
+                       )
+    result= first(filter(:persistenceInPopularity => x -> x > 5000, dfModePopularity), 10)
+
+    dfMexMode = combine(groupby(filter(:country => x -> x == "MX", songs_csv),
+                                [:mode, :is_explicit]
+                                ),
+                        nrow => :frequency
+                )
+    end_df = time()
+    elap_df = round(end_df - start_df, digits = 4)
+    println("\n$dfMode")
+    println("\n$result")
+    println("\n$dfMexMode\ntime~$elap_df")
+
+    if is_available(db, "songs")
 
             duck = nothing
 
@@ -76,72 +104,66 @@ function main(args = ARGS)
                 duck = DBInterface.connect(DuckDB.DB, ":memory:")
 
                 println("\n", "*"^40)
-                start_cursor = time()
-                cursor_df = get_DataFrame(db, "heart_2022")
-                end_cursor = time()
-                lecture_cursor = round(end_cursor - start_cursor, digits = 4)
-                println("LECTURE TIME, 'DBInterface.Cursor() TO DATAFRAMES': $lecture_cursor")
-            
-                arrowstart = time()
-                duck_heart = get_ArrowTable(db, "heart_2022")
-                arrowend = time()
-                DuckDB.register_data_frame(duck, duck_heart, "HEART")
-                state = """
-                        SELECT
-                            State,
-                            COUNT(*) AS PERSONS
-                         FROM
-                             'HEART'
-                         GROUP BY
-                             State
-                         LIMIT 10
-                         """
-                sex = """
-                      SELECT
-                          Sex,
-                          COUNT(*) AS PERSONS
-                      FROM
-                          'HEART'
-                      GROUP BY
-                          Sex
-                      """
-                sex_state = """
-                            SELECT
-                                State,
-                                Sex,
-                                COUNT(*) AS PERSONS
-                            FROM
-                                'HEART'
-                            GROUP BY
-                                State, Sex
-                            LIMIT 10
-                            """
 
-                state_duck = DBInterface.execute(duck, state) |> DataFrame
-                sex_duck = DBInterface.execute(duck, sex) |> DataFrame
-                statesex_duck = DBInterface.execute(duck, sex_state) |> DataFrame
+                arrow_start = time()
+                duck_songs = get_ArrowTable(db, "songs")
                 arrow_end = time()
-                lecture_arrow = round(arrowend - arrowstart, digits = 4)
-                exec_arrow = round(arrow_end - arrowend, digits = 4)
-                println("\n", "*"^40)
-                println("CONVERSION-LECTURE TIME: 'DBInterface.Cursor() => DOC.ARROW => ArrowTable': $lecture_arrow\nPROCESSING TIME (DUCKDB QUERIES): $exec_arrow")
-                println("\n$sex_duck\n")
-                println("\n$state_duck\n")
-                println("\n$statesex_duck\n")
+                elap_arrow = round(arrow_end - arrow_start, digits = 4)
+                println("LECTURE TIME (EXPLICIT EXPORT), FROM CURSOR TO ARROW TABLE:\n$elap_arrow")
 
-                df_start = time()
-                heart_state = combine(groupby(heart_csv, :State), nrow => :Persons)
-                heart_sex = combine(groupby(heart_csv, :Sex), nrow => :Persons)
-                sex_state = combine(groupby(heart_csv, [:State, :Sex]), nrow => :Persons)
-                sample_1 = first(heart_state, 10)
-                sample_2 = first(sex_state, 10)
-                df_end = time()
-                exec_df = df_end - df_start
-                println("\n", "*"^40)
-                println("PROCESSING TIME (ANALYSIS IN DATAFRAMES): $exec_df")
-                println("\n$heart_sex\n")
-                println("\n$sample_1\n")
-                println("\n$sample_2\n")
+                duck_start = time()
+                DuckDB.register_data_frame(duck, duck_songs, "SONGS")
+                mode =  """
+                        SELECT
+                            mode,
+                            COUNT(*) AS frequency
+                        FROM
+                            SONGS
+                        GROUP BY
+                            mode
+                """
+                modePopularity = """
+                                 WITH
+                                     POPULAR AS(
+                                         SELECT
+                                             name,
+                                             mode,
+                                             COUNT(*) AS persistenceInPopularity95
+                                         FROM
+                                             SONGS
+                                         WHERE
+                                             popularity > 95
+                                         GROUP BY
+                                             spotify_id, name, mode)
+                                 SELECT
+                                     *
+                                 FROM
+                                     POPULAR
+                                 WHERE
+                                     persistenceInPopularity95 > 5000
+                """
+                mexMode = """
+                          SELECT
+                              mode,
+                              is_explicit,
+                              COUNT(*) AS frequency
+                          FROM
+                              SONGS
+                          WHERE
+                              country = 'MX'
+                          GROUP BY
+                              mode, is_explicit
+                """
+                modeDuck = DBInterface.execute(duck, mode) |> DataFrame
+                popularityDuck = DBInterface.execute(duck, modePopularity) |> DataFrame
+                mexDuck = DBInterface.execute(duck, mexMode) |> DataFrame
+                duck_end = time()
+                elap_duck = round(duck_end - duck_start, digits = 4)
+
+                println("PROCESSING TIME, USING DUCKDB QUERIES: $elap_duck")
+                println("\n$modeDuck")
+                println("\n$popularityDuck")
+                println("\n$mexDuck")
 
             finally
 
