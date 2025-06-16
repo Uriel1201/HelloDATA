@@ -30,7 +30,7 @@ def get_ArrowTable(conn:dbapi.AdbcSqliteConnection, table:str) -> pa.Table:
 #THIS FUNCTION IS ONLY A TEST AND IT MUSTN'T BE EXECUTED
 def main():
 
-    print(f'DATA SIZE~82MB')
+    print(f'DATA SIZE~437 MB')
     print("\n" + ":" * 50)
 
     start_csv = time.time()
