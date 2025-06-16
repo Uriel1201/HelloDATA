@@ -49,3 +49,61 @@ PROCESSING TIME, USING DUCKDB QUERIES: 0.8765
    2 │ BIRDS OF A FEATHER      1                      14043
    3 │ Espresso                1                       6597
    4 │ greedy                  0                       7658
+
+
+/*Python. */
+
+/*****************************************************************/
+DATA SIZE~437 MB
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+LECTURE TIME, FROM CSV TO POLARS (EAGER MODE):
+time~6.5959
+PROCESSING TIME, USING POLARS (EAGER MODE):
+
+shape: (2, 2)
+┌──────┬───────────┐
+│ mode ┆ frequency │
+│ ---  ┆ ---       │
+│ i64  ┆ u32       │
+╞══════╪═══════════╡
+│ 0    ┆ 978222    │
+│ 1    ┆ 1132094   │
+└──────┴───────────┘
+
+shape: (4, 4)
+┌────────────────────────┬────────────────────┬──────┬────────────────────────────┐
+│ spotify_id             ┆ name               ┆ mode ┆ persistenceInPopularity>95 │
+│ ---                    ┆ ---                ┆ ---  ┆ ---                        │
+│ str                    ┆ str                ┆ i64  ┆ u32                        │
+╞════════════════════════╪════════════════════╪══════╪════════════════════════════╡
+│ 2plbrEY59IikOBgBGLjaoe ┆ Die With A Smile   ┆ 0    ┆ 11238                      │
+│ 6dOtVTDdiauQNBQEDOtlAB ┆ BIRDS OF A FEATHER ┆ 1    ┆ 14043                      │
+│ 3rUGC1vUpkDG9CZFHMur1t ┆ greedy             ┆ 0    ┆ 7658                       │
+│ 2qSkIjg1o9h3YT9RAgYN75 ┆ Espresso           ┆ 1    ┆ 6597                       │
+└────────────────────────┴────────────────────┴──────┴────────────────────────────┘
+
+time~0.2714
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+LECTURE TIME, FROM CURSOR (NATIVE ARROW) TO ARROW TABLE: 8.9602
+PROCESSING TIME, USING DUCKDB QUERIES:
+┌───────┬───────────┐
+│ mode  │ frequency │
+│ int64 │   int64   │
+├───────┼───────────┤
+│     0 │    978222 │
+│     1 │   1132094 │
+└───────┴───────────┘
+
+┌────────────────────┬───────┬───────────────────────────┐
+│        name        │ mode  │ persistenceInPopularity95 │
+│      varchar       │ int64 │           int64           │
+├────────────────────┼───────┼───────────────────────────┤
+│ BIRDS OF A FEATHER │     1 │                     14043 │
+│ Espresso           │     1 │                      6597 │
+│ greedy             │     0 │                      7658 │
+│ Die With A Smile   │     0 │                     11238 │
+└────────────────────┴───────┴───────────────────────────┘
+
+time~1.8713
