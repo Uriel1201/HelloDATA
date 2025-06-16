@@ -86,7 +86,8 @@ function main(csv_path::String, db_table::String)
     end_df = time()
     elap_df = round(end_df - start_df, digits = 4)
     println("\n$dfMode")
-    println("\n$result\ntime~$elap_df")
+    println("\n$result\n")
+    println("\ntime~$elap_df")
 
     if is_available(db, db_table)
 
