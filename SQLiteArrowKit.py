@@ -1,4 +1,4 @@
-!python -m pip install adbc_driver_sqlite duckdb --upgrade
+#python -m pip install adbc_driver_sqlite duckdb --upgrade
 import adbc_driver_sqlite.dbapi as dbapi
 import polars as pol
 import pyarrow as pa
@@ -18,13 +18,9 @@ def is_available(conn:dbapi.AdbcSqliteConnection, table:str) -> bool:
 def get_ArrowTable(conn:dbapi.AdbcSqliteConnection, table:str) -> pa.Table:
 
     name = table.upper()
-    start_lecture = time.time()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM " + name)
-    end_lecture = time.time()
-    elapsed = round(end_lecture - start_lecture, 4)
-    print(f'LECTURE TIME, FROM DB TABLE TO CURSOR (NATIVE ARROW): {elapsed}')
-
+     
     return cursor.fetch_arrow_table()
 #============================================================
 #THIS FUNCTION IS ONLY A TEST AND IT MUSTN'T BE EXECUTED
@@ -39,29 +35,26 @@ def main():
                              has_header = True,
                              infer_schema_length = 1000,
                              ignore_errors = False
-    )
+    ).collect()
     end_csv = time.time()
     elapsed_csv = round(end_csv - start_csv, 4)
-    print(f'LECTURE TIME, FROM CSV TO POLARS (LAZY MODE):\ntime~{elapsed_csv}')
-    print(f'PROCESSING TIME, USING POLARS (LAZY MODE):')
+    print(f'LECTURE TIME, FROM CSV TO POLARS (EAGER MODE):\ntime~{elapsed_csv}')
+    print(f'PROCESSING TIME, USING POLARS (EAGER MODE):')
     start_polars = time.time()
     polMode = (songs_csv.group_by("mode")
                         .agg(pol.len().alias("frequency"))
-    ).collect()
+    )
     polModePopularity = (songs_csv.filter(pol.col("popularity") > 95)
                                   .group_by(["spotify_id", "name", "mode"])
                                   .agg(pol.len().alias("persistenceInPopularity>95"))
                                   .filter(pol.col("persistenceInPopularity>95") > 5000)
-    ).head(10).collect()
-    polMexMode = (songs_csv.filter(pol.col("country") == "MX")
-                           .group_by(["mode", "is_explicit"])
-                           .agg(pol.len().alias("frequency"))
-    ).collect()
+    ).head(10)
+   
     end_polars = time.time()
     elap_polars = round(end_polars - start_polars, 4)
-    print(f'{polMode}')
-    print(f'{polModePopularity}')
-    print(f'{polMexMode}\ntime~{elap_polars}')
+    print(f'\n{polMode}')
+    print(f'\n{polModePopularity}')
+    print(f'\ntime~{elap_polars}')
 
     conn = dbapi.connect("file:/content/drive/MyDrive/popular.db?mode=ro")
     if is_available(conn, "songs"):
@@ -107,21 +100,8 @@ def main():
                              WHERE
                                  persistenceInPopularity95 > 5000
             """
-            mexMode = """
-                      SELECT
-                          mode,
-                          is_explicit,
-                          COUNT(*) AS frequency
-                      FROM
-                          arrow_songs
-                      WHERE
-                          country = 'MX'
-                      GROUP BY
-                          mode, is_explicit
-            """
             duck.sql(mode).show()
             duck.sql(modePopularity).show()
-            duck.sql(mexMode).show()
             duck_end = time.time()
             elap_duck = round(duck_end - duck_start, 4)
             print(f'time~{elap_duck}')
