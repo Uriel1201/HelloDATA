@@ -40,7 +40,7 @@ def main(table:str):
                            )
             )
 
-            print("\n" + ":" * 50)
+            print("\n" + ":" * 40)
             print(f'USER STATISTICS, USING POLARS:\n{rates}')
 
             duck = duckdb.connect(":memory:")
@@ -77,7 +77,7 @@ def main(table:str):
             ORDER BY
                 1
             """
-            print("\n" + ":" * 50)
+            print("\n" + ":" * 40)
             print(f'USER STATISTICS, USING DUCKDB QUERIES:')
             duck.sql(query).show()
 
