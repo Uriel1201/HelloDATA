@@ -74,7 +74,7 @@ function main(args = ARGS)
             """
             duck_result = DBInterface.execute(duck, query) |> DataFrame
             println("\n", "*"^40)
-            println("MOST FREQUENT ITEM BY EACH DATE USING DUCKDB QUERIES:\n$duck_result")
+            println("MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:\n$duck_result")
 
             items = arrow_items |> DataFrame
             frequencies = combine(groupby(items,
@@ -91,7 +91,7 @@ function main(args = ARGS)
                               frequencies 
                        )
             println("\n", "*"^40)
-            println("MOST FREQUENT ITEM BY EACH DATE USING DATAFRAMES:\n$filtered")
+            println("MOST FREQUENTED ITEM BY EACH DATE USING DATAFRAMES:\n$filtered")
         finally
 
             DBInterface.close!(duck)
