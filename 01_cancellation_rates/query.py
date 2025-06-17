@@ -34,9 +34,8 @@ def main(table:str):
                           .drop('DATES')
                           .group_by('USER_ID')
                           .agg(pol.col('*').sum())
-                          .select(pol.col('USER_ID'),
-                                  publish_rate = pol.col('ACTION_publish') / pol.col('ACTION_start'),
-                                  cancel_rate = pol.col('ACTION_cancel') / pol.col('ACTION_start')
+                          .with_columns(publish_rate = pol.col('ACTION_publish') / pol.col('ACTION_start'),
+                                        cancel_rate = pol.col('ACTION_cancel') / pol.col('ACTION_start')
                            )
             )
 
