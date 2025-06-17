@@ -1,3 +1,6 @@
+/* 
+Rust. 
+*************************************************/
 Standard Error
    Compiling playground v0.0.1 (/playground)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.29s
