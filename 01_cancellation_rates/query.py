@@ -1,39 +1,91 @@
-# python -m pip install oracledb numpy pyarrow polars --upgrade
-# import numpy as np
-# import polars as pl
-# import oracledb
-# import pyarrow
+#python -m pip install adbc_driver_sqlite duckdb --upgrade
+import requests
 
-try:
-    # You need to write your credentials in the following connection.
-    conn = oracledb.connect(user = "[Username]", password = "[Password]", dsn = "localhost:1521/FREEPDB1")
-    table = "SELECT * FROM USERS_P1"
-    odf = conn.fetch_df_all(statement = table, arraysize = 100)
-    pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
-    users = pl.from_arrow(pyarrow_table)
-    
-    '''
-    Alternative 2: Querying directly from this repository 
-    url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/01_cancellation_rates/data.tsv"
-    users = pl.scan_csv(url,
-                        separator="\t",
-                        has_header=True,
-                        infer_schema_length=1000,
-                        ignore_errors=False
-    )
-    users = users.collect()
-    '''
-    print(f'users table SAMPLE(5):\n{users.head(5)}')
-    rates = (users.to_dummies(columns = 'ACTION')
-                  .drop('DATES')
-                  .group_by('USER_ID')
-                  .agg(pl.col('*').sum())
-                  .select(pl.col('USER_ID'),
-                          publish_rate = pl.col('ACTION_publish') / pl.col('ACTION_start'),
-                          cancel_rate = pl.col('ACTION_cancel') / pl.col('ACTION_start')
-                   )
-    )
-    print(f'Rates for each user:\n{rates}')                 
+arrow_kit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.py"
+my_db = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.db"
+response1 = requests.get(arrow_kit)
+response2 = requests.get(my_db)
+with open('arrowkit.py', 'wb') as f:
+    f.write(response1.content)
 
-finally:
-    conn.close()
+with open("my_SQLite.db", "wb") as f:
+    f.write(response2.content)
+
+import adbc_driver_sqlite.dbapi as dbapi
+import polars as pol
+import pyarrow as pa
+import duckdb
+import arrowkit
+
+def main(table:str):
+
+    conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
+
+    if arrowkit.is_available(conn, table) and (table == "users_01"):
+
+        try:
+
+            arrow_users = arrowkit.get_ArrowTable(conn, table)
+            users = pol.from_arrow(arrow_users)
+
+            print("\n" + ":" * 40)
+            print(f'USERS TABLE USING POLARS:\n{users.head(5)}')
+            rates = (users.to_dummies(columns = 'ACTION')
+                          .drop('DATES')
+                          .group_by('USER_ID')
+                          .agg(pol.col('*').sum())
+                          .select(pol.col('USER_ID'),
+                                  publish_rate = pol.col('ACTION_publish') / pol.col('ACTION_start'),
+                                  cancel_rate = pol.col('ACTION_cancel') / pol.col('ACTION_start')
+                           )
+            )
+
+            print("\n" + ":" * 50)
+            print(f'USER STATISTICS, USING POLARS:\n{rates}')
+
+            duck = duckdb.connect(":memory:")
+
+            query = """
+            WITH
+                DUCK_UPDATED AS (
+                    SELECT
+                        USER_ID,
+                        ACTION,
+                        STRFTIME(STRPTIME(DATES, '%d-%b-%y'), '%Y-%m-%d')::DATE AS DATES
+                    FROM
+                        arrow_users),
+                TOTALS AS (
+                    SELECT
+                        USER_ID,
+                        SUM(IF(ACTION = 'start',1,0)) AS TOTAL_STARTS,
+                        SUM(IF(ACTION = 'cancel',1,0)) AS TOTAL_CANCELS,
+                        SUM(IF(ACTION = 'publish',1,0)) AS TOTAL_PUBLISHES
+                    FROM
+                        DUCK_UPDATED
+                    GROUP BY
+                        USER_ID)
+            SELECT
+                USER_ID,
+                ROUND(TOTAL_PUBLISHES / NULLIF(TOTAL_STARTS,
+                                               0),
+                      2) AS PUBLISH_RATE,
+                ROUND(TOTAL_CANCELS / NULLIF(TOTAL_STARTS,
+                                             0),
+                      2) AS CANCEL_RATE
+            FROM
+                TOTALS
+            ORDER BY
+                1
+            """
+            print("\n" + ":" * 50)
+            print(f'USER STATISTICS, USING DUCKDB QUERIES:')
+            duck.sql(query).show()
+
+        finally:
+
+            conn.close()
+            duck.close()
+
+    else:
+  
+        print(f'table {table} not available')
