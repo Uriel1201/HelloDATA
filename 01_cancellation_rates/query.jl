@@ -1,12 +1,7 @@
 #=using Pkg
-
 packages = ["SQLite", "Tables", "DataFrames", "Arrow", "Downloads", "DuckDB"]
-
-for pkg in packages
-
-    Pkg.add(pkg)
-
-end=#
+Pkg.add(packages)
+=#
 
 DB_PATH = "my_SQLite.db"
 
