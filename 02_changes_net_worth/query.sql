@@ -51,25 +51,36 @@ ORDER BY
 /* DUCKDB. */
 
 /********************************************************************/
-SELECT * FROM TRANSACTIONS;
+SELECT 
+    * 
+FROM 
+    TRANSACTIONS;
 
-WITH SENDERS AS (SELECT
-                     SENDER,
-                     SUM(AMOUNT) AS SENDED
-                 FROM 
-                     TRANSACTIONS
-                 GROUP BY
-                     SENDER),
-RECEIVERS AS (SELECT
-                  RECEIVER,
-                  SUM(AMOUNT) AS RECEIVED
-              FROM
-                  TRANSACTIONS
-              GROUP BY
-                  RECEIVER) SELECT
-                                COALESCE(S.SENDER, R.RECEIVER) AS USER_ID,
-                                COALESCE(R.RECEIVED, 0) - COALESCE(S.SENDED, 0) AS NET_CHANGE
-                            FROM
-                                RECEIVERS R
-                            FULL JOIN SENDERS S ON (R.RECEIVER = S.SENDER)
-                            ORDER BY 2 DESC;
+WITH 
+    SENDERS AS (
+        SELECT
+            SENDER,
+            SUM(AMOUNT) AS SENDED
+        FROM 
+            TRANSACTIONS
+        GROUP BY
+            SENDER),
+    RECEIVERS AS (
+        SELECT
+            RECEIVER,
+            SUM(AMOUNT) AS RECEIVED
+        FROM
+            TRANSACTIONS
+        GROUP BY
+            RECEIVER) 
+SELECT
+    COALESCE(S.SENDER, R.RECEIVER) AS USER_ID,
+    COALESCE(R.RECEIVED, 0) - COALESCE(S.SENDED, 0) AS NET_CHANGE
+FROM
+    RECEIVERS R 
+        FULL JOIN 
+            SENDERS S 
+        ON 
+            (R.RECEIVER = S.SENDER)
+ORDER BY 
+    2 DESC;
