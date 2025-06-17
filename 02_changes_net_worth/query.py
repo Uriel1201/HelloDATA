@@ -1,69 +1,96 @@
-# python -m pip install oracledb numpy pyarrow polars --upgrade
-# import numpy as np
-# import polars as pl
-# import oracledb
-# import pyarrow
+#python -m pip install adbc_driver_sqlite duckdb --upgrade
+import requests
 
-try:
-    #---------------------------------------------------------
-    # You need to write your credentials in the following connection.
-    conn = oracledb.connect(user = "[Username]", password = "[Password]", dsn = "localhost:1521/FREEPDB1")
-    table = "SELECT * FROM TRANSACTIONS_P2"
-    odf = conn.fetch_df_all(statement = table, arraysize = 100)
-    pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
-    transactions = pl.from_arrow(pyarrow_table).lazy()
-    #---------------------------------------------------------
+arrow_kit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.py"
+my_db = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.db"
+response1 = requests.get(arrow_kit)
+response2 = requests.get(my_db)
+with open('arrowkit.py', 'wb') as f:
+    f.write(response1.content)
 
-    '''
-    Alternative 2: Querying directly from this repository 
-    url = "https://raw.githubusercontent.com/Uriel1201/HelloSQL2.0/refs/heads/main/02_changes_net_worth/data.tsv"
-    transactions = pl.scan_csv(url,
-                               separator = "\t",
-                               has_header = True,
-                               infer_schema_length = 1000,
-                               ignore_errors = False
-                      )
-    '''
-    
-    space = "#---------------------------------------------------------"
-    sample = transactions.head(5)
-    print(f'\n {space}')
-    print(f'\n Transactions table -> SAMPLE:\n{sample.collect()}')
+with open("my_SQLite.db", "wb") as f:
+    f.write(response2.content)
 
-    _type = (sample.unpivot(on = ['SENDER', 'RECEIVER'],
-                            index = 'AMOUNT',
-                            variable_name = 'TYPE',
-                            value_name = 'USER_ID'
-                    )
-                   .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
-                                           .then(pl.col('AMOUNT') * -1)
-                                           .otherwise(pl.col('AMOUNT'))
-                                           .alias('AMOUNT')
-                                )
+import adbc_driver_sqlite.dbapi as dbapi
+import polars as pol
+import pyarrow as pa
+import duckdb
+import arrowkit
+
+def main(table:str):
+
+    conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
+
+    if arrowkit.is_available(conn, table) and (table == "transactions_02"):
+
+        try:
+
+            duck = duckdb.connect(":memory:")
+       
+            arrow_transactions = arrowkit.get_ArrowTable(conn, table)
+            transactions= pol.from_arrow(arrow_transactions).lazy()
+
+            sample = transactions.head(5)
+            print("\n" + ":"*40)
+            print(f'TRANSACTIONS TABLE USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
+            _type = (transactions.unpivot(on = ['SENDER', 'RECEIVER'],
+                                         index = 'AMOUNT',
+                                         variable_name = 'TYPE',
+                                         value_name = 'USER_ID'
+                                 )
+                                .with_columns(pol.when(pol.col('TYPE') == 'SENDER')
+                                                 .then(pol.col('AMOUNT') * -1)
+                                                 .otherwise(pol.col('AMOUNT'))
+                                                 .alias('AMOUNT')
+                                 )
+                                .group_by(pol.col('USER_ID'))
+                                .agg(pol.col('AMOUNT').sum())
+                                .sort(by = 'AMOUNT', 
+                                     descending = True
+                                 )
             )
-    print(f'\n {space}')
-    print(f'\n Type of transaction made by each user -> SAMPLE:\n{_type.collect()}')
-    
-    changes = (transactions.unpivot(on = ['SENDER','RECEIVER']
-                                    ,index = 'AMOUNT' 
-                                    ,variable_name = 'TYPE' 
-                                    ,value_name = 'USER_ID'
-                            )
-                           .with_columns(pl.when(pl.col('TYPE') == 'SENDER')
-                                           .then(pl.col('AMOUNT') * -1)
-                                           .otherwise(pl.col('AMOUNT'))
-                                           .alias('AMOUNT')
-                            )
-                           .group_by('USER_ID')
-                           .agg(pl.col('AMOUNT')
-                                  .sum()
-                            )
-                           .sort(by = 'AMOUNT' 
-                                 ,descending = True
-                            )
-              )
-    print(f'\n {space}')
-    print(f'\n Net changes:\n{changes.collect()}')                 
+            print("\n" + ":" * 40)
+            print(f'NET CHANGES USING POLARS LAZYFRAMES:\n{_type.collect()}')
 
-finally:
-    conn.close()
+            query = """
+                    WITH 
+                        SENDERS AS (
+                            SELECT
+                                SENDER,
+                                SUM(AMOUNT) AS SENDED
+                            FROM 
+                                'arrow_transactions'
+                            GROUP BY
+                                SENDER),
+                        RECEIVERS AS (
+                            SELECT
+                                RECEIVER,
+                                SUM(AMOUNT) AS RECEIVED
+                            FROM
+                                'arrow_transactions'
+                            GROUP BY
+                                RECEIVER) 
+                    SELECT
+                        COALESCE(S.SENDER, R.RECEIVER) AS USER_ID,
+                        COALESCE(R.RECEIVED, 0) - COALESCE(S.SENDED, 0) AS NET_CHANGE
+                    FROM
+                        RECEIVERS R 
+                    FULL JOIN 
+                        SENDERS S 
+                    ON 
+                        (R.RECEIVER = S.SENDER)
+                    ORDER BY 
+                        2 DESC
+            """
+            print("\n" + ":" * 40)
+            print(f'NET CHANGES USING DUCKDB QUERIES:')
+            duck.sql(query).show()
+
+        finally:
+
+            duck.close()
+            conn.close()
+
+    else:
+
+        print(f'TABLE {table} NOT AVAILABLE')
