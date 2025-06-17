@@ -91,7 +91,7 @@ function main(args = ARGS)
                               frequencies 
                        )
             println("\n", "*"^40)
-            println("MOST FREQUENT ITEM BY EACH DATE USING DATAFRAMES\n$filtered")
+            println("MOST FREQUENT ITEM BY EACH DATE USING DATAFRAMES:\n$filtered")
         finally
 
             DBInterface.close!(duck)
