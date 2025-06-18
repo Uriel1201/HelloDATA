@@ -157,7 +157,7 @@ function main(args = ARGS)
 
     else
 
-        println("$args TABLE NOT VALID")
+        println("TABLE $args NOT VALIDATED")
 
     end
 
