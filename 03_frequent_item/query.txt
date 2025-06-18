@@ -23,6 +23,40 @@ Item: "pear" -> in date: Some(2020-01-02)
 /* 
 Julia. 
 *************************************************/
+┌ Info: arrow table created:
+│   conversion_time = 4.7823
+└   lecture_time = 1.1942
+
+****************************************
+ITEMS TABLE USING DUCKDB QUERIES -> SAMPLE:
+3×2 DataFrame
+ Row │ DATES      ITEM
+     │ String     String
+─────┼───────────────────
+   1 │ 01-jan-20  pear
+   2 │ 02-jan-20  pear
+   3 │ 02-jan-20  orange
+
+****************************************
+MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:
+3×2 DataFrame
+ Row │ DATES      ITEM
+     │ String     String
+─────┼───────────────────
+   1 │ 01-jan-20  apple
+   2 │ 01-jan-20  pear
+   3 │ 02-jan-20  pear
+
+****************************************
+MOST FREQUENTED ITEM BY EACH DATE USING DATAFRAMES:
+3×4 DataFrame
+ Row │ DATES      ITEM    FREQUENCIES  RANK
+     │ String     String  Int64        Int64
+─────┼───────────────────────────────────────
+   1 │ 01-jan-20  apple             2      1
+   2 │ 01-jan-20  pear              2      1
+   3 │ 02-jan-20  pear              3      1
+
 /* 
 Python. 
 *************************************************/
