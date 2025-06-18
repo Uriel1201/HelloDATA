@@ -1,14 +1,8 @@
 #=using Pkg
-
 packages = ["SQLite", "Tables", "DataFrames",
             "Arrow", "Downloads", "DuckDB",
             "ShiftedArrays"]
-
-for pkg in packages
-
-    Pkg.add(pkg)
-
-end=#
+Pkg.add(packages)=#
 
 DB_PATH = "my_SQLite.db"
 
@@ -125,7 +119,7 @@ function main(args = ARGS)
                     PENULTIMATE_DATES P
                 USING (ID)
             ORDER BY
-                1;
+                1
             """
             duck_result = DBInterface.execute(duck, query) |> DataFrame
             println("\n", "*"^40)
@@ -153,7 +147,7 @@ function main(args = ARGS)
                     )
             users.ELAPSED_DAYS = passmissing(x -> x.value).(users.ELAPSED_DAYS)
             println("\n", "*"^40)
-            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DATAFRAMES\n$users")
+            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DATAFRAMES:\n$users")
 
         finally
 
