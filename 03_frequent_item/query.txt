@@ -1,3 +1,6 @@
+/* 
+Rust. 
+*************************************************/
 Execution
 Close
 Standard Error
@@ -16,3 +19,46 @@ MOST FREQUENTED ITEMS:
 Item: "apple" -> in date: Some(2020-01-01)
 Item: "pear" -> in date: Some(2020-01-01)
 Item: "pear" -> in date: Some(2020-01-02)
+
+/* 
+Julia. 
+*************************************************/
+/* 
+Python. 
+*************************************************/
+::::::::::::::::::::::::::::::::::::::::
+ITEMS TABLE USING POLARS LAZYFRAMES -> SAMPLE:
+shape: (5, 2)
+┌───────────┬───────┐
+│ DATES     ┆ ITEM  │
+│ ---       ┆ ---   │
+│ str       ┆ str   │
+╞═══════════╪═══════╡
+│ 01-jan-20 ┆ apple │
+│ 01-jan-20 ┆ apple │
+│ 01-jan-20 ┆ pear  │
+│ 01-jan-20 ┆ pear  │
+│ 02-jan-20 ┆ pear  │
+└───────────┴───────┘
+::::::::::::::::::::::::::::::::::::::::
+MOST FREQUENTED ITEM BY EACH DATE USING POLARS LAZYFRAMES:
+shape: (3, 4)
+┌───────────┬───────┬───────────┬───────────────┐
+│ DATES     ┆ ITEM  ┆ FREQUENCY ┆ MAX_FREQUENCY │
+│ ---       ┆ ---   ┆ ---       ┆ ---           │
+│ str       ┆ str   ┆ u32       ┆ u32           │
+╞═══════════╪═══════╪═══════════╪═══════════════╡
+│ 01-jan-20 ┆ pear  ┆ 2         ┆ 2             │
+│ 02-jan-20 ┆ pear  ┆ 3         ┆ 3             │
+│ 01-jan-20 ┆ apple ┆ 2         ┆ 2             │
+└───────────┴───────┴───────────┴───────────────┘
+::::::::::::::::::::::::::::::::::::::::
+MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:
+┌───────────┬─────────┐
+│   DATES   │  ITEM   │
+│  varchar  │ varchar │
+├───────────┼─────────┤
+│ 01-jan-20 │ pear    │
+│ 01-jan-20 │ apple   │
+│ 02-jan-20 │ pear    │
+└───────────┴─────────┘
