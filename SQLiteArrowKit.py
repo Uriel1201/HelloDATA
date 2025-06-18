@@ -18,10 +18,9 @@ def is_available(conn:dbapi.AdbcSqliteConnection, table:str) -> bool:
 def get_ArrowTable(conn:dbapi.AdbcSqliteConnection, table:str) -> pa.Table:
 
     name = table.upper()
-
     with conn.cursor() as cursor:
         
-        cursor.execute("SELECT * FROM " + name)
+        cursor.execute("SELECT * FROM ?", name)
         return cursor.fetch_arrow_table()
 #============================================================
 #THIS FUNCTION IS ONLY A TEST AND IT MUSTN'T BE EXECUTED
