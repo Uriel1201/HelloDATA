@@ -1,4 +1,4 @@
-#python -m pip install adbc_driver_sqlite duckdb --upgrade
+#python -m pip install adbc_driver_sqlite --upgrade
 import requests
 
 arrow_kit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.py"
@@ -14,21 +14,19 @@ with open("my_SQLite.db", "wb") as f:
 import adbc_driver_sqlite.dbapi as dbapi
 import polars as pol
 import pyarrow as pa
-import duckdb
 import arrowkit
 
 def main(table:str):
 
     conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
-
-    if arrowkit.is_available(conn, table) and (table == "users_01"):
+    name = table.upper()
+    if (name == "USERS_01"):
 
         try:
 
             arrow_users = arrowkit.get_ArrowTable(conn, table)
             users = pol.from_arrow(arrow_users)
 
-            print("\n" + ":" * 40)
             print(f'USERS TABLE USING POLARS:\n{users.head(5)}')
             rates = (users.to_dummies(columns = 'ACTION')
                           .drop('DATES')
@@ -39,51 +37,39 @@ def main(table:str):
                            )
             )
 
-            print("\n" + ":" * 40)
+            print(":" * 40)
             print(f'USER STATISTICS, USING POLARS:\n{rates}')
 
-            duck = duckdb.connect(":memory:")
-
             query = """
-            WITH
-                DUCK_UPDATED AS (
-                    SELECT
-                        USER_ID,
-                        ACTION,
-                        STRFTIME(STRPTIME(DATES, '%d-%b-%y'), '%Y-%m-%d')::DATE AS DATES
-                    FROM
-                        arrow_users),
-                TOTALS AS (
-                    SELECT
-                        USER_ID,
-                        SUM(IF(ACTION = 'start',1,0)) AS TOTAL_STARTS,
-                        SUM(IF(ACTION = 'cancel',1,0)) AS TOTAL_CANCELS,
-                        SUM(IF(ACTION = 'publish',1,0)) AS TOTAL_PUBLISHES
-                    FROM
-                        DUCK_UPDATED
-                    GROUP BY
-                        USER_ID)
+                    WITH
+                        TOTALS AS (
+                            SELECT
+                                USER_ID,
+                                1.0 * SUM(CASE WHEN ACTION = "start" THEN 1 ELSE 0 END) AS TOTAL_STARTS,
+                                1.0 * SUM(CASE WHEN ACTION = "cancel" THEN 1 ELSE 0 END) AS TOTAL_CANCELS,
+                                1.0 * SUM(CASE WHEN ACTION = "publish" THEN 1 ELSE 0 END) AS TOTAL_PUBLISHES
+                            FROM
+                                USERS_01
+                            GROUP BY
+                                USER_ID)
             SELECT
                 USER_ID,
-                ROUND(TOTAL_PUBLISHES / NULLIF(TOTAL_STARTS,
-                                               0),
-                      2) AS PUBLISH_RATE,
-                ROUND(TOTAL_CANCELS / NULLIF(TOTAL_STARTS,
-                                             0),
-                      2) AS CANCEL_RATE
+                TOTAL_PUBLISHES / NULLIF(TOTAL_STARTS, 0) AS PUBLISH_RATE,
+                TOTAL_CANCELS / NULLIF(TOTAL_STARTS, 0) AS CANCEL_RATE
             FROM
                 TOTALS
             ORDER BY
                 1
             """
-            print("\n" + ":" * 40)
-            print(f'USER STATISTICS, USING DUCKDB QUERIES:')
-            duck.sql(query).show()
+            result = arrowkit.get_ArrowTable(conn, query)
+            df = result.to_pandas()
+            print(":" * 40)
+            print(f'USER STATISTICS, USING QUERIES:\n{result}')
+            print(f'<*pandas visualization*>\n{df}')
 
         finally:
 
             conn.close()
-            duck.close()
 
     else:
   
