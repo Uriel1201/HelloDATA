@@ -1,4 +1,4 @@
-#python -m pip install adbc_driver_sqlite duckdb --upgrade
+#python -m pip install adbc_driver_sqlite --upgrade
 import requests
 
 arrow_kit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.py"
@@ -14,24 +14,21 @@ with open("my_SQLite.db", "wb") as f:
 import adbc_driver_sqlite.dbapi as dbapi
 import polars as pol
 import pyarrow as pa
-import duckdb
 import arrowkit
 
 def main(table:str):
 
     conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
-
-    if arrowkit.is_available(conn, table) and (table == "transactions_02"):
+    name = table.upper()
+    if (name == "TRANSACTIONS_02"):
 
         try:
 
-            duck = duckdb.connect(":memory:")
-       
             arrow_transactions = arrowkit.get_ArrowTable(conn, table)
-            transactions= pol.from_arrow(arrow_transactions).lazy()
+            transactions = pol.from_arrow(arrow_transactions).lazy()
 
             sample = transactions.head(5)
-            print("\n" + ":"*40)
+            print(":"*40)
             print(f'TRANSACTIONS TABLE USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
             _type = (transactions.unpivot(on = ['SENDER', 'RECEIVER'],
                                          index = 'AMOUNT',
@@ -59,7 +56,7 @@ def main(table:str):
                                 SENDER,
                                 SUM(AMOUNT) AS SENDED
                             FROM 
-                                'arrow_transactions'
+                                TRANSACTIONS_02
                             GROUP BY
                                 SENDER),
                         RECEIVERS AS (
@@ -67,7 +64,7 @@ def main(table:str):
                                 RECEIVER,
                                 SUM(AMOUNT) AS RECEIVED
                             FROM
-                                'arrow_transactions'
+                                TRANSACTIONS_02
                             GROUP BY
                                 RECEIVER) 
                     SELECT
@@ -82,13 +79,14 @@ def main(table:str):
                     ORDER BY 
                         2 DESC
             """
+            result = arrowkit.get_ArrowTable(conn, query)
+            df = result.to_pandas()
             print("\n" + ":" * 40)
-            print(f'NET CHANGES USING DUCKDB QUERIES:')
-            duck.sql(query).show()
+            print(f'NET CHANGES USING QUERIES:\n{result}')
+            print(f'<*pandas visualization*>\n{df}')
 
         finally:
 
-            duck.close()
             conn.close()
 
     else:
