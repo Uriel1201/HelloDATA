@@ -1,4 +1,4 @@
-#!python -m pip install adbc_driver_sqlite duckdb --upgrade
+#python -m pip install adbc_driver_sqlite --upgrade
 import requests
 
 arrow_kit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.py"
@@ -14,18 +14,16 @@ with open("my_SQLite.db", "wb") as f:
 import adbc_driver_sqlite.dbapi as dbapi
 import polars as pol
 import pyarrow as pa
-import duckdb
 import arrowkit
+import pandas as pd
 
 def main(table:str):
 
     conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
 
-    if arrowkit.is_available(conn, table) and (table == "items_03"):
+    if (table == "items_03"):
 
         try:
-
-            duck = duckdb.connect(":memory:")
        
             arrow_items = arrowkit.get_ArrowTable(conn, table)
             items = pol.from_arrow(arrow_items).lazy()
@@ -55,7 +53,7 @@ def main(table:str):
                                 ITEM, 
                                 COUNT(*) AS FREQUENCY 
                             FROM 
-                                'arrow_items'
+                                ITEMS_03
                             GROUP BY 
                                 DATES, 
                                 ITEM),
@@ -79,13 +77,14 @@ def main(table:str):
             ORDER BY
                 1
             """
+            result = arrowkit.get_ArrowTable(conn, query)
+            df = result.to_pandas()
             print(":" * 40)
-            print(f'MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:')
-            duck.sql(query).show()
-
+            print(f'MOST FREQUENTED ITEM BY EACH DATE USING QUERIES:\n{result}')
+            print(f'<*pandas visualization*>\n{df}')
+ 
         finally:
 
-            duck.close()
             conn.close()
 
     else:
