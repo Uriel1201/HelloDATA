@@ -81,16 +81,19 @@ shape: (3, 4)
 │ str       ┆ str   ┆ u32       ┆ u32           │
 ╞═══════════╪═══════╪═══════════╪═══════════════╡
 │ 01-jan-20 ┆ pear  ┆ 2         ┆ 2             │
-│ 02-jan-20 ┆ pear  ┆ 3         ┆ 3             │
 │ 01-jan-20 ┆ apple ┆ 2         ┆ 2             │
+│ 02-jan-20 ┆ pear  ┆ 3         ┆ 3             │
 └───────────┴───────┴───────────┴───────────────┘
 ::::::::::::::::::::::::::::::::::::::::
-MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:
-┌───────────┬─────────┐
-│   DATES   │  ITEM   │
-│  varchar  │ varchar │
-├───────────┼─────────┤
-│ 01-jan-20 │ pear    │
-│ 01-jan-20 │ apple   │
-│ 02-jan-20 │ pear    │
-└───────────┴─────────┘
+MOST FREQUENTED ITEM BY EACH DATE USING QUERIES:
+pyarrow.Table
+DATES: string
+ITEM: string
+----
+DATES: [["01-jan-20","01-jan-20","02-jan-20"]]
+ITEM: [["apple","pear","pear"]]
+<*pandas visualization*>
+       DATES   ITEM
+0  01-jan-20  apple
+1  01-jan-20   pear
+2  02-jan-20   pear
