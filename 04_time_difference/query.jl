@@ -1,21 +1,3 @@
-#=using Pkg
-packages = ["SQLite", "Tables", "DataFrames",
-            "Arrow", "Downloads", "DuckDB",
-            "ShiftedArrays"]
-Pkg.add(packages)=#
-
-DB_PATH = "my_SQLite.db"
-
-using Downloads
-
-arrowkit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.jl"
-Downloads.download(arrowkit,"arrowkit.jl")
-db_url = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.jl"
-Downloads.download(db_url, "database.jl")
-
-include("database.jl")
-include("arrowkit.jl")
-
 using .MyDataBase, DataFrames, ShiftedArrays, Dates, Arrow, SQLite, DuckDB, .SQLiteArrowKit
 
 MyDataBase.main()
@@ -23,7 +5,7 @@ MyDataBase.main()
 **********************************************
 =#
 function year_format(my_date::String)::String
- 
+
     parts = split(my_date, "-")
     if length(parts) != 3
 
@@ -39,11 +21,11 @@ function year_format(my_date::String)::String
     end
 
     try
-    
+
         year_2d = parse(Int, my_year)
         year_4d = year_2d >= 70 ? 1900 + year_2d : 2000 + year_2d
 
-        return join([parts[1], parts[2], string(year_4d)], "-") 
+        return join([parts[1], parts[2], string(year_4d)], "-")
 
     catch
 
@@ -126,8 +108,8 @@ function main(args = ARGS)
             println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DUCKDB QUERIES:\n$duck_result")
 
             users = arrow_users |> DataFrame
-            transform!(users, 
-                       :ACTION_DATE => (x -> Date.(year_format.(x), 
+            transform!(users,
+                       :ACTION_DATE => (x -> Date.(year_format.(x),
                                                    Ref(dateformat"d-u-y")
                                              )) => :ACTION_DATE
             )
@@ -135,19 +117,21 @@ function main(args = ARGS)
                          [:ID, :ACTION_DATE],
                          rev = [false, true]
                     )
-            transform!(groupby(users, 
+            transform!(groupby(users,
                                :ID
                        ),
                        :ACTION_DATE => (x -> (x .- ShiftedArrays.lead(x, 1))) => :ELAPSED_DAYS
             )
-            users = combine(groupby(users, 
+            println("\n", "*"^40)
+            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DATAFRAMES:\n$users")
+
+            users = combine(groupby(users,
                                     :ID
-                            ), 
+                            ),
                             :ELAPSED_DAYS => first => :ELAPSED_DAYS
                     )
             users.ELAPSED_DAYS = passmissing(x -> x.value).(users.ELAPSED_DAYS)
-            println("\n", "*"^40)
-            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DATAFRAMES:\n$users")
+            println("\n$users")
 
         finally
 
