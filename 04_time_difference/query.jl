@@ -1,3 +1,4 @@
+const DB_PATH = "my_SQLite.db"
 using .MyDataBase, DataFrames, ShiftedArrays, Dates, Arrow, SQLite, DuckDB, .SQLiteArrowKit
 
 MyDataBase.main()
