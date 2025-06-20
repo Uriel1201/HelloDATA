@@ -1,16 +1,3 @@
-#python -m pip install adbc_driver_sqlite --upgrade
-import requests
-
-arrow_kit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.py"
-my_db = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.db"
-response1 = requests.get(arrow_kit)
-response2 = requests.get(my_db)
-with open('arrowkit.py', 'wb') as f:
-    f.write(response1.content)
-
-with open("my_SQLite.db", "wb") as f:
-    f.write(response2.content)
-
 import adbc_driver_sqlite.dbapi as dbapi
 import polars as pol
 import pyarrow as pa
