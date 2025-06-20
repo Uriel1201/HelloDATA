@@ -1,19 +1,4 @@
-#=using Pkg
-packages = ["SQLite", "Tables", "DataFrames", "Arrow", "Downloads", "DuckDB"]
-Pkg.add(packages)
-=#
-DB_PATH = "my_SQLite.db"
-
-using Downloads
-
-arrowkit = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/SQLiteArrowKit.jl"
-Downloads.download(arrowkit,"arrowkit.jl")
-db_url = "https://github.com/Uriel1201/HelloDATA/raw/refs/heads/main/my_SQLite.jl"
-Downloads.download(db_url, "database.jl")
-
-include("database.jl")
-include("arrowkit.jl")
-
+const DB_PATH = "my_SQLite.db"
 using .MyDataBase, DataFrames, Arrow, SQLite, DuckDB, .SQLiteArrowKit
 
 MyDataBase.main()
