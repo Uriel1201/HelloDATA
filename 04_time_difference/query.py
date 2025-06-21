@@ -1,58 +1,105 @@
-# python -m pip install oracledb numpy pyarrow polars --upgrade
-# import numpy as np
-# import polars as pl
-# import oracledb
-# import pyarrow
+import adbc_driver_sqlite.dbapi as dbapi
+import polars as pol
+import pyarrow as pa
+import arrowkit
+import pandas as pd
+import duckdb
 
-try:
-    # You need to write your credentials in the following connection.
-    conn = oracledb.connect(user = "[Username]", password = "[Password]", dsn = "localhost:1521/FREEPDB1")
-    table = "SELECT * FROM USERS_P4"
-    odf = conn.fetch_df_all(statement = table, arraysize = 100)
-    pyarrow_table = pyarrow.Table.from_arrays(odf.column_arrays(), names = odf.column_names())
-    users = pl.from_arrow(pyarrow_table).lazy()
+def main(table:str):
 
-    '''
-    Alternative 2: Querying directly from this repository 
-    url = "https://raw.githubusercontent.com/Uriel1201/HelloDATA/refs/heads/main/04_time_difference/data.tsv"
-    users = pl.scan_csv(url,
-                        separator = "\t",
-                        has_header = True,
-                        infer_schema_length = 1000,
-                        ignore_errors = False
-               )
-    '''
-    
-    sample = users.head(5)
-    print(f'USERS TABLE (SAMPLE -> 5):\n{sample.collect()}')
+    conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
+    name = table.upper()
+    if (name == "USERS_04"):
 
-    df = (sample.sort(by = ['ID','ACTION_DATE']
-                      ,descending=[False,True]
-                 )
-                .with_columns(ELAPSED_TIME = pl.col('ACTION_DATE')
-                                               .diff(-1)
-                                               .dt
-                                               .total_days()
-                                               .over(partition_by = 'ID')
-                 )
-         )
-    print(f'\nTIME DIFFERENCE BETWEEN CONSECUTIVE ACTIONS (SAMPLE -> 5):\n{df.collect()}')
-    
-    durations = (users.sort(by = ['ID','ACTION_DATE']
-                            ,descending=[False,True]
-                       )
-                      .with_columns(ELAPSED_TIME = pl.col('ACTION_DATE')
-                                                     .diff(-1)
-                                                     .dt
-                                                     .total_days()
-                                                     .over(partition_by = 'ID')
-                       )
-                      .group_by('ID')
-                      .first()
-                      .select(pl.col('ID'),
-                              pl.col('ELAPSED_TIME')
-                       )
-                )
-    print(f'\nRETURNING ELAPSED TIME BETWEEN THE TWO LAST ACTIVITIES:\n{durations.collect()}')          
-finally:
-    conn.close()
+        try:
+
+            duck = duckdb.connect(":memory:")
+            arrow_users = arrowkit.get_ArrowTable(conn, table)
+            users = pol.from_arrow(arrow_users).lazy()
+
+            sample = users.head(5)
+            print(":" * 40)
+            print(f'USERS TABLE USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
+            users = (users.with_columns(pol.col('ACTION_DATE')
+                                           .str
+                                           .strptime(pol.Date,
+                                                     format = "%d-%b-%y"
+                                            )
+                           )
+            )
+            result = (users.sort(by = ['ID','ACTION_DATE'],
+                                 descending = [False,True]
+                            )
+                           .with_columns(ELAPSED_TIME = pol.col('ACTION_DATE')
+                                                           .diff(-1)
+                                                           .dt
+                                                           .total_days()
+                                                           .over(partition_by = 'ID')
+                            )
+                           .group_by('ID')
+                           .first()
+
+            )
+            print(f'ELAPSED TIME BETWEEN LAST ACTIONS, USING POLARS LAZYFRAMES:\n{result.collect()}')
+            users_arrow = arrowkit.get_ArrowTable(conn, table)
+            query = """
+                    WITH
+                        DUCK_FORMATTED AS (
+                            SELECT
+                                ID,
+                                ACTIONS,
+                                DATE(STRPTIME(ACTION_DATE, '%d-%b-%y')) AS ACTION_DATE
+                            FROM
+                                'users_arrow'),
+                        ORDERED_DATES AS (
+                            SELECT
+                                ID,
+                                ACTION_DATE,
+                                ROW_NUMBER() OVER (PARTITION BY
+                                                       ID
+                                                   ORDER BY
+                                                       ACTION_DATE
+                                                   DESC) AS ORDERED
+                            FROM
+                                DUCK_FORMATTED),
+                        LAST_DATES AS (
+                            SELECT
+                                ID,
+                                ACTION_DATE AS LAST_DATE
+                            FROM
+                                ORDERED_DATES
+                            WHERE
+                                ORDERED = 1),
+                        PENULTIMATE_DATES AS (
+                            SELECT
+                                ID,
+                                ACTION_DATE AS PENULTIMATE_DATE
+                            FROM
+                                ORDERED_DATES
+                            WHERE
+                                ORDERED = 2)
+            SELECT
+                L.ID,
+                (L.LAST_DATE - P.PENULTIMATE_DATE) AS ELAPSED_TIME
+            FROM
+                LAST_DATES L
+                LEFT JOIN
+                    PENULTIMATE_DATES P
+                USING (ID)
+            ORDER BY
+                1
+            """
+            result = duck.sql(query).fetch_arrow_table()
+            df = result.to_pandas()
+            print(":" * 40)
+            print(f'MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:\n{result}')
+            print(f'<*pandas visualization*>\n{df}')
+
+        finally:
+
+            conn.close()
+            duck.close()
+
+    else:
+
+        print(f'TABLE {table} NOT AVAILABLE')
