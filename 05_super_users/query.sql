@@ -82,7 +82,7 @@ WITH
                                   TRANSACTION_DATE) AS RANKED_DATE
         FROM
             USERS), 
-    USERS AS (
+    USER_ AS (
         SELECT DISTINCT
             USER_ID
         FROM
@@ -99,7 +99,7 @@ SELECT
     U.USER_ID,
     S.DATE_AS_SUPER
 FROM
-    USERS      U
+    USER_      U
     LEFT JOIN 
         SUPERUSERS S 
     USING (USER_ID)
