@@ -62,7 +62,7 @@ function main(args = ARGS)
                     SELECT
                         ID,
                         ACTIONS,
-                        STRFTIME(STRPTIME(ACTION_DATE, '%d-%b-%y'), '%Y-%m-%d')::DATE AS ACTION_DATE
+                        DATE(STRPTIME(ACTION_DATE, '%d-%b-%y')) AS ACTION_DATE
                     FROM
                         USERS),
                 ORDERED_DATES AS (
