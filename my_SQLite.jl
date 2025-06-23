@@ -208,6 +208,157 @@ end
 #=
 **********************************************
 =#
+function users_05(db::SQLite.DB)
+
+    if !SQLiteArrowKit.is_available(db, "users_05")
+        schema = Tables.Schema((:USER_ID, :PRODUCT_ID, :TRANSACTION_DATE), (Int32, Int32, String))
+        SQLite.createtable!(db, "USERS_05" , schema, temp = false)
+
+        rows = [(1,
+                 101,
+                 "12-feb-20"),
+
+                (2,
+                 105,
+                 "13-feb-20"),
+
+                (1,
+                 111,
+                 "14-feb-20"),
+
+                (3,
+                 121,
+                 "15-feb-20"),
+
+                (1,
+                 101,
+                 "16-feb-20"),
+
+                (2,
+                 105,
+                 "17-feb-20"),
+
+                (4,
+                 101,
+                 "16-feb-20"),
+
+                (3,
+                 105,
+                 "15-feb-20")]
+
+        placeholders = join(["(?, ?, ?)" for _ in rows], ", ")
+        query = "INSERT INTO USERS_05 (USER_ID, PRODUCT_ID, TRANSACTION_DATE) VALUES $placeholders"
+        stmt = SQLite.Stmt(db, query)
+        params = collect(Iterators.flatten(rows))
+        DBInterface.execute(stmt, params)
+
+        columns = join(schema.names, " | ")
+        _type = join(schema.types, " | ")
+        @info "TABLE USERS_05 IS AVAILABLE:" columns _type
+
+    else
+
+        @info "TABLE USERS_05 ALREADY EXISTS"
+
+    end
+
+end
+#=
+**********************************************
+=#
+function friendship_06(db::SQLite.DB)
+
+    if !is_available(db, "friends_06")
+        schema = Tables.Schema((:USER_ID, :FRIEND), (Int32, Int32))
+        SQLite.createtable!(db, "FRIENDS_06" , schema, temp = false)
+
+        rows = [(1,
+                 2),
+
+                (1,
+                 3),
+
+                (1,
+                 4),
+
+                (2,
+                 1),
+
+                (3,
+                 1),
+
+                (3,
+                 4),
+
+                (4,
+                 1),
+
+                (4,
+                 3)]
+
+        placeholders = join(["(?, ?)" for _ in rows], ", ")
+        query = "INSERT INTO FRIENDS_06 (USER_ID, FRIEND) VALUES $placeholders"
+        stmt = SQLite.Stmt(db, query)
+        params = collect(Iterators.flatten(rows))
+        DBInterface.execute(stmt, params)
+
+        columns = join(schema.names, " | ")
+        _type = join(schema.types, " | ")
+        @info "TABLE FRIENDS_06 IS AVAILABLE:" columns _type
+
+    else
+
+        @info "TABLE FRIENDS_06 ALREADY EXISTS"
+
+    end
+
+    if !is_available(db, "likes_06")
+        schema = Tables.Schema((:USER_ID, :PAGE_LIKES), (Int32, String))
+        SQLite.createtable!(db, "LIKES_06" , schema, temp = false)
+
+        rows = [
+
+            (1,
+             "A"),
+
+            (1,
+             "B"),
+
+            (1,
+             "C"),
+
+            (2,
+             "A"),
+
+            (3,
+             "B"),
+
+            (3,
+             "C"),
+
+            (4,
+             "B")]
+
+        placeholders = join(["(?, ?)" for _ in rows], ", ")
+        query = "INSERT INTO LIKES_06 (USER_ID, PAGE_LIKES) VALUES $placeholders"
+        stmt = SQLite.Stmt(db, query)
+        params = collect(Iterators.flatten(rows))
+        DBInterface.execute(stmt, params)
+
+        columns = join(schema.names, " | ")
+        _type = join(schema.types, " | ")
+        @info "TABLE LIKES_06 IS AVAILABLE:" columns _type
+
+    else
+
+        @info "TABLE LIKES_06 ALREADY EXISTS"
+
+    end
+
+end
+#=
+**********************************************
+=#
 function main()
 
     config = DatabaseConfig("my_SQLite.db")
@@ -217,6 +368,8 @@ function main()
         transactions_02(db)
         items_03(db)
         users_04(db)
+        users_05(db)
+        friendship_06(db)
 
     end
 
