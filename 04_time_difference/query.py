@@ -41,7 +41,7 @@ def main(table:str):
 
             )
             print(f'ELAPSED TIME BETWEEN LAST ACTIONS, USING POLARS LAZYFRAMES:\n{result.collect()}')
-            users_arrow = arrowkit.get_ArrowTable(conn, table)
+          
             query = """
                     WITH
                         DUCK_FORMATTED AS (
@@ -50,7 +50,7 @@ def main(table:str):
                                 ACTIONS,
                                 DATE(STRPTIME(ACTION_DATE, '%d-%b-%y')) AS ACTION_DATE
                             FROM
-                                'users_arrow'),
+                                'arrow_users'),
                         ORDERED_DATES AS (
                             SELECT
                                 ID,
@@ -89,10 +89,10 @@ def main(table:str):
             ORDER BY
                 1
             """
-            result = duck.sql(query).fetch_arrow_table()
-            df = result.to_pandas()
+            duck_result = duck.sql(query).fetch_arrow_table()
+            df = duck_result.to_pandas()
             print(":" * 40)
-            print(f'MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:\n{result}')
+            print(f'MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:\n{duck_result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
