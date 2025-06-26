@@ -59,7 +59,7 @@ ORDER BY
 /* DUCKDB. */
 
 /********************************************************************/
--- SQLITE table friends_06
+-- SQLite table friends_06
 SELECT 
     *
 FROM
@@ -67,7 +67,7 @@ FROM
 LIMIT
     10;
 
--- SQLITE table likes_06
+-- SQlite table likes_06
 SELECT 
     *
 FROM
