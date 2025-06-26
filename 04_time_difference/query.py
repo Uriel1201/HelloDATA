@@ -19,7 +19,7 @@ def main(table:str):
 
             sample = users.head(5)
             print(":" * 40)
-            print(f'USERS TABLE USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
+            print(f'USERS TABLE (POLARS) -> SAMPLE:\n{sample.collect()}')
             users = (users.with_columns(pol.col('ACTION_DATE')
                                            .str
                                            .strptime(pol.Date,
@@ -38,9 +38,11 @@ def main(table:str):
                             )
                            .group_by('ID')
                            .first()
-
+                           .select(pol.col("ID"), 
+                                   pol.col("ELAPSED_TIME")
+                            )
             )
-            print(f'ELAPSED TIME BETWEEN LAST ACTIONS, USING POLARS LAZYFRAMES:\n{result.collect()}')
+            print(f'ELAPSED TIME BETWEEN LAST ACTIONS (POLARS):\n{result.collect()}')
           
             query = """
                     WITH
@@ -92,7 +94,7 @@ def main(table:str):
             duck_result = duck.sql(query).fetch_arrow_table()
             df = duck_result.to_pandas()
             print(":" * 40)
-            print(f'MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:\n{duck_result}')
+            print(f'ELAPSED TIME BETWEEN LAST ACTIONS (DUCKDB QUERIES):\n{duck_result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
