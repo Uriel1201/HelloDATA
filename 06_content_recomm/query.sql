@@ -8,7 +8,10 @@ pages that their friends have liked, but
 that they have not yet marked as liked.
 Order the result by ascending user ID. */
 
-/* Querying the original data*/
+/* ORACLE. */
+
+/********************************************************************/
+-- Querying the original data
 SELECT
     *
 FROM
@@ -19,8 +22,6 @@ SELECT
 FROM
     LIKES_P6;
 
-                                /* Querying pages recommendations for users 
-                                                   based on pages liked by their friends */
 WITH RECOMMENDATIONS ( -- identifying possible recommendations for each user
     USER_ID,
     RECOMMENDATION
@@ -54,3 +55,47 @@ WHERE
     IS_MATCHED IS NULL
 ORDER BY
     USER_ID;
+
+/* DUCKDB. */
+
+/********************************************************************/
+-- SQLITE table friends_06
+SELECT 
+    *
+FROM
+    'arrow_friends'
+LIMIT
+    10;
+
+-- SQLITE table likes_06
+SELECT 
+    *
+FROM
+    'arrow_likes'
+LIMIT
+    10;
+
+WITH
+    RECOMMENDATIONS AS (
+        SELECT
+            F.USER_ID,
+            L.PAGE_LIKES AS RECOMMENDATION
+        FROM
+            'arrow_friends' F
+            INNER JOIN 
+                'arrow_likes' L
+            ON 
+                F.FRIEND = L.USER_ID)
+   SELECT DISTINCT
+       R.USER_ID,
+       R.RECOMMENDATION
+   FROM
+       RECOMMENDATIONS R
+       ANTI JOIN 
+           'arrow_likes' L
+       ON
+           R.USER_ID = L.USER_ID
+       AND
+           R.RECOMMENDATION = L.PAGE_LIKES
+   ORDER BY
+       1, 2;
