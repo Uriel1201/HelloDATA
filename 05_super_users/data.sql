@@ -9,8 +9,7 @@ date when they become a super user, ordered by oldest super users first.
 Users who are not super users should
 also be present in the table. */
 
-/* ORACLE. 
-   (HTAP)*/
+/* ORACLE. */
 
 /********************************************************************/
 CREATE TABLE USERS_P5 (
@@ -81,43 +80,3 @@ INSERT INTO USERS_P5
         *
     FROM
         NAMES;
-
-/* DUCKDB. 
-   (OLAP)*/
-
-/********************************************************************/
-CREATE TABLE 
-    USERS (
-           USER_ID          INTEGER,
-           PRODUCT_ID       INTEGER,
-           TRANSACTION_DATE DATE
-    );
-
-INSERT INTO 
-    USERS
-BY POSITION 
-VALUES
-    (1,
-     101,
-     "2020-02-12"),
-    (2,
-     105,
-     "2020-02-13"),
-    (1,
-     111,
-     "2020-02-14"),
-    (3,
-     121,
-     "2020-02-15"),
-    (1,
-     101,
-     "2020-02-16"),
-    (2,
-     105,
-     "2020-02-17"),
-    (4,
-     101,
-     "2020-02-16"),
-    (3,
-     105,
-     "2020-02-15");
