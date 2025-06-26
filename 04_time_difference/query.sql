@@ -71,8 +71,8 @@ SELECT
     *
 FROM
     'arrow_users' -- arrow_users is an arrow table
-LIMIT
-    10;
+USING SAMPLE
+    50% (bernoulli);
 
 WITH
     DUCK_FORMATTED AS (
