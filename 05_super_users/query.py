@@ -19,7 +19,7 @@ def main(table:str):
 
             sample = users.head(5)
             print(":" * 40)
-            print(f'USERS TABLE, USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
+            print(f'USERS TABLE (POLARS) -> SAMPLE:\n{sample.collect()}')
 
             super = (users.select(pol.col("USER_ID"),
                                   pol.col("TRANSACTION_DATE")
@@ -46,7 +46,8 @@ def main(table:str):
                                  how = "left"
                             )
             )
-            print(f'USERS BECOMING SUPERUSERS, USING POLARS FUNCTIONS:\n{result.collect()}')
+            print(":" * 40)
+            print(f'USERS BECOMING SUPERUSERS (POLARS):\n{result.collect()}')
 
             query = """
                     WITH
@@ -93,7 +94,7 @@ def main(table:str):
             duck_result = duck.sql(query).fetch_arrow_table()
             df = duck_result.to_pandas()
             print(":" * 40)
-            print(f'USERS BECOMING SUPERUSERS, USING DUCKDB QUERIES:\n{duck_result}')
+            print(f'USERS BECOMING SUPERUSERS (DUCKDB QUERIES):\n{duck_result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
