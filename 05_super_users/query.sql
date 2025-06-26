@@ -9,8 +9,7 @@ date when they become a super user, ordered by oldest super users first.
 Users who are not super users should
 also be present in the table. */
 
-/* ORACLE. 
-   (HTAP)*/
+/* ORACLE. */
 
 /********************************************************************/
 -- Querying original data 
@@ -62,46 +61,6 @@ FROM
 ORDER BY
     2;
 
-/* DUCKDB. 
-   (OLAP)*/
+/* DUCKDB. */
 
 /********************************************************************/
-SELECT
-    *
-FROM
-    USERS;
-
-WITH 
-    RANKINGS AS (
-        SELECT
-            USER_ID,
-            TRANSACTION_DATE,
-            ROW_NUMBER() OVER(PARTITION BY 
-                                  USER_ID
-                              ORDER BY
-                                  TRANSACTION_DATE) AS RANKED_DATE
-        FROM
-            USERS), 
-    USER_ AS (
-        SELECT DISTINCT
-            USER_ID
-        FROM
-            USERS), 
-    SUPERUSERS AS (
-        SELECT
-            USER_ID,
-            TRANSACTION_DATE AS DATE_AS_SUPER
-        FROM
-            RANKINGS
-        WHERE
-            RANKED_DATE = 2)
-SELECT
-    U.USER_ID,
-    S.DATE_AS_SUPER
-FROM
-    USER_      U
-    LEFT JOIN 
-        SUPERUSERS S 
-    USING (USER_ID)
-ORDER BY
-    2;
