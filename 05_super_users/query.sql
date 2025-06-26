@@ -68,7 +68,9 @@ ORDER BY
 SELECT 
     * 
 FROM 
-    'arrow_users'; -- arrow_users is an arrow table
+    'arrow_users' -- arrow_users is an arrow table
+LIMIT 
+    10;
 
 WITH
     DUCK_FORMATTED AS (
