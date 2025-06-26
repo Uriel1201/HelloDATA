@@ -86,16 +86,16 @@ WITH
                 'arrow_likes' L
             ON 
                 F.FRIEND = L.USER_ID)
-   SELECT DISTINCT
-       R.USER_ID,
-       R.RECOMMENDATION
-   FROM
-       RECOMMENDATIONS R
-       ANTI JOIN 
-           'arrow_likes' L
-       ON
-           R.USER_ID = L.USER_ID
-       AND
-           R.RECOMMENDATION = L.PAGE_LIKES
-   ORDER BY
-       1, 2;
+SELECT DISTINCT
+    R.USER_ID,
+    R.RECOMMENDATION
+FROM
+    RECOMMENDATIONS R
+    ANTI JOIN 
+    'arrow_likes' L
+ON
+    R.USER_ID = L.USER_ID
+AND
+    R.RECOMMENDATION = L.PAGE_LIKES
+ORDER BY
+    1, 2;
