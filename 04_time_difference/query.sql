@@ -66,22 +66,31 @@ ORDER BY
 /* DUCKDB. */
 
 /********************************************************************/
+-- SQLite table users_04
 SELECT 
     *
 FROM
-    USERS;
+    'arrow_users'; -- arrow_users is an arrow table
 
-WITH 
+WITH
+    DUCK_FORMATTED AS (
+        SELECT
+            ID,
+            ACTIONS,
+            DATE(STRPTIME(ACTION_DATE, '%d-%b-%y')) AS ACTION_DATE
+        FROM
+            'arrow_users'),
     ORDERED_DATES AS (
         SELECT
             ID,
             ACTION_DATE,
-            ROW_NUMBER() OVER (PARTITION BY 
+            ROW_NUMBER() OVER (PARTITION BY
                                    ID
                                ORDER BY
-                                   ACTION_DATE DESC) AS ORDERED
+                                   ACTION_DATE
+                               DESC) AS ORDERED
         FROM
-            USERS), 
+            DUCK_FORMATTED),
     LAST_DATES AS (
         SELECT
             ID,
@@ -89,7 +98,7 @@ WITH
         FROM
             ORDERED_DATES
         WHERE
-            ORDERED = 1), 
+            ORDERED = 1),
     PENULTIMATE_DATES AS (
         SELECT
             ID,
@@ -103,8 +112,8 @@ SELECT
     (L.LAST_DATE - P.PENULTIMATE_DATE) AS ELAPSED_TIME
 FROM
     LAST_DATES L
-    LEFT JOIN 
-        PENULTIMATE_DATES P 
-    USING (ID)
+        LEFT JOIN
+            PENULTIMATE_DATES P
+        USING (ID)
 ORDER BY
     1;
