@@ -1,7 +1,17 @@
 const DB_PATH = "my_SQLite.db"
-using .MyDataBase, DataFrames, ShiftedArrays, Dates, Arrow, SQLite, DuckDB, .SQLiteArrowKit
+using .MyDataBase, DataFrames, ShiftedArrays, Dates, Arrow, SQLite, DuckDB, .SQLiteArrowKit, PrettyTables
 
 MyDataBase.main()
+#=
+**********************************************
+=#
+function print_DuckTable(cursor::DuckDB.QueryResult)
+
+    pretty_table(
+                 cursor;
+                 tf = tf_ascii_rounded
+    )
+end
 #=
 **********************************************
 =#
@@ -51,7 +61,8 @@ function main(args = ARGS)
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
 
             arrow_users = get_ArrowTable(db, args)
-            println("RETURNING TABLE USERS_04 FROM DATABASE:\n$arrow_users")
+            println("RETURNING TABLE USERS_04 FROM DATABASE:\n")
+            println(arrow_users)
             DuckDB.register_data_frame(duck, arrow_users, "arrow_users")
             println("\n", "*"^40)
             println("USERS TABLE (DUCKDB QUERIES) -> SAMPLE:\n")
@@ -63,8 +74,8 @@ function main(args = ARGS)
                      USING SAMPLE
                          50% (bernoulli)
             """
-            duck_sample = DBInterface.execute(duck, sample) |> DataFrame
-            println(duck_sample)
+            duck_sample = DBInterface.execute(duck, sample)
+            print_DuckTable(duck_sample)
 
             println("\n", "*"^40)
             println("ELAPSED TIME BETWEEN LAST ACTIONS (DUCKDB QUERIES):\n")
@@ -115,9 +126,9 @@ function main(args = ARGS)
             ORDER BY
                 1
             """
-            duck_result = DBInterface.execute(duck, query) |> DataFrame
-            println(duck_result)
-           
+            duck_result = DBInterface.execute(duck, query)
+            print_DuckTable(duck_result)
+
             users = arrow_users |> DataFrame
             transform!(users,
                        :ACTION_DATE => (x -> Date.(year_format.(x),
