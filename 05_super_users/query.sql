@@ -12,12 +12,11 @@ also be present in the table. */
 /* ORACLE. */
 
 /********************************************************************/
--- Querying original data 
 SELECT
     *
 FROM
     USERS_P5;
-
+   
                 -- Querying dates when users become superusers
 WITH RANKINGS ( -- identifying superuser dates
     USER_ID,
@@ -65,12 +64,12 @@ ORDER BY
 
 /********************************************************************/
 -- SQLite table, users_05
-SELECT 
-    * 
-FROM 
+SELECT
+    *
+FROM
     'arrow_users' -- arrow_users is an arrow table
-LIMIT 
-    10;
+USING SAMPLE
+    50% (bernoulli);
 
 WITH
     DUCK_FORMATTED AS (
