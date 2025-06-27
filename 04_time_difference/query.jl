@@ -41,8 +41,8 @@ end
 function main(args = ARGS)
 
     db = SQLite.DB(DB_PATH)
-
-    if is_available(db, args) && (args == "users_04")
+    name = uppercase(args)
+    if is_available(db, args) && (name == "USERS_04")
 
         duck = nothing
 
@@ -50,64 +50,74 @@ function main(args = ARGS)
 
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
 
-            arrow_users = SQLiteArrowKit.get_ArrowTable(db, args)
-            DuckDB.register_data_frame(duck, arrow_users, "USERS")
-            duck_users = DBInterface.execute(duck, "SELECT * FROM USERS USING SAMPLE 50% (bernoulli)") |> DataFrame
+            arrow_users = get_ArrowTable(db, args)
+            println("RETURNING TABLE USERS_04 FROM DATABASE:\n$arrow_users")
+            DuckDB.register_data_frame(duck, arrow_users, "arrow_users")
             println("\n", "*"^40)
-            println("USERS TABLE USING DUCKDB QUERIES -> SAMPLE:\n$duck_users")
+            println("USERS TABLE (DUCKDB QUERIES) -> SAMPLE:\n")
+            sample = """
+                     SELECT
+                         *
+                     FROM
+                         'arrow_users' -- arrow_users is an arrow table
+                     USING SAMPLE
+                         50% (bernoulli)
+            """
+            duck_sample = DBInterface.execute(duck, sample) |> DataFrame
+            println(duck_sample)
 
+            println("\n", "*"^40)
+            println("ELAPSED TIME BETWEEN LAST ACTIONS (DUCKDB QUERIES):\n")
             query = """
-            WITH
-                FORMATTED AS (
-                    SELECT
-                        ID,
-                        ACTIONS,
-                        DATE(STRPTIME(ACTION_DATE, '%d-%b-%y')) AS ACTION_DATE
-                    FROM
-                        USERS),
-                ORDERED_DATES AS (
-                    SELECT
-                        ID,
-                        ACTION_DATE,
-                        ROW_NUMBER() OVER (PARTITION BY
-                                               ID
-                                           ORDER BY
-                                               ACTION_DATE
-                                           DESC
-                        ) AS ORDERED
-                    FROM
-                        FORMATTED),
-                LAST_DATES AS (
-                    SELECT
-                        ID,
-                        ACTION_DATE AS LAST_DATE
-                    FROM
-                        ORDERED_DATES
-                    WHERE
-                        ORDERED = 1),
-                PENULTIMATE_DATES AS (
-                    SELECT
-                        ID,
-                        ACTION_DATE AS PENULTIMATE_DATE
-                    FROM
-                        ORDERED_DATES
-                    WHERE
-                        ORDERED = 2)
+                    WITH
+                        DUCK_FORMATTED AS (
+                            SELECT
+                                ID,
+                                ACTIONS,
+                                DATE(STRPTIME(ACTION_DATE, '%d-%b-%y')) AS ACTION_DATE
+                            FROM
+                                'arrow_users'),
+                        ORDERED_DATES AS (
+                            SELECT
+                                ID,
+                                ACTION_DATE,
+                                ROW_NUMBER() OVER (PARTITION BY
+                                                       ID
+                                                   ORDER BY
+                                                       ACTION_DATE
+                                                   DESC) AS ORDERED
+                            FROM
+                                DUCK_FORMATTED),
+                        LAST_DATES AS (
+                            SELECT
+                                ID,
+                                ACTION_DATE AS LAST_DATE
+                            FROM
+                                ORDERED_DATES
+                            WHERE
+                                ORDERED = 1),
+                        PENULTIMATE_DATES AS (
+                            SELECT
+                                ID,
+                                ACTION_DATE AS PENULTIMATE_DATE
+                            FROM
+                                ORDERED_DATES
+                            WHERE
+                                ORDERED = 2)
             SELECT
                 L.ID,
-                (L.LAST_DATE - P.PENULTIMATE_DATE) AS ELAPSED_TIME
+                (L.LAST_DATE - P.PENULTIMATE_DATE) AS ELAPSED_DAYS
             FROM
                 LAST_DATES L
-                LEFT JOIN
-                    PENULTIMATE_DATES P
-                USING (ID)
+                    LEFT JOIN
+                        PENULTIMATE_DATES P
+                    USING (ID)
             ORDER BY
                 1
             """
             duck_result = DBInterface.execute(duck, query) |> DataFrame
-            println("\n", "*"^40)
-            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DUCKDB QUERIES:\n$duck_result")
-
+            println(duck_result)
+           
             users = arrow_users |> DataFrame
             transform!(users,
                        :ACTION_DATE => (x -> Date.(year_format.(x),
@@ -124,7 +134,7 @@ function main(args = ARGS)
                        :ACTION_DATE => (x -> (x .- ShiftedArrays.lead(x, 1))) => :ELAPSED_DAYS
             )
             println("\n", "*"^40)
-            println("ELAPSED TIME BETWEEN LAST ACTIONS, USING DATAFRAMES:\n$users")
+            println("ELAPSED TIME BETWEEN LAST ACTIONS (DATAFRAMES.jl):\n")
 
             users = combine(groupby(users,
                                     :ID
@@ -132,7 +142,7 @@ function main(args = ARGS)
                             :ELAPSED_DAYS => first => :ELAPSED_DAYS
                     )
             users.ELAPSED_DAYS = passmissing(x -> x.value).(users.ELAPSED_DAYS)
-            println("\n$users")
+            println(users)
 
         finally
 
