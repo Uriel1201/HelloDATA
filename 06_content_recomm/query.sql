@@ -60,20 +60,21 @@ ORDER BY
 
 /********************************************************************/
 -- SQLite table friends_06
-SELECT 
+SELECT
     *
 FROM
-    'arrow_friends'
-LIMIT
-    10;
+    'arrow_friends' -- arrow_friends is an arrow table
+USING 
+    SAMPLE 50% (bernoulli);
 
--- SQlite table likes_06
-SELECT 
+-- SQLite table likes_06
+SELECT
     *
 FROM
-    'arrow_likes'
-LIMIT
-    10;
+    'arrow_likes' -- arrow_likes is an arrow table
+USING 
+    SAMPLE 50% (bernoulli);
+
 
 WITH
     RECOMMENDATIONS AS (
