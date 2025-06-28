@@ -92,10 +92,10 @@ SELECT DISTINCT
 FROM
     RECOMMENDATIONS R
     ANTI JOIN 
-    'arrow_likes' L
-ON
-    R.USER_ID = L.USER_ID
-AND
-    R.RECOMMENDATION = L.PAGE_LIKES
+        'arrow_likes' L
+    ON
+        R.USER_ID = L.USER_ID
+    AND
+        R.RECOMMENDATION = L.PAGE_LIKES
 ORDER BY
     1, 2;
