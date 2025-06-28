@@ -9,7 +9,7 @@ function print_DuckTable(cursor::DuckDB.QueryResult)
 
     pretty_table(
                  cursor;
-                 tf = tf_ascii_rounded
+                 tf = tf_mysql
     )
 end
 #=
