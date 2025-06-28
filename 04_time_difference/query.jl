@@ -9,7 +9,9 @@ function print_DuckTable(cursor::DuckDB.QueryResult)
 
     pretty_table(
                  cursor;
-                 tf = tf_mysql
+                 tf = tf_unicode,
+                 hlines = [:begin, 1],
+                 vlines = [1]
     )
 end
 #=
