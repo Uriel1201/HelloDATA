@@ -75,7 +75,6 @@ FROM
 USING 
     SAMPLE 50% (bernoulli);
 
-
 WITH
     RECOMMENDATIONS AS (
         SELECT
