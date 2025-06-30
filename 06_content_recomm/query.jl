@@ -1,5 +1,5 @@
 const DB_PATH = "my_SQLite.db"
-using .MyDataBase, DataFrames, Arrow, SQLite, DuckDB, .SQLiteArrowKit, PrettyTables
+using .MyDataBase, DataFrames, Dates, Arrow, SQLite, DuckDB, .SQLiteArrowKit, PrettyTables, StatsBase
 
 MyDataBase.main()
 #=
@@ -51,8 +51,7 @@ function main(table1::String, table2::String)
                      USING SAMPLE
                          50% (bernoulli)
             """
-            duck_sample1 = DBInterface.execute(duck, sample1)
-            print_DuckTable(duck_sample1)
+            print_DuckTable(DBInterface.execute(duck, sample1))
             println("\n", "*"^40)
             println("LIKES TABLE (DUCKDB QUERIES) -> SAMPLE:\n")
             sample2 = """
@@ -63,8 +62,7 @@ function main(table1::String, table2::String)
                       USING SAMPLE
                          50% (bernoulli)
             """
-            duck_sample2 = DBInterface.execute(duck, sample2)
-            print_DuckTable(duck_sample2)
+            print_DuckTable(DBInterface.execute(duck, sample2))
 
             println("\n", "*"^40)
             println("RETURNING RECOMMENDATIONS FOR EACH USER (DUCKDB QUERIES):\n")
@@ -94,8 +92,7 @@ function main(table1::String, table2::String)
             ORDER BY
                 1, 2
             """
-            duck_result = DBInterface.execute(duck, query)
-            print_DuckTable(duck_result)
+            print_DuckTable(DBInterface.execute(duck, query))
 
             friends = arrow_friends |> DataFrame
             likes = arrow_likes |> DataFrame
