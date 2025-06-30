@@ -24,17 +24,11 @@ function get_ArrowTable(db::SQLite.DB, table::String)::Arrow.Table
 
     name = uppercase(table)
     io = IOBuffer()
-
     cursor = DBInterface.execute(db, "SELECT * FROM $name")
-    start_write = time()
     Arrow.write(io, cursor)
-    end_write = time()
     seekstart(io)
     arrow_table = Arrow.Table(io)
-    end_arrow = time()
-    conversion_time = round(end_write - start_write, digits = 4)
-    lecture_time = round(end_arrow - end_write, digits = 4)
-    @info "arrow table created:" conversion_time lecture_time
+    
     return arrow_table
 
 end
