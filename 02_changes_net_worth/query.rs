@@ -1,134 +1,153 @@
-use rusqlite::{Connection, Result, params}; // 0.35.0
-use chrono::NaiveDate; // 0.4.41
+use rusqlite::{Connection, Result as RusqliteResult, params}; // 0.35.0
+use chrono::{NaiveDate, Duration}; // 0.4.41
 use thiserror::Error;
+use std::collections::HashMap;
 
 #[derive(Error, Debug)]
 pub enum AppError {
-    #[error("Error de base de datos: {0}")]
+    #[error("Error in Database: {0}")]
     Database(#[from] rusqlite::Error),
-    #[error("Error de fecha: {0}")]
+    #[error("Date Error: {0}")]
     DateParse(#[from] chrono::ParseError),
 }
 
+// This struct is used to simulate the table in a database 
 #[derive(Debug)]
-struct Transaction {
-    sender: i32,
-    receiver: i32,
-    amount: f64,
-    dates: Option<NaiveDate>,
+struct User {
+    id: i32, 
+    action: String,
+    action_date: String,
 }
 
 #[derive(Debug)]
-struct Changes {
-    user_id: Option<i32>, 
-    change: Option<f64>,
+struct UserF {
+    id: i32, 
+    action: String,
+    action_date: Option<NaiveDate>,
 }
 
-impl Transaction {
-    fn new(sender: i32, receiver: i32, amount: f64, date_str: &str) -> Result<Self, chrono::ParseError> {
-        Ok(Self {
-            sender,
-            receiver,
-            amount,
-            dates: Some(NaiveDate::parse_from_str(date_str, "%d-%b-%y")?),
-        })
+impl User {
+    fn new(id: i32, action: &str, date_str: &str) -> Self {
+        Self {
+            id,
+            action: action.to_string(),
+            action_date: date_str.to_string(),
+        }
     }
 }
 
-macro_rules! transaction {
-    ($sender:expr, $receiver:expr, $amount:expr, $dates:expr) => {
-        Transaction::new($sender, $receiver, $amount, $dates)?
+macro_rules! user {
+    ($id_user:expr, $actions:expr, $dates:expr) => {
+        User::new($id_user, $actions, $dates)
     };
 }
 
 fn main() -> Result<(), AppError> {
-    
+
     let mut conn = Connection::open_in_memory()?;
-    conn.execute("CREATE TABLE TRANSACTIONS(
-                     SENDER INTEGER, 
-                     RECEIVER INTEGER,
-                     AMOUNT NUMERIC, 
-                     TRANSACTION_DATE DATE)", (),
+    
+    conn.execute(
+    "CREATE TABLE USERS (
+         ID INTEGER,
+         ACTION VARCHAR(9),
+         ACTION_DATE CHAR(9)
+     )", (),
     )?;
     
-    let transactions = vec![
-    transaction!(5, 2, 10.0, "12-feb-20"),
-    transaction!(1, 3, 15.0, "13-feb-20"),
-    transaction!(2, 1, 20.0, "13-feb-20"),
-    transaction!(2, 3, 25.0, "14-feb-20"),
-    transaction!(3, 1, 20.0, "15-feb-20"),
-    transaction!(3, 2, 15.0, "15-feb-20"),
-    transaction!(1, 4, 5.0, "16-feb-20"),
+    let users = vec![
+    
+            user!(1, "Start", "13-feb-20"),
+            user!(1, "Cancel", "13-feb-20"),
+            user!(2, "Start", "11-feb-20"),
+            user!(2, "Publish", "14-feb-20"),
+            user!(3, "Start", "15-feb-20"),
+            user!(3, "Cancel", "15-feb-20"),
+            user!(4, "Start", "18-feb-20"),
+            user!(1, "Publish", "19-feb-20"),
     ];
     
     let tx = conn.transaction()?;
     {
-    let mut stmt = tx.prepare("INSERT INTO TRANSACTIONS(SENDER, RECEIVER, AMOUNT, TRANSACTION_DATE) 
-                               values (?1, ?2, ?3, ?4)")?;
-    for t in transactions {
-        stmt.execute(params![t.sender, t.receiver, t.amount, t.dates])?;
+    let mut stmt = tx.prepare("INSERT INTO USERS (ID, ACTION, ACTION_DATE) 
+                               values (?1, ?2, ?3)")?;
+    for u in users {
+        stmt.execute(params![u.id, u.action, u.action_date])?;
     }
     }
     tx.commit()?;
     
-    {
-    println!("TRANSACTIONS SAMPLE(5):");
-    let mut stmt = conn.prepare("SELECT * FROM TRANSACTIONS LIMIT 5")?;
-    let transaction_iter = stmt.query_map([], |row| {Ok(Transaction {
-                                                            sender: row.get(0)?,
-                                                            receiver: row.get(1)?,
-                                                            amount: row.get(2)?,
-                                                            dates: row.get(3)?,
-                                                  }
-                                                        )
-                                                    })?;
-    for t in transaction_iter {
-        println!("Found: {:?}", t.unwrap());
-    }
+    let mut all_users_v:Vec<UserF> = Vec::new();
+    
+    let mut stmt = conn.prepare("SELECT * FROM USERS")?;
+    let users_iter = stmt.query_map([], |row| {
+                                               let date_str: String = row.get(2)?;
+                                               let parsed_date = NaiveDate::parse_from_str(&date_str, 
+                                                                                           "%d-%b-%y"
+                                                                            ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(2, 
+                                                                                                                                    rusqlite::types::Type::Text, 
+                                                                                                                                    Box::new(e)
+                                                                                                           )
+                                                                              )?;
+    
+                                               RusqliteResult::Ok(UserF {
+                                                                 id: row.get(0)?,
+                                                                 action: row.get(1)?,
+                                                                 action_date: Some(parsed_date),
+                                                                })
+                                              }
+                          )?; 
+                 
+                
+    for u in users_iter {
+        match u {
+            Ok(user_v) => all_users_v.push(user_v),
+                          Err(e) => eprintln!("Processing Row Error: {:?}",
+                                              AppError::Database(e)
+                                    ),
+        }
+    }          
+
+    println!("\n--- ALL 'UserF' CHARGED AND VALIDATED ---");
+    for u in &all_users_v {
+        println!("{:?}", u);
     }
     
-    {
-    let mut stmt = conn.prepare(
-    "WITH SENDERS AS (
-    SELECT 
-        SENDER, 
-        SUM(AMOUNT) AS SENDED
-    FROM
-        TRANSACTIONS
-    GROUP BY
-        SENDER), 
-        RECEIVERS AS (
-    SELECT
-        RECEIVER,
-        SUM(AMOUNT) AS RECEIVED 
-    FROM
-        TRANSACTIONS
-    GROUP BY
-        RECEIVER)
-    SELECT
-        COALESCE(S.SENDER, R.RECEIVER)                    AS USER_ID,
-        1.0*(COALESCE(R.RECEIVED, 0) - COALESCE(S.SENDED, 0)) AS NET_CHANGE
-    FROM
-        RECEIVERS R
-        FULL OUTER JOIN SENDERS   S ON R.RECEIVER = S.SENDER
-    ORDER BY
-        2 DESC")?;
-        
-    println!("\nNET CHANGES:");
-    let changes_iter = stmt.query_map([], |row| {Ok(Changes {
-                                                        user_id: row.get("USER_ID")?,
-                                                        change: row.get("NET_CHANGE")?,
-                                                    }
-                                                 )}
-                                     )?;
-                                     
-    for changes in changes_iter {
-        let changes = changes?;
-        println!("User {:?} -> Net_Change: {:?}",
-                 changes.user_id,
-                 changes.change
-        );
+    let mut users_by_id:HashMap<i32, Vec<UserF>> = HashMap::new();
+    for u in all_users_v {
+        users_by_id.entry(u.id).or_insert_with(Vec::new).push(u);
     }
+    
+    println!("\n--- USERS GROUPED BY ID ---");
+    for (id, user_list) in &users_by_id {
+        println!("USER_ID: {}", id);
+        for u in user_list {
+            println!("  {:?}", u);
+        }
+    }
+    println!("\n--- Diferencia entre Última y Penúltima Fecha por Usuario (Vec<UserF>) ---");
+    for (id, user_list) in &users_by_id {
+    
+        let mut valid_dates: Vec<NaiveDate> = user_list.iter()
+                                                       .filter_map(|u| u.action_date)
+                                                       .collect();
+
+        valid_dates.sort();
+        if valid_dates.len() >= 2 {
+            let last_date = valid_dates[valid_dates.len() - 1];
+            let second_last_date = valid_dates[valid_dates.len() - 2];
+
+            let duration_diff: Duration = last_date.signed_duration_since(second_last_date);
+
+            println!(
+                "ID {}: LAST DATE: {}, PENULTIMATE DATE: {}, ELAPSED_TIME: {}",
+                id, last_date, second_last_date, duration_diff.num_days()
+            );
+        } else {
+            println!(
+                "ID {}: NONE",
+                id
+            );
+        }
     }
     
     Ok(())
