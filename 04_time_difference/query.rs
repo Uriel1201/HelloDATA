@@ -78,16 +78,23 @@ fn main() -> Result<(), AppError> {
     {
     println!("USERS TABLE:");
     let mut stmt = conn.prepare("SELECT * FROM USERS")?;
-    let users_iter = stmt.query_map([], |row| {let date_str: String = row.get(2)?;
-                                               let parsed_date = Some(NaiveDate::parse_from_str(&date_str, "%d-%b-%y").map_err(|e| rusqlite::Error::FromSqlConversionFailure(2, rusqlite::types::Type::Text, Box::new(e)))?);
+    let users_iter = stmt.query_map([], |row| {
+                                               let date_str: String = row.get(2)?;
+                                               let parsed_date = NaiveDate::parse_from_str(&date_str, 
+                                                                                           "%d-%b-%y"
+                                                                            ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(2, 
+                                                                                                                                    rusqlite::types::Type::Text, 
+                                                                                                                                    Box::new(e)
+                                                                                                           )
+                                                                              )?;
     
-                                               Ok(UserF {
-                                                      id: row.get(0)?,
-                                                      action: row.get(1)?,
-                                                      action_date: parsed_date,
-                                                  }
-                                               )
-                                              })?; 
+                                               RusqliteResult::Ok(UserF {
+                                                                         id: row.get(0)?,
+                                                                         action: row.get(1)?,
+                                                                         action_date: Some(parsed_date),
+                                                                  })
+                                              }
+                          )?; 
                                         
     for u in users_iter {
         println!("Found: {:?}", u.unwrap());
