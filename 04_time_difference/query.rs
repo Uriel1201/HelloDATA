@@ -65,7 +65,7 @@ fn main() -> Result<(), AppError> {
             user!(4, "Start", "18-feb-20"),
             user!(1, "Publish", "19-feb-20"),
             user!(1, "SINGING", "41-feb-20"),
-            user!(10, "DANCING", " "),
+            user!(10, "DANCING", "UZUMAKI naruto"),
             user!(3, "FIGHTING", "02-feb-1540"),
     ];
     
@@ -129,11 +129,7 @@ fn main() -> Result<(), AppError> {
         }
     } 
     
-    println!("\n--- ALL VALIDATED ROWS ---");
-    for u in &all_users_v {
-        println!("{:?}", u);
-    }
-
+    
     let mut users_by_id:HashMap<i32, Vec<UserF>> = HashMap::new();
     for u in all_users_v {
         users_by_id.entry(u.id).or_insert_with(Vec::new).push(u);
@@ -154,16 +150,16 @@ fn main() -> Result<(), AppError> {
             let duration_diff: Duration = last_date.signed_duration_since(second_last_date);
 
             println!(
-                "ID {}: LAST DATE: {}, PENULTIMATE DATE: {}, ELAPSED_TIME: {} DAYS",
-                id, last_date, second_last_date, duration_diff.num_days()
+                "ID {} => ELAPSED_TIME: {} DAYS",
+                id, duration_diff.num_days()
             );
         } else {
             println!(
-                "ID {}: NONE",
+                "ID {} => NONE",
                 id
             );
         }
     }
     
     Ok(())
-}
+                                                                                                                                }
