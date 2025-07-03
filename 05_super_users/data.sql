@@ -90,3 +90,8 @@ CREATE TABLE
            PRODUCT_ID       INTEGER,
            TRANSACTION_DATE CHAR(9)
     );
+
+"INSERT INTO USERS 
+     (USER_ID, PRODUCT_ID, TRANSACTION_DATE) 
+ VALUES 
+     (?1, ?2, ?3)"
