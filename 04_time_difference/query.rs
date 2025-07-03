@@ -162,4 +162,4 @@ fn main() -> Result<(), AppError> {
     }
     
     Ok(())
-                                                                                                                                }
+}
