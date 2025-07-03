@@ -80,3 +80,13 @@ INSERT INTO USERS_P5
         *
     FROM
         NAMES;
+
+/* SQLITE. */
+
+/********************************************************************/
+CREATE TABLE 
+    USERS (
+           USER_ID          INTEGER,
+           PRODUCT_ID       INTEGER,
+           TRANSACTION_DATE CHAR(9)
+    );
