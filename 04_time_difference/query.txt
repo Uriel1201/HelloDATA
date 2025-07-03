@@ -1,1 +1,96 @@
+/* 
+Python. 
+*************************************************/
+::::::::::::::::::::::::::::::::::::::::
+USERS TABLE (POLARS) -> SAMPLE:
+shape: (5, 3)
+┌─────┬─────────┬─────────────┐
+│ ID  ┆ ACTIONS ┆ ACTION_DATE │
+│ --- ┆ ---     ┆ ---         │
+│ i64 ┆ str     ┆ str         │
+╞═════╪═════════╪═════════════╡
+│ 1   ┆ Start   ┆ 13-feb-20   │
+│ 1   ┆ Cancel  ┆ 13-feb-20   │
+│ 2   ┆ Start   ┆ 11-feb-20   │
+│ 2   ┆ Publish ┆ 14-feb-20   │
+│ 3   ┆ Start   ┆ 15-feb-20   │
+└─────┴─────────┴─────────────┘
+ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER
+(POLARS):
+shape: (4, 2)
+┌─────┬──────────────┐
+│ ID  ┆ ELAPSED_TIME │
+│ --- ┆ ---          │
+│ i64 ┆ i64          │
+╞═════╪══════════════╡
+│ 1   ┆ 6            │
+│ 2   ┆ 3            │
+│ 3   ┆ 0            │
+│ 4   ┆ null         │
+└─────┴──────────────┘
+::::::::::::::::::::::::::::::::::::::::
+ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER
+(DUCKDB QUERIES):
+pyarrow.Table
+ID: int64
+ELAPSED_TIME: int64
+----
+ID: [[1,2,3,4]]
+ELAPSED_TIME: [[6,3,0,null]]
+<*pandas visualization*>
+   ID  ELAPSED_TIME
+0   1           6.0
+1   2           3.0
+2   3           0.0
+3   4           NaN
 
+/* 
+Julia. 
+*************************************************/
+RETURNING TABLE USERS_04 FROM DATABASE:
+
+Arrow.Table with 8 rows, 3 columns, and schema:
+ :ID           Int64
+ :ACTIONS      String
+ :ACTION_DATE  String
+
+****************************************
+USERS TABLE (DUCKDB QUERIES) -> SAMPLE:
+
+────────┬──────────────────────
+     ID │ ACTIONS  ACTION_DATE
+ Int64? │ String?      String?
+────────┼──────────────────────
+      1 │   Start    13-feb-20
+      3 │   Start    15-feb-20
+      3 │  Cancel    15-feb-20
+
+****************************************
+ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER
+(DUCKDB QUERIES):
+
+────────┬──────────────
+     ID │ ELAPSED_DAYS
+ Int64? │       Int64?
+────────┼──────────────
+      1 │            6
+      2 │            3
+      3 │            0
+      4 │      missing
+
+****************************************
+ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER
+(DATAFRAMES.jl):
+
+4×2 DataFrame
+ Row │ ID     ELAPSED_DAYS
+     │ Int64  Int64?
+─────┼─────────────────────
+   1 │     1             6
+   2 │     2             3
+   3 │     3             0
+   4 │     4       missing
+
+/* 
+Rust. 
+*************************************************/
