@@ -42,7 +42,7 @@ def main(table:str):
                                    pol.col("ELAPSED_TIME")
                             )
             )
-            print(f'ELAPSED TIME BETWEEN LAST ACTIONS (POLARS):\n{result.collect()}')
+            print(f'ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER\n(POLARS):\n{result.collect()}')
           
             query = """
                     WITH
@@ -94,7 +94,7 @@ def main(table:str):
             duck_result = duck.sql(query).fetch_arrow_table()
             df = duck_result.to_pandas()
             print(":" * 40)
-            print(f'ELAPSED TIME BETWEEN LAST ACTIONS (DUCKDB QUERIES):\n{duck_result}')
+            print(f'ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER\n(DUCKDB QUERIES):\n{duck_result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
