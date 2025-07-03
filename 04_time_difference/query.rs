@@ -135,7 +135,7 @@ fn main() -> Result<(), AppError> {
         users_by_id.entry(u.id).or_insert_with(Vec::new).push(u);
     }
     
-    println!("\n--- ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER(Vec<UserF>) ---");
+    println!("\n--- ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER ---");
     for (id, user_list) in &users_by_id {
     
         let mut valid_dates: Vec<NaiveDate> = user_list.iter()
