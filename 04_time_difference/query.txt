@@ -94,3 +94,40 @@ ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER
 /* 
 Rust. 
 *************************************************/
+Standard Error
+   Compiling playground v0.0.1 (/playground)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.79s
+     Running `target/debug/playground`
+Hi my friend!, there's a problem: Database(FromSqlConversionFailure(1, Text, ParseError(OutOfRange)))
+Hi my friend!, there's a problem: Database(FromSqlConversionFailure(1, Text, ParseError(TooShort)))
+Hi my friend!, there's a problem: Database(FromSqlConversionFailure(1, Text, ParseError(TooLong)))
+Standard Output
+
+--- USER'S DATA ---
+Found: User { id: 1, action: "Start", action_date: "13-feb-20" }
+Found: User { id: 1, action: "Cancel", action_date: "13-feb-20" }
+Found: User { id: 2, action: "Start", action_date: "11-feb-20" }
+Found: User { id: 2, action: "Publish", action_date: "14-feb-20" }
+Found: User { id: 3, action: "Start", action_date: "15-feb-20" }
+Found: User { id: 3, action: "Cancel", action_date: "15-feb-20" }
+Found: User { id: 4, action: "Start", action_date: "18-feb-20" }
+Found: User { id: 1, action: "Publish", action_date: "19-feb-20" }
+Found: User { id: 1, action: "SINGING", action_date: "41-feb-20" }
+Found: User { id: 10, action: "DANCING", action_date: " " }
+Found: User { id: 3, action: "FIGHTING", action_date: "02-feb-1540" }
+
+--- ALL VALIDATED ROWS ---
+UserF { id: 1, action_date: Some(2020-02-13) }
+UserF { id: 1, action_date: Some(2020-02-13) }
+UserF { id: 2, action_date: Some(2020-02-11) }
+UserF { id: 2, action_date: Some(2020-02-14) }
+UserF { id: 3, action_date: Some(2020-02-15) }
+UserF { id: 3, action_date: Some(2020-02-15) }
+UserF { id: 4, action_date: Some(2020-02-18) }
+UserF { id: 1, action_date: Some(2020-02-19) }
+
+--- ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER(Vec<UserF>) ---
+ID 1: LAST DATE: 2020-02-19, PENULTIMATE DATE: 2020-02-13, ELAPSED_TIME: 6 DAYS
+ID 2: LAST DATE: 2020-02-14, PENULTIMATE DATE: 2020-02-11, ELAPSED_TIME: 3 DAYS
+ID 4: NONE
+ID 3: LAST DATE: 2020-02-15, PENULTIMATE DATE: 2020-02-15, ELAPSED_TIME: 0 DAYS
