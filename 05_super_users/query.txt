@@ -46,3 +46,50 @@ DATE_AS_SUPER: [[2020-02-14,2020-02-15,2020-02-17,null]]
 /* 
 Julia. 
 *************************************************/
+RETURNING TABLE users_05 FROM DATABASE:
+
+Arrow.Table with 8 rows, 3 columns, and schema:
+ :USER_ID           Int64
+ :PRODUCT_ID        Int64
+ :TRANSACTION_DATE  String
+
+****************************************
+USERS TABLE (DUCKDB QUERIES) -> SAMPLE:
+
+─────────┬──────────────────────────────
+ USER_ID │ PRODUCT_ID  TRANSACTION_DATE
+  Int64? │     Int64?           String?
+─────────┼──────────────────────────────
+       2 │        105         13-feb-20
+       1 │        111         14-feb-20
+       2 │        105         17-feb-20
+       4 │        101         16-feb-20
+       3 │        105         15-feb-20
+
+****************************************
+USERS BECOMING SUPERUSERS (DUCKDB QUERIES):
+
+─────────┬───────────────
+ USER_ID │ DATE_AS_SUPER
+  Int64? │         Date?
+─────────┼───────────────
+       1 │    2020-02-14
+       3 │    2020-02-15
+       2 │    2020-02-17
+       4 │       missing
+
+****************************************
+USERS BECOMING SUPERUSERS (DATAFRAMES.jl):
+
+4×3 DataFrame
+ Row │ USER_ID  TRANSACTION_DATE  DATE_RANK
+     │ Int64    Date?             Int64?
+─────┼──────────────────────────────────────
+   1 │       1  2020-02-14                2
+   2 │       2  2020-02-17                2
+   3 │       3  2020-02-15                2
+   4 │       4  missing             missing
+
+/* 
+Rust. 
+*************************************************/
