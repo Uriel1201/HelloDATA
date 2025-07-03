@@ -87,3 +87,8 @@ CREATE TABLE
     ACTION      VARCHAR(9),
     ACTION_DATE CHAR(9)
     );
+
+"INSERT INTO 
+     USERS_04 (ID, ACTION, ACTION_DATE) 
+ values 
+     (?1, ?2, ?3)"
