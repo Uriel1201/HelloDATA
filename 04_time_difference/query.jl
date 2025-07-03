@@ -80,7 +80,7 @@ function main(args = ARGS)
             print_DuckTable(duck_sample)
 
             println("\n", "*"^40)
-            println("ELAPSED TIME BETWEEN LAST ACTIONS (DUCKDB QUERIES):\n")
+            println("ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER\n(DUCKDB QUERIES):\n")
             query = """
                     WITH
                         DUCK_FORMATTED AS (
@@ -147,7 +147,7 @@ function main(args = ARGS)
                        :ACTION_DATE => (x -> (x .- ShiftedArrays.lead(x, 1))) => :ELAPSED_DAYS
             )
             println("\n", "*"^40)
-            println("ELAPSED TIME BETWEEN LAST ACTIONS (DATAFRAMES.jl):\n")
+            println("ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER\n(DATAFRAMES.jl):\n")
 
             users = combine(groupby(users,
                                     :ID
