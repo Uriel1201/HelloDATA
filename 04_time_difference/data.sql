@@ -77,3 +77,13 @@ INSERT INTO USERS_P4
         *
     FROM
         NAMES;
+
+/* SQLITE. */
+
+/********************************************************************/
+CREATE TABLE 
+    USERS_04 (
+    ID          INTEGER,
+    ACTION      VARCHAR(9),
+    ACTION_DATE CHAR(9)
+    );
