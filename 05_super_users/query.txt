@@ -93,3 +93,28 @@ USERS BECOMING SUPERUSERS (DATAFRAMES.jl):
 /* 
 Rust. 
 *************************************************/
+Standard Error
+   Compiling playground v0.0.1 (/playground)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.56s
+     Running `target/debug/playground`
+Hi my friend!, there's a problem: Database(FromSqlConversionFailure(1, Text, ParseError(Invalid)))
+Hi my friend!, there's a problem: Database(FromSqlConversionFailure(1, Text, ParseError(Invalid)))
+Standard Output
+
+--- USER'S DATA ---
+Found: User { user_id: 1, product_id: 101, transaction_date: "12-feb-20" }
+Found: User { user_id: 2, product_id: 105, transaction_date: "13-feb-20" }
+Found: User { user_id: 1, product_id: 111, transaction_date: "14-feb-20" }
+Found: User { user_id: 3, product_id: 121, transaction_date: "15-feb-20" }
+Found: User { user_id: 1, product_id: 101, transaction_date: "16-feb-20" }
+Found: User { user_id: 2, product_id: 105, transaction_date: "17-feb-20" }
+Found: User { user_id: 4, product_id: 101, transaction_date: "16-feb-20" }
+Found: User { user_id: 3, product_id: 105, transaction_date: "15-feb-20" }
+Found: User { user_id: 3, product_id: 207, transaction_date: "SOYNARUTO" }
+Found: User { user_id: 2, product_id: 401, transaction_date: "AllaMadrid" }
+
+--- USERS BECOMING SUPERUSERS ---
+USER_ID 4 => NONE
+USER_ID 1 => DATE: 2020-02-14 
+USER_ID 3 => DATE: 2020-02-15 
+USER_ID 2 => DATE: 2020-02-17 
