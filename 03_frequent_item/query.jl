@@ -5,11 +5,23 @@ MyDataBase.main()
 #=
 **********************************************
 =#
+function print_DuckTable(cursor::DuckDB.QueryResult)
+
+    pretty_table(
+                 cursor;
+                 tf = tf_unicode,
+                 hlines = [:begin, 1],
+                 vlines = [1]
+    )
+end
+#=
+**********************************************
+=#
 function main(args = ARGS)
 
     db = SQLite.DB(DB_PATH)
-
-    if is_available(db, args) && (args == "items_03")
+    name = uppercase(args)
+    if is_available(db, args) && (name == "ITEMS_03")
 
         duck = nothing
 
@@ -17,47 +29,50 @@ function main(args = ARGS)
 
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
 
-            arrow_items = SQLiteArrowKit.get_ArrowTable(db, args)
-            DuckDB.register_data_frame(duck, arrow_items, "ITEMS")
-            duck_items = DBInterface.execute(duck, "SELECT * FROM ITEMS USING SAMPLE 50% (bernoulli)") |> DataFrame
+            arrow_items = get_ArrowTable(db, args)
+            println("RETURNING TABLE ITEMS_03 FROM DATABASE:\n")
+            println(arrow_items)
+            DuckDB.register_data_frame(duck, arrow_items, "arrow_items")
+            duck_items = DBInterface.execute(duck, "SELECT * FROM 'arrow_items' USING SAMPLE 50% (bernoulli)")
             println("\n", "*"^40)
-            println("ITEMS TABLE USING DUCKDB QUERIES -> SAMPLE:\n$duck_items")
-
+            println("ITEMS TABLE (DuckDB) -> SAMPLE:")
+            print_DuckTable(duck_items)
             query = """
-            WITH
+            WITH 
                 FREQUENCIES AS (
                     SELECT
-                        DATES,
-                        ITEM,
-                        COUNT(*) AS FREQUENCY
-                    FROM
-                        ITEMS
-                    GROUP BY
-                        DATES,
+                        DATES, 
+                        ITEM, 
+                        COUNT(*) AS FREQUENCY 
+                    FROM 
+                        'arrow_items'
+                    GROUP BY 
+                        DATES, 
                         ITEM),
                 RANKS AS (
                     SELECT
-                        DATES,
-                        ITEM,
-                        RANK() OVER (PARTITION BY
-                                       DATES
-                                     ORDER BY
-                                       FREQUENCY DESC) AS RANKED
-                    FROM
-                        FREQUENCIES)
-            SELECT
-                DATES,
+                        DATES, 
+                        ITEM, 
+                        RANK() OVER (PARTITION BY 
+                                         DATES 
+                                     ORDER BY 
+                                         FREQUENCY DESC) AS RANKED 
+                    FROM 
+                        FREQUENCIES) 
+            SELECT 
+                DATES, 
                 ITEM
-            FROM
+            FROM 
                 RANKS
-            WHERE
+            WHERE 
                 RANKED = 1
             ORDER BY
                 1
             """
-            duck_result = DBInterface.execute(duck, query) |> DataFrame
+            duck_result = DBInterface.execute(duck, query)
             println("\n", "*"^40)
-            println("MOST FREQUENTED ITEM BY EACH DATE USING DUCKDB QUERIES:\n$duck_result")
+            println("MOST FREQUENTED ITEM BY EACH DATE (DuckDB):")
+            print_DuckTable(duck_result)
 
             items = arrow_items |> DataFrame
             frequencies = combine(groupby(items,
@@ -74,7 +89,7 @@ function main(args = ARGS)
                               frequencies 
                        )
             println("\n", "*"^40)
-            println("MOST FREQUENTED ITEM BY EACH DATE USING DATAFRAMES:\n$filtered")
+            println("MOST FREQUENTED ITEM BY EACH DATE (DataFrames.jl):\n$filtered")
         finally
 
             DBInterface.close!(duck)
