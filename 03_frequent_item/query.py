@@ -7,8 +7,8 @@ import pandas as pd
 def main(table:str):
 
     conn = dbapi.connect("file:/content/my_SQLite.db?mode=ro")
-
-    if (table == "items_03"):
+    name = table.upper()
+    if (name == "ITEMS_03"):
 
         try:
        
@@ -17,7 +17,7 @@ def main(table:str):
 
             sample = items.head(5)
             print(":" * 40)
-            print(f'ITEMS TABLE USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
+            print(f'ITEMS TABLE (Polars) -> SAMPLE:\n{sample.collect()}')
             
             pol_ranks = (items.group_by(["DATES", "ITEM"])
                               .agg(pol.len()
@@ -30,7 +30,7 @@ def main(table:str):
                               .filter(pol.col("FREQUENCY") == pol.col("MAX_FREQUENCY"))
             )
             print(":" * 40)
-            print(f'MOST FREQUENTED ITEM BY EACH DATE USING POLARS LAZYFRAMES:\n{pol_ranks.collect()}')
+            print(f'MOST FREQUENTED ITEM BY EACH DATE (Polars):\n{pol_ranks.collect()}')
 
             query = """
                     WITH 
@@ -67,7 +67,7 @@ def main(table:str):
             result = arrowkit.get_ArrowTable(conn, query)
             df = result.to_pandas()
             print(":" * 40)
-            print(f'MOST FREQUENTED ITEM BY EACH DATE USING QUERIES:\n{result}')
+            print(f'MOST FREQUENTED ITEM BY EACH DATE (DuckDB):\n{result}')
             print(f'<*pandas visualization*>\n{df}')
  
         finally:
