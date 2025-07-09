@@ -61,7 +61,7 @@ WHERE
 SELECT 
     *
 FROM
-    ITEMS;
+    'arrow_items';
 
 WITH 
     FREQUENCIES AS (
@@ -70,7 +70,7 @@ WITH
             ITEM, 
             COUNT(*) AS FREQUENCY 
         FROM 
-            ITEMS
+            'arrow_items'
         GROUP BY 
             DATES, 
             ITEM),
