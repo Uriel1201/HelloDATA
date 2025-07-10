@@ -61,7 +61,9 @@ WHERE
 SELECT 
     *
 FROM
-    'arrow_items';
+    'arrow_items'
+USING SAMPLE 50%
+    (bernoulli);
 
 WITH 
     FREQUENCIES AS (
