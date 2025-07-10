@@ -1,5 +1,5 @@
 const DB_PATH = "my_SQLite.db"
-using .MyDataBase, DataFrames, StatsBase, Arrow, SQLite, DuckDB, .SQLiteArrowKit
+using .MyDataBase, DataFrames, StatsBase, Arrow, SQLite, DuckDB, .SQLiteArrowKit, PrettyTables 
 
 MyDataBase.main()
 #=
