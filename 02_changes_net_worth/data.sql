@@ -79,26 +79,55 @@ INSERT INTO TRANSACTIONS_P2
     FROM
         NAMES;
 
-/* DUCKDB. */
+/* SQLite. */
 
 /********************************************************************/
+"
 CREATE TABLE 
     TRANSACTIONS (
                   SENDER           INTEGER,
                   RECEIVER         INTEGER,
                   AMOUNT           DECIMAL,
-                  TRANSACTION_DATE DATE
-    );
-
+                  TRANSACTION_DATE VARCHAR(9)
+    )
+"
+"""
+let transactions = vec![
+    transaction!(5,
+                 2,
+                 10.0,
+                 "12-feb-20"),
+    transaction!(1,
+                 3,
+                 15.0,
+                 "13-feb-20"),
+    transaction!(2,
+                 1,
+                 20.0,
+                 "13-feb-20"),
+    transaction!(2,
+                 3,
+                 25.0,
+                 "14-feb-20"),
+    transaction!(3,
+                 1,
+                 20.0,
+                 "15-feb-20"),
+    transaction!(3,
+                 2,
+                 15.0,
+                 "15-feb-20"),
+    transaction!(1,
+                 4,
+                 5.0,
+                 "16-feb-20"),
+    transaction!(3, "THanos, "seven", "02-feb-1540"),
+    ];
+"""
+"
 INSERT INTO 
-    TRANSACTIONS  
-BY 
-    POSITION 
-VALUES 
-    (5, 2, 10.0, "2020-02-12"),
-    (1, 3, 15.0, "2020-02-13"),
-    (2, 1, 20.0, "2020-02-13"),
-    (2, 3, 25.0, "2020-02-14"),
-    (3, 1, 20.0, "2020-02-15"),
-    (3, 2, 15.0, "2020-02-15"),
-    (1, 4, 5.0, "2020-02-16");
+    TRANSACTIONS 
+    (SENDER, RECEIVER, AMOUNT, TRANSACTION_DATE)
+VALUES
+    (?1, ?2, ?3, ?4)
+"
