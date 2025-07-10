@@ -14,7 +14,9 @@ items in the case of a tie. */
 SELECT
     *
 FROM
-    ITEMS_P3;
+    ITEMS_P3
+LIMIT 
+    10;
 
       -- Querying most frequent items on each date
 WITH FREQUENCIES ( --Frequencies for items on each date
@@ -62,8 +64,8 @@ SELECT
     *
 FROM
     'arrow_items'
-USING SAMPLE 50%
-    (bernoulli);
+USING 
+    SAMPLE 50% (bernoulli);
 
 WITH 
     FREQUENCIES AS (
