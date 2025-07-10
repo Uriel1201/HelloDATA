@@ -82,15 +82,14 @@ INSERT INTO TRANSACTIONS_P2
 /* SQLite. */
 
 /********************************************************************/
-"
 CREATE TABLE 
     TRANSACTIONS (
                   SENDER           INTEGER,
                   RECEIVER         INTEGER,
                   AMOUNT           DECIMAL,
                   TRANSACTION_DATE VARCHAR(9)
-    )
-"
+    );
+
 """
 let transactions = vec![
     transaction!(5,
@@ -124,10 +123,9 @@ let transactions = vec![
     transaction!(3, "THanos, "seven", "02-feb-1540"),
     ];
 """
-"
+
 INSERT INTO 
     TRANSACTIONS 
     (SENDER, RECEIVER, AMOUNT, TRANSACTION_DATE)
 VALUES
     (?1, ?2, ?3, ?4)
-"
