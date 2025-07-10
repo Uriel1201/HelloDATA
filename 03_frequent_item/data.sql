@@ -70,23 +70,27 @@ INSERT INTO ITEMS_P3
     FROM
         NAMES;
 
-/* DUCKDB. */
+/* SQLite. */
 
 /********************************************************************/
-CREATE TABLE 
-    ITEMS (
-           DATES DATE,
-           ITEM  VARCHAR
-    );
-
-INSERT INTO 
-    ITEMS
-BY POSITION VALUES 
-    ("2020-01-01", "apple"),
-    ("2020-01-01", "apple"),
-    ("2020-01-01", "pear"),
-    ("2020-01-01", "pear"),
-    ("2020-01-02", "pear"),
-    ("2020-01-02", "pear"),
-    ("2020-01-02", "pear"),
-    ("2020-01-02", "orange");
+"CREATE TABLE 
+     ITEMS(
+         DATE VARCHAR(9),
+         ITEM VARCHAR(9)
+     )"
+"""
+    let items = vec![
+    item!("apple", "01-jan-20"),
+    item!("apple", "01-jan-20"),
+    item!("pear", "01-jan-20"),
+    item!("pear", "01-jan-20"),
+    item!("pear", "02-jan-20"),
+    item!("pear", "02-jan-20"),
+    item!("pear", "02-jan-20"),
+    item!("orange", "02-jan-20"),
+    item!("Dewey", "fuaaaa!!!"),
+    item!("Thanos", "67-jan-93"),
+    ];
+"""
+"INSERT INTO ITEMS(DATE, ITEM) 
+     values (?1, ?2)"
