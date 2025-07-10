@@ -120,7 +120,7 @@ let transactions = vec![
                  4,
                  5.0,
                  "16-feb-20"),
-    transaction!(3, "THanos", "seven", "02-feb-1540"),
+    transaction!(3, 4, 7.0, "PickleRick"),
     ];
 """
 
