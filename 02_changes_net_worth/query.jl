@@ -11,7 +11,7 @@ function print_DuckTable(cursor::DuckDB.QueryResult)
                  cursor;
                  tf = tf_unicode,
                  hlines = [:begin, 1],
-                 vlines = [0, :end]
+                 vlines = [0]
     )
 end
 #=
