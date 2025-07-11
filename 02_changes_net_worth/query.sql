@@ -48,13 +48,15 @@ FROM
 ORDER BY
     2 DESC;
 
-/* DUCKDB. */
+/* DuckDB. */
 
 /********************************************************************/
 SELECT 
     * 
 FROM 
-    TRANSACTIONS;
+    'arrow_transactions'
+USING 
+    SAMPLE 50% (bernoulli);
 
 WITH 
     SENDERS AS (
@@ -62,7 +64,7 @@ WITH
             SENDER,
             SUM(AMOUNT) AS SENDED
         FROM 
-            TRANSACTIONS
+            'arrow_transactions'
         GROUP BY
             SENDER),
     RECEIVERS AS (
@@ -70,7 +72,7 @@ WITH
             RECEIVER,
             SUM(AMOUNT) AS RECEIVED
         FROM
-            TRANSACTIONS
+            'arrow_transactions'
         GROUP BY
             RECEIVER) 
 SELECT
