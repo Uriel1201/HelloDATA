@@ -26,6 +26,11 @@ struct TransactionF {
               amount:   f64,
 }
 
+#[derive(Debug)]
+struct User {
+              transaction: f64,
+}
+
 impl Transaction {
     fn new(sender: i32, receiver: i32, amount: f64, date_str: &str) -> Self {
         Self {
@@ -37,6 +42,15 @@ impl Transaction {
     }
 }
 
+impl User {
+    fn new(transaction: f64) -> Self {
+        Self {
+              transaction,
+        }
+    }
+}
+
+
 macro_rules! transaction {
     ($id_sender:expr, $id_receiver:expr, $amount:expr, $date:expr) => {
         Transaction::new($id_sender, $id_receiver, $amount, $date)
@@ -46,14 +60,15 @@ macro_rules! transaction {
 fn main() -> Result<(), AppError> {
 
     let mut conn = Connection::open_in_memory()?;
-    
+
     conn.execute("    
                  CREATE TABLE 
                      TRANSACTIONS (
                          SENDER           INTEGER,
                          RECEIVER         INTEGER,
-                        
-                         TRANSACTION_DATE VARCHAR(9)", 
+                         AMOUNT           DECIMAL,
+                         TRANSACTION_DATE VARCHAR(9)
+                     )", 
                  (),
     )?;
 
@@ -86,7 +101,6 @@ fn main() -> Result<(), AppError> {
                  4,
                  5.0,
                  "16-feb-20"),
-    transaction!(3, 4, 7.0, "PickleRick"),
     ];
     let tx = conn.transaction()?;
     {
@@ -102,7 +116,7 @@ fn main() -> Result<(), AppError> {
     }
     }
     tx.commit()?;
-    /*
+    
     let mut stmt = conn.prepare("SELECT 
                                      * 
                                  FROM 
@@ -122,90 +136,51 @@ fn main() -> Result<(), AppError> {
     
     println!("--- RAW DATA ---");
     for i in transactions_iter {
-        println!("Found: {:?}", i.unwrap());
+        println!("Transaction Found: {:?}", i.unwrap());
     }
-    
-    let mut all_users_v:Vec<UserF> = Vec::new();
-    
-    {
-     let mut stmt = conn.prepare("SELECT * FROM USERS")?;
-     let users_iter = stmt.query_map([],
-                                     |row| {
-                                            RusqliteResult::Ok( User {
-                                                                      id:          row.get(0)?,
-                                                                      action:      row.get(1)?,
-                                                                      action_date: row.get(2)?,
+   
+    let mut all_transactions_v:Vec<TransactionF> = Vec::new();
+    let mut stmt = conn.prepare("SELECT 
+                                     SENDER, 
+                                     RECEIVER, 
+                                     AMOUNT 
+                                 FROM 
+                                     TRANSACTIONS"
+                        )?;
+                        
+    let transactions_iter = stmt.query_map([], 
+                                           |row| {                                          
+                                                  RusqliteResult::Ok(TransactionF {
+                                                                         sender:   row.get("SENDER")?,
+                                                                         receiver: row.get("RECEIVER")?,
+                                                                         amount:   row.get("AMOUNT")?,
                                                                      }
-                                                            )
-                                           }
-                           )?;
-                           
-     println!("\n--- USER'S DATA ---");
-     for u in users_iter {
-        println!("Found: {:?}", u.unwrap()); 
-     }
-    }
-    let mut stmt = conn.prepare("SELECT ID, ACTION_DATE FROM USERS")?;
-    let users_iter = stmt.query_map([], 
-                                    |row| {
-                                           let date_str: String = row.get("ACTION_DATE")?;
-                                           let parsed_date = NaiveDate::parse_from_str(&date_str, 
-                                                                                       "%d-%b-%y"
-                                                                        ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(1, 
-                                                                                                                                rusqlite::types::Type::Text, 
-                                                                                                                                Box::new(e)
-                                                                                                       )
-                                                                          )?;
-    
-                                               RusqliteResult::Ok(UserF {
-                                                                         id:          row.get("ID")?,
-                                                                         action_date: Some(parsed_date),
-                                                                        }
-                                                                )
-                                          }
-                            )?; 
+                                                                  )
+                                                 }
+                                 )?; 
                  
-                
-    for u in users_iter {
-        match u {
-            Ok(user_v) => all_users_v.push(user_v),
-                          Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                              AppError::Database(e)
-                                    ),
+    for t in transactions_iter {
+        match t {
+            Ok(transaction_v) => all_transactions_v.push(transaction_v),
+            Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
+                                AppError::Database(e)
+                      ),
         }
     } 
     
-    
-    let mut users_by_id:HashMap<i32, Vec<UserF>> = HashMap::new();
-    for u in all_users_v {
-        users_by_id.entry(u.id).or_insert_with(Vec::new).push(u);
+    let mut transactions_by_id:HashMap<i32, Vec<User>> = HashMap::new();
+    for t in all_transactions_v {
+        let a = -1.0 * t.amount;
+        let b = t.amount;
+        transactions_by_id.entry(t.sender).or_insert_with(Vec::new).push(User::new(a));
+        transactions_by_id.entry(t.receiver).or_insert_with(Vec::new).push(User::new(b));
     }
     
-    println!("\n--- ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER ---");
-    for (id, user_list) in &users_by_id {
-    
-        let mut valid_dates: Vec<NaiveDate> = user_list.iter()
-                                                       .filter_map(|u| u.action_date)
-                                                       .collect();
-
-        valid_dates.sort();
-        if valid_dates.len() >= 2 {
-            let last_date = valid_dates[valid_dates.len() - 1];
-            let second_last_date = valid_dates[valid_dates.len() - 2];
-
-            let duration_diff: Duration = last_date.signed_duration_since(second_last_date);
-
-            println!(
-                "ID {} => ELAPSED_TIME: {} DAYS",
-                id, duration_diff.num_days()
-            );
-        } else {
-            println!(
-                "ID {} => NONE",
-                id
-            );
-        }
-    } */
-    
+    println!("\n--- NET CHANGES MADE BY EACH USER ---");
+    for (i, list) in &transactions_by_id {
+        let c:f64 = list.iter().map(|u| u.transaction).sum();
+        println!("User_id: {} => Net Change {}", i, c);
+    }
+   
     Ok(())
 }
