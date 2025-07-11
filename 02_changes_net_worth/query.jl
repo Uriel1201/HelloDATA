@@ -1,27 +1,50 @@
 const DB_PATH = "my_SQLite.db"
-using .MyDataBase, DataFrames, Arrow, SQLite, DuckDB, .SQLiteArrowKit
+using .MyDataBase, DataFrames, Arrow, SQLite, DuckDB, .SQLiteArrowKit, PrettyTables 
 
 MyDataBase.main()
+#=
+**********************************************
+=#
+function print_DuckTable(cursor::DuckDB.QueryResult)
+
+    pretty_table(
+                 cursor;
+                 tf = tf_unicode,
+                 hlines = [:begin, 1],
+                 vlines = [0, :end]
+    )
+end
 #=
 **********************************************
 =#
 function main(args = ARGS)
 
     db = SQLite.DB(DB_PATH)
+    name = uppercase(args)
 
-    if SQLiteArrowKit.is_available(db, args) && (args == "transactions_02")
+    if is_available(db, args) && (name == "TRANSACTIONS_02")
 
         duck = nothing
 
         try
 
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
+            arrow_transactions = get_ArrowTable(db, args)
+            println("RETURNING TABLE TRANSACTIONS_02 FROM DATABASE:\n$arrow_transactions")
 
-            arrow_transactions = SQLiteArrowKit.get_ArrowTable(db, args)
-            DuckDB.register_data_frame(duck, arrow_transactions, "TRANSACTIONS")
-            duck_sample = DBInterface.execute(duck, "SELECT * FROM TRANSACTIONS USING SAMPLE 50% (bernoulli)") |> DataFrame
-            println("*"^40)
-            println("TRANSACTIONS TABLE USING DUCKDB QUERIES -> SAMPLE:\n$duck_sample")
+            DuckDB.register_data_frame(duck, arrow_transactions, "arrow_transactions")
+            sample = """
+            SELECT 
+                * 
+            FROM 
+                'arrow_transactions'
+            USING 
+                SAMPLE 50% (bernoulli)
+            """
+            duck_sample = DBInterface.execute(duck, sample)
+            println("\n", "*"^40)
+            println("TRANSACTIONS TABLE (DuckDB) -> SAMPLE:")
+            print_DuckTable(duck_sample)
 
             query = """
             WITH SENDERS AS (
@@ -29,7 +52,7 @@ function main(args = ARGS)
                     SENDER,
                     SUM(AMOUNT) AS SENDED
                 FROM
-                    TRANSACTIONS
+                    'arrow_transactions'
                 GROUP BY
                     SENDER),
             RECEIVERS AS (
@@ -37,7 +60,7 @@ function main(args = ARGS)
                     RECEIVER,
                     SUM(AMOUNT) AS RECEIVED
                 FROM
-                    TRANSACTIONS 
+                    'arrow_transactions'
                 GROUP BY
                     RECEIVER) SELECT
                                   COALESCE(S.SENDER, R.RECEIVER) AS USER_ID,
@@ -47,11 +70,10 @@ function main(args = ARGS)
                               FULL JOIN SENDERS S ON (R.RECEIVER = S.SENDER)
                               ORDER BY 2 DESC
             """
-            duck_query = DBInterface.execute(duck, query) |> DataFrame
-            
+            duck_query = DBInterface.execute(duck, query)
             println("\n", "*"^40)
-            println("NET CHANGES USING DUCKDB QUERIES:\n$duck_query")
-
+            println("NET CHANGES MADE BY EACH USER (DuckDB):")
+            print_DuckTable(duck_query)
             df_transactions = arrow_transactions |> DataFrame
 
             df = (rename!(stack(select(df_transactions,
@@ -77,7 +99,7 @@ function main(args = ARGS)
                           )
             )
             println("\n", "*"^40)
-            println("NET CHANGES USING DATAFRAMES:\n$result")
+            println("NET CHANGES MADE BY EACH USER (DataFrames.jl):\n$result")
 
         finally
 
