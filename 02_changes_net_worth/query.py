@@ -12,10 +12,12 @@ def main(table:str):
         try:
 
             arrow_transactions = arrowkit.get_ArrowTable(conn, table)
+            print(f'RETURNING TABLE TRANSACTIONS_02 TABLE FROM DATABASE:\n{arrow_transactions.schema}')
+            print(":" * 40)
             transactions = pol.from_arrow(arrow_transactions).lazy()
 
             sample = transactions.head(5)
-            print(f'TRANSACTIONS TABLE USING POLARS LAZYFRAMES -> SAMPLE:\n{sample.collect()}')
+            print(f'TRANSACTIONS TABLE (POLARS) -> SAMPLE:\n{sample.collect()}')
             _type = (transactions.unpivot(on = ['SENDER', 'RECEIVER'],
                                          index = 'AMOUNT',
                                          variable_name = 'TYPE',
@@ -33,7 +35,7 @@ def main(table:str):
                                  )
             )
             print(":" * 40)
-            print(f'NET CHANGES USING POLARS LAZYFRAMES:\n{_type.collect()}')
+            print(f'NET CHANGES MADE BY EACH USER (POLARS):\n{_type.collect()}')
 
             query = """
                     WITH 
@@ -68,7 +70,7 @@ def main(table:str):
             result = arrowkit.get_ArrowTable(conn, query)
             df = result.to_pandas()
             print(":" * 40)
-            print(f'NET CHANGES USING QUERIES:\n{result}')
+            print(f'NET CHANGES MADE BY EACH USER (DuckDB):\n{result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
