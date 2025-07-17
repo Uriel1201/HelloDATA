@@ -70,7 +70,7 @@ def main(table:str):
             result = arrowkit.get_ArrowTable(conn, query)
             df = result.to_pandas()
             print(":" * 40)
-            print(f'NET CHANGES MADE BY EACH USER (Query):\n{result}')
+            print(f'NET CHANGES MADE BY EACH USER (SQLite query):\n{result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
