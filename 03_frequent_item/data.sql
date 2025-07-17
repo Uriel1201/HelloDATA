@@ -70,7 +70,7 @@ INSERT INTO ITEMS_P3
     FROM
         NAMES;
 
-/* SQLite. */
+/* SQLITE/
 
 /********************************************************************/
 "CREATE TABLE 
