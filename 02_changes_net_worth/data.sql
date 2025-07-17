@@ -79,7 +79,7 @@ INSERT INTO TRANSACTIONS_P2
     FROM
         NAMES;
 
-/* SQLite. */
+/* SQLITE. */
 
 /********************************************************************/
 CREATE TABLE 
