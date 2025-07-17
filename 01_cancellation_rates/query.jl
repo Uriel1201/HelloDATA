@@ -1,15 +1,28 @@
 const DB_PATH = "my_SQLite.db"
-using .MyDataBase, DataFrames, Arrow, SQLite, DuckDB, .SQLiteArrowKit
+using .MyDataBase, DataFrames, Arrow, SQLite, DuckDB, .SQLiteArrowKit, PrettyTables 
 
 MyDataBase.main()
+#=
+**********************************************
+=#
+function print_DuckTable(cursor::DuckDB.QueryResult)
+
+    pretty_table(
+                 cursor;
+                 tf = tf_unicode,
+                 hlines = [:begin, 1],
+                 vlines = [0]
+    )
+end
 #=
 **********************************************
 =#
 function main(args = ARGS)
 
     db = SQLite.DB(DB_PATH)
+    name = uppercase(args)
 
-    if is_available(db, args) && (args == "users_01")
+    if is_available(db, args) && (name == "USERS_01")
 
         duck = nothing
 
@@ -17,12 +30,13 @@ function main(args = ARGS)
 
             duck = DBInterface.connect(DuckDB.DB, ":memory:")
 
-            arrow_users = SQLiteArrowKit.get_ArrowTable(db, args)
-            DuckDB.register_data_frame(duck, arrow_users, "USERS")
-            duck_users = DBInterface.execute(duck, "SELECT * FROM USERS USING SAMPLE 50% (bernoulli)") |> DataFrame
+            arrow_users = get_ArrowTable(db, args)
+            println("RETURNING TABLE USERS_01 FROM DATABASE:\n$arrow_users")
+            DuckDB.register_data_frame(duck, arrow_users, "arrow_users")
+            sample = DBInterface.execute(duck, "SELECT * FROM 'arrow_users' USING SAMPLE 50% (bernoulli)")
             println("\n", "*"^40)
-            println("USERS TABLE USING DUCKDB QUERIES -> SAMPLE:\n$duck_users")
-
+            println("USERS TABLE (DuckDB) -> SAMPLE:")
+            print_DuckTable(sample)
             query = """
             WITH
                 DUCK_UPDATED AS (
@@ -31,7 +45,7 @@ function main(args = ARGS)
                         ACTION,
                         STRFTIME(STRPTIME(DATES, '%d-%b-%y'), '%Y-%m-%d')::DATE AS DATES
                     FROM
-                        USERS),
+                        'arrow_users'),
                 TOTALS AS (
                     SELECT
                         USER_ID,
@@ -55,9 +69,10 @@ function main(args = ARGS)
             ORDER BY
                 1
             """
-            duck_result = DBInterface.execute(duck, query) |> DataFrame
+            duck_result = DBInterface.execute(duck, query)
             println("\n", "*"^40)
-            println("USER STATISTICS USING DUCKDB QUERIES:\n$duck_result")
+            println("USER STATISTICS (DuckDB):")
+            print_DuckTable(duck_result)
 
             users = arrow_users |> DataFrame
             dummy = select(users,
@@ -74,7 +89,7 @@ function main(args = ARGS)
             result.CANCEL_RATE = @.ifelse(result.start_sum != 0, result.cancel_sum ./ result.start_sum, 0.0)
             result.PUBLISH_RATE = @.ifelse(result.start_sum != 0, result.publish_sum ./ result.start_sum, 0.0)
             println("\n", "*"^40)
-            println("USER STATISTICS, USING DATAFRAMES:\n$result")
+            println("USER STATISTICS (DataFrames.jl):\n$result")
 
         finally
 
