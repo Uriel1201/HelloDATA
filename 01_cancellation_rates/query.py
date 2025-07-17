@@ -12,9 +12,10 @@ def main(table:str):
         try:
 
             arrow_users = arrowkit.get_ArrowTable(conn, table)
+            print(f'RETURNING TABLE USERS_01 TABLE FROM DATABASE:\n{arrow_users.schema}')
             users = pol.from_arrow(arrow_users)
-
-            print(f'USERS TABLE USING POLARS:\n{users.head(5)}')
+            print(":" * 40)
+            print(f'USERS TABLE (Polars) -> SAMPLE\n{users.head(5)}')
             rates = (users.to_dummies(columns = 'ACTION')
                           .drop('DATES')
                           .group_by('USER_ID')
@@ -25,7 +26,7 @@ def main(table:str):
             )
 
             print(":" * 40)
-            print(f'USER STATISTICS, USING POLARS:\n{rates}')
+            print(f'USER STATISTICS (Polars) \n{rates}')
 
             query = """
                     WITH
@@ -51,7 +52,7 @@ def main(table:str):
             result = arrowkit.get_ArrowTable(conn, query)
             df = result.to_pandas()
             print(":" * 40)
-            print(f'USER STATISTICS, USING QUERIES:\n{result}')
+            print(f'USER STATISTICS (DuckDB)\n{result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
