@@ -67,7 +67,7 @@ def main(table:str):
             result = arrowkit.get_ArrowTable(conn, query)
             df = result.to_pandas()
             print(":" * 40)
-            print(f'MOST FREQUENTED ITEM BY EACH DATE (DuckDB):\n{result}')
+            print(f'MOST FREQUENTED ITEM BY EACH DATE (SQLite query):\n{result}')
             print(f'<*pandas visualization*>\n{df}')
  
         finally:
