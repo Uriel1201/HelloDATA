@@ -8,6 +8,9 @@ pages that their friends have liked, but
 that they have not yet marked as liked.
 Order the result by ascending user ID. */
 
+/* ORACLE. */
+
+/********************************************************************/
 CREATE TABLE FRIENDS_P6 (
     USER_ID INTEGER,
     FRIEND  INTEGER
@@ -121,3 +124,68 @@ INSERT INTO LIKES_P6
         *
     FROM
         NAMES;
+
+/* RUSQLITE. */
+
+/********************************************************************/
+CREATE TABLE 
+    FRIENDS (
+        USER_ID INTEGER,
+        FRIEND INTEGER
+    );
+
+CREATE TABLE 
+    LIKES (
+        USER_ID INTEGER,
+        PAGE_LIKES CHAR
+    );
+
+"""
+let friends = vec![
+    friend!(1,
+            2),
+    friend!(1,
+            3),
+    friend!(1,
+            4),
+    friend!(2,
+            1),
+    friend!(3,
+            1),
+    friend!(3,
+            4),
+    friend!(4,
+            1),
+    friend!(4,
+            3),
+];
+"""
+"""
+let likes = vec![
+    like!(1,
+          "A"),
+    like!(1,
+          "B"),
+    like!(1,
+          "C"),
+    like!(2,
+          "A"),
+    like!(3,
+          "B"),
+    like!(3,
+          "C"),
+    like!(4,
+          "B"),
+];
+"""
+INSERT INTO 
+    FRIENDS 
+    (USER_ID, FRIEND)
+VALUES
+    (?1, ?2);
+
+INSERT INTO 
+    LIKES 
+    (USER_ID, PAGE_LIKES)
+VALUES
+    (?1, ?2);
