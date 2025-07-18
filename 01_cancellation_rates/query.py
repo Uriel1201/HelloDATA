@@ -52,7 +52,7 @@ def main(table:str):
             result = arrowkit.get_ArrowTable(conn, query)
             df = result.to_pandas()
             print(":" * 40)
-            print(f'USER STATISTICS (Query)\n{result}')
+            print(f'USER STATISTICS (SQLite QUERY)\n{result}')
             print(f'<*pandas visualization*>\n{df}')
 
         finally:
