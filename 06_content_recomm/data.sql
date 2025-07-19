@@ -132,15 +132,14 @@ CREATE TABLE
     FRIENDS (
         USER_ID INTEGER,
         FRIEND INTEGER
-    );
+    )
 
 CREATE TABLE 
     LIKES (
         USER_ID INTEGER,
         PAGE_LIKES CHAR
-    );
+    )
 
-"""
 let friends = vec![
     friend!(1,
             2),
@@ -159,8 +158,7 @@ let friends = vec![
     friend!(4,
             3),
 ];
-"""
-"""
+
 let likes = vec![
     like!(1,
           "A"),
@@ -177,15 +175,15 @@ let likes = vec![
     like!(4,
           "B"),
 ];
-"""
+
 INSERT INTO 
     FRIENDS 
     (USER_ID, FRIEND)
 VALUES
-    (?1, ?2);
+    (?1, ?2)
 
 INSERT INTO 
     LIKES 
     (USER_ID, PAGE_LIKES)
 VALUES
-    (?1, ?2);
+    (?1, ?2)
