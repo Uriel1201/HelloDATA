@@ -17,6 +17,8 @@ def main(table1:str, table2:str):
             duck = duckdb.connect(":memory:")
             arrow_friends = arrowkit.get_ArrowTable(conn, table1)
             arrow_likes = arrowkit.get_ArrowTable(conn, table2)
+            print(f'RETURNING TABLE FRIENDS_06 FROM DATABASE:\n{arrow_friends.schema}')
+            print(f'RETURNING TABLE LIKES_06 FROM DATABASE:\n{arrow_likes.schema}')
 
             friends = pol.from_arrow(arrow_friends).lazy()
             likes = pol.from_arrow(arrow_likes).lazy()
@@ -32,14 +34,14 @@ def main(table1:str, table2:str):
                                    right_on = "USER_ID",
                                    coalesce = True
                               )
-                             .select(pol.col("USER_ID"), 
+                             .select(pol.col("USER_ID"),
                                      pol.col("PAGE_LIKES")
                                         .alias("RECOMMENDATION")
                               )
-                             .join(likes, 
-                                   left_on = ["USER_ID", "RECOMMENDATION"], 
-                                   right_on = ["USER_ID", "PAGE_LIKES"], 
-                                   coalesce = True, 
+                             .join(likes,
+                                   left_on = ["USER_ID", "RECOMMENDATION"],
+                                   right_on = ["USER_ID", "PAGE_LIKES"],
+                                   coalesce = True,
                                    how = "anti"
                               )
                              .unique()
