@@ -120,3 +120,58 @@ INSERT INTO WEB_P7
 /* RUSQLITE. */
 
 /********************************************************************/
+CREATE TABLE 
+    MOBILE (
+        USER_ID INTEGER,
+        PAGE_URL CHAR
+    )
+
+CREATE TABLE 
+    WEB (
+         USER_ID INTEGER,
+         PAGE_URL CHAR
+    )
+
+let all_mobile = vec![
+    mobile!(1,
+            "A"),
+    mobile!(2,
+            "B"),
+    mobile!(3,
+            "C"),
+    mobile!(4,
+            "A"),
+    mobile!(9,
+            "B"),
+    mobile!(2,
+            "C"),
+    mobile!(10,
+            "B"),
+];
+
+let all_web = vec![
+    web!(6,
+         "A"),
+    web!(2,
+         "B"),
+    web!(3,
+         "C"),
+    web!(7,
+         "A"),
+    web!(4,
+         "B"),
+    web!(8,
+         "C"),
+    web!(5,
+         "B"),
+];
+
+INSERT INTO 
+    MOBILE (USER_ID, PAGE_URL)
+VALUES
+    (?1, ?2)
+
+INSERT INTO 
+    WEB (USER_ID, PAGE_URL)
+VALUES
+    (?1, ?2)
