@@ -6,6 +6,9 @@ fraction of users who only visited
 mobile, only visited web, and visited
 both. */
 
+/* ORACLE. */
+
+/********************************************************************/
 CREATE TABLE MOBILE_P7 (
     USER_ID  INTEGER,
     PAGE_URL CHAR
@@ -113,3 +116,7 @@ INSERT INTO WEB_P7
         *
     FROM
         NAMES;
+
+/* RUSQLITE. */
+
+/********************************************************************/
