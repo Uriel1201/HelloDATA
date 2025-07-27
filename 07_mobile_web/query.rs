@@ -227,4 +227,4 @@ fn main() -> Result<(), AppError> {
     println!("fraction of users using web or mobile =>\nboth: {}\nonly_web: {}\nonly_mobile: {}", rate_both, rate_web, rate_mobile);
     
     Ok(())
-                                  }
+}
