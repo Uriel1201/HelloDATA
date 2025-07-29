@@ -10,6 +10,14 @@ pub enum AppError {
     DateParse(#[from] chrono::ParseError),
 }
 
+#[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
 // This struct is used to simulate the table in a database 
 #[derive(Debug)]
 struct User {
@@ -77,13 +85,7 @@ fn main() -> Result<(), AppError> {
     let mut conn = Connection::open_in_memory()?;
 
     conn.execute("
-                 CREATE TABLE 
-                     USERS (
-                         USER_ID INTEGER,
-                         ACTION VARCHAR(9),
-                         DATES VARCHAR(9)
-                     )
-                 ", 
+                 CREATE TABLE USERS (USER_ID INTEGER, ACTION VARCHAR(9), DATES VARCHAR(9))", 
                  (),
     )?;
     
@@ -132,28 +134,22 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
-    let mut stmt = conn.prepare("SELECT 
-                                     * 
-                                 FROM 
-                                     USERS"
-                        )?;
-    let users_iter = stmt.query_map([],
-                                    |row| {
-                                    RusqliteResult::Ok(User {
-                                                             user_id: row.get(0)?,
-                                                             action:  row.get(1)?,
-                                                             date:    row.get(2)?,
-                                                       }
-                                                    )
-                                    }
-                                 )?;
+    println!("\n--- RAW DATA ---\n(schema)");
+    let mut _stmt = conn.prepare("PRAGMA table_info('USERS')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
     
-    println!("--- RAW DATA ---");
-    for u in users_iter {
-        println!("Found: {:?}", u.unwrap());
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
     }
 
-    let mut all_users_v:Vec<UserF> = Vec::new();
     let mut stmt = conn.prepare("SELECT 
                                      USER_ID, 
                                      ACTION 
@@ -161,25 +157,22 @@ fn main() -> Result<(), AppError> {
                                      USERS"
                         )?;
                         
-    let users_iter = stmt.query_map([], 
-                                    |row| {                                          
-                                    RusqliteResult::Ok(UserF {
-                                                              user_id: row.get("USER_ID")?,
-                                                              action:  row.get("ACTION")?,
-                                                       }
+    let all_users_v:Vec<UserF> = stmt.query_map([], 
+                                                    |row| {                                          
+                                                    RusqliteResult::Ok(UserF {
+                                                                           user_id: row.get("USER_ID")?,
+                                                                           action:  row.get("ACTION")?,
+                                                                       }
                                                     )
-                                          }
-                          )?; 
-                 
-    for u in users_iter {
-        match u {
-            Ok(user_v) => all_users_v.push(user_v),
-            Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                AppError::Database(e)
-                      ),
-        }
-    } 
+                                                    }
+                                          )?
+                                         .filter_map(Result::ok).collect();
+                                
+    for u in &all_users_v {
+        println!("found: {:?}", u);
+    }
     
+    println!("\n--- USER'S STATISTICS ---");
     let mut counts_by_action:HashMap<(i32, String), usize> = HashMap::new();
     for u in all_users_v {
         *counts_by_action.entry((u.user_id, u.action)).or_insert(0)+=1;
@@ -189,7 +182,7 @@ fn main() -> Result<(), AppError> {
     for (i, c) in counts_by_action {
         id_actions.entry(i.0).or_insert_with(Vec::new).push(Action::new(i.1, c));
     }
-    
+
     let mut users_count:HashMap<i32, Count> = HashMap::new();
    
     for (i, list) in id_actions {
@@ -199,12 +192,11 @@ fn main() -> Result<(), AppError> {
                 "start" => {result_count.start_count = Some(v.count)},
                 "publish" => {result_count.publish_count = Some(v.count)},
                 "cancel" => {result_count.cancel_count = Some(v.count)},
-                _ => {println!("Warning");}
+                _ => {()}
             }
         }
     }
 
-    println!("\n--- USER'S STATISTICS ---");
     for (i, action) in users_count {
         let publish_rate:Option<f64> = action.start_count.and_then(|start_val| {action.publish_count.map(|publish_val| {if start_val == 0 {None} 
                                                                                                                         else {Some(publish_val as f64 / start_val as f64)}
