@@ -134,7 +134,7 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
-    println!("\n--- RAW DATA ---\n(schema)");
+    println!("\n--- RAW DATA ---\nSCHEMA");
     let mut _stmt = conn.prepare("PRAGMA table_info('USERS')")?;
     let column_info_iter = _stmt.query_map([], |row| {
         RusqliteResult::Ok(ColumnInfo {
@@ -206,7 +206,7 @@ fn main() -> Result<(), AppError> {
                                                           ).flatten();
         let cancel_rate:Option<f64> = action.start_count.and_then(|start_val| {action.cancel_count.map(|cancel_val| {if start_val == 0 {None} else {Some(cancel_val as f64 / start_val as f64)}})})
                                                         .flatten();
-        println!("user_id {}\npublish rate: {:?}\ncancel rate: {:?}\n", i, publish_rate, cancel_rate);
+        println!("user_id: {}\npublish rate: {:?}\ncancel rate: {:?}\n", i, publish_rate, cancel_rate);
     }
     
     Ok(())
