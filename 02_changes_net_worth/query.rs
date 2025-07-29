@@ -10,6 +10,15 @@ pub enum AppError {
     DateParse(#[from] chrono::ParseError),
 }
 
+#[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
+
 // This struct is used to simulate the table in a database 
 #[derive(Debug)]
 struct Transaction {
@@ -117,29 +126,22 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
-    let mut stmt = conn.prepare("SELECT 
-                                     * 
-                                 FROM 
-                                     TRANSACTIONS"
-                        )?;
-    let transactions_iter = stmt.query_map([],
-                                           |row| {
-                                            RusqliteResult::Ok(Transaction {
-                                                                   sender:           row.get(0)?,
-                                                                   receiver:         row.get(1)?,
-                                                                   amount:           row.get(2)?,
-                                                                   transaction_date: row.get(3)?,
-                                                               }
-                                                            )
-                                           }
-                                 )?;
+    println!("--- RAW DATA ---\nSCHEMA");
+    let mut _stmt = conn.prepare("PRAGMA table_info('TRANSACTIONS')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
     
-    println!("--- RAW DATA ---");
-    for i in transactions_iter {
-        println!("Transaction Found: {:?}", i.unwrap());
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
     }
-   
-    let mut all_transactions_v:Vec<TransactionF> = Vec::new();
+    
     let mut stmt = conn.prepare("SELECT 
                                      SENDER, 
                                      RECEIVER, 
@@ -147,28 +149,26 @@ fn main() -> Result<(), AppError> {
                                  FROM 
                                      TRANSACTIONS"
                         )?;
-                        
-    let transactions_iter = stmt.query_map([], 
-                                           |row| {                                          
-                                                  RusqliteResult::Ok(TransactionF {
-                                                                         sender:   row.get("SENDER")?,
-                                                                         receiver: row.get("RECEIVER")?,
-                                                                         amount:   row.get("AMOUNT")?,
-                                                                     }
-                                                                  )
-                                                 }
-                                 )?; 
-                 
-    for t in transactions_iter {
-        match t {
-            Ok(transaction_v) => all_transactions_v.push(transaction_v),
-            Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                AppError::Database(e)
-                      ),
-        }
-    } 
     
+    let all_transactions_v:Vec<TransactionF> = stmt.query_map([], 
+                                                              |row| {                                          
+                                                                  RusqliteResult::Ok(TransactionF {
+                                                                         sender: row.get("SENDER")?,
+                                                                         receiver:  row.get("RECEIVER")?,
+                                                                         amount: row.get("AMOUNT")?,
+                                                                       }
+                                                    )
+                                                    }
+                                          )?
+                                         .filter_map(Result::ok).collect();
+                                
+    for t in &all_transactions_v {
+        println!("found: {:?}", t);
+    }  
+    
+    println!("\n--- NET CHANGES MADE BY EACH USER ---");
     let mut transactions_by_id:HashMap<i32, Vec<User>> = HashMap::new();
+    
     for t in all_transactions_v {
         let a = -1.0 * t.amount;
         let b = t.amount;
@@ -176,10 +176,9 @@ fn main() -> Result<(), AppError> {
         transactions_by_id.entry(t.receiver).or_insert_with(Vec::new).push(User::new(b));
     }
     
-    println!("\n--- NET CHANGES MADE BY EACH USER ---");
     for (i, list) in &transactions_by_id {
         let c:f64 = list.iter().map(|u| u.transaction).sum();
-        println!("User_id: {} => Net Change {}", i, c);
+        println!("User_id: {}\nnet_change: {}\n", i, c);
     }
    
     Ok(())
