@@ -11,6 +11,15 @@ pub enum AppError {
     DateParse(#[from] chrono::ParseError),
 }
 
+#[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
+
 // This struct is used to simulate the table in a database 
 #[derive(Debug)]
 struct User {
@@ -79,69 +88,63 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
-    let mut all_users_v:Vec<UserF> = Vec::new();
+    println!("\n--- RAW DATA ---\nSCHEMA");
+    let mut _stmt = conn.prepare("PRAGMA table_info('USERS')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
     
-    {
-     let mut stmt = conn.prepare("SELECT * FROM USERS")?;
-     let users_iter = stmt.query_map([],
-                                     |row| {
-                                            RusqliteResult::Ok( User {
-                                                                      id:          row.get(0)?,
-                                                                      action:      row.get(1)?,
-                                                                      action_date: row.get(2)?,
-                                                                     }
-                                                            )
-                                           }
-                           )?;
-                           
-     println!("\n--- USER'S DATA ---");
-     for u in users_iter {
-        println!("Found: {:?}", u.unwrap()); 
-     }
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
     }
-    let mut stmt = conn.prepare("SELECT ID, ACTION_DATE FROM USERS")?;
-    let users_iter = stmt.query_map([], 
-                                    |row| {
-                                           let date_str: String = row.get("ACTION_DATE")?;
-                                           let parsed_date = NaiveDate::parse_from_str(&date_str, 
-                                                                                       "%d-%b-%y"
-                                                                        ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(1, 
-                                                                                                                                rusqlite::types::Type::Text, 
-                                                                                                                                Box::new(e)
-                                                                                                       )
-                                                                          )?;
+    println!("");
     
+    let mut stmt = conn.prepare("SELECT 
+                                     ID, 
+                                     ACTION_DATE 
+                                 FROM 
+                                     USERS")?;
+    let all_users_v:Vec<UserF> = stmt.query_map([], 
+                                                |row| {let date_str: String = row.get("ACTION_DATE")?;
+                                                       let parsed_date = NaiveDate::parse_from_str(&date_str, 
+                                                                                                   "%d-%b-%y"
+                                                                                    ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(1, 
+                                                                                                                                            rusqlite::types::Type::Text, 
+                                                                                                                                            Box::new(e)
+                                                                                                                   )
+                                                                                      )?;
                                                RusqliteResult::Ok(UserF {
                                                                          id:          row.get("ID")?,
                                                                          action_date: Some(parsed_date),
                                                                         }
-                                                                )
-                                          }
-                            )?; 
-                 
-                
-    for u in users_iter {
-        match u {
-            Ok(user_v) => all_users_v.push(user_v),
-                          Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                              AppError::Database(e)
-                                    ),
-        }
-    } 
+                                               )
+                                               }
+                                       )?.filter_map(|res| match res {Ok(user) => Some(user), Err(e) => {eprintln!("Hi my friend!, there's a problem: {:?}",
+                                                                                                                   AppError::Database(e)
+                                                                                                               ); None}}
+                                          )
+                                         .collect();
     
-    
+    for u in &all_users_v {
+        println!("Found: {:?}", u);
+    }
+
+    println!("\n--- ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER ---");
     let mut users_by_id:HashMap<i32, Vec<UserF>> = HashMap::new();
     for u in all_users_v {
         users_by_id.entry(u.id).or_insert_with(Vec::new).push(u);
     }
     
-    println!("\n--- ELAPSED TIME BETWEEN TWO LAST ACTIONS MADE BY EACH USER ---");
     for (id, user_list) in &users_by_id {
-    
         let mut valid_dates: Vec<NaiveDate> = user_list.iter()
                                                        .filter_map(|u| u.action_date)
                                                        .collect();
-
         valid_dates.sort();
         if valid_dates.len() >= 2 {
             let last_date = valid_dates[valid_dates.len() - 1];
@@ -150,12 +153,12 @@ fn main() -> Result<(), AppError> {
             let duration_diff: Duration = last_date.signed_duration_since(second_last_date);
 
             println!(
-                "ID {} => ELAPSED_TIME: {} DAYS",
+                "user_id {} => elapsed_time: {} days",
                 id, duration_diff.num_days()
             );
         } else {
             println!(
-                "ID {} => NONE",
+                "user_id {} => NONE",
                 id
             );
         }
