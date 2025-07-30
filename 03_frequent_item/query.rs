@@ -12,6 +12,15 @@ pub enum AppError {
 }
 
 #[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
+
+#[derive(Debug)]
 struct Item {
     item: String, 
     date: String,
@@ -21,6 +30,7 @@ struct ItemF {
     item: String, 
     date: Option<NaiveDate>,
 }
+
 #[derive(Debug)]
 struct Count {
     item: String, 
@@ -86,10 +96,23 @@ fn main() -> Result<(), AppError> {
     tx.commit()?;
     
     
-    println!("--- ITEM'S DATA ---");
+    println!("--- RAW DATA ---");
+    let mut _stmt = conn.prepare("PRAGMA table_info('ITEMS')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
+    
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
+    }
     let mut stmt = conn.prepare("SELECT
-                                     DATE, 
-                                     ITEM
+                                     *
                                  FROM
                                      ITEMS"
                         )?;
@@ -104,52 +127,44 @@ fn main() -> Result<(), AppError> {
         println!("Found: {:?}", i.unwrap());
     }
     
-    let items_iter = stmt.query_map([], 
-                                    |row| {
-                                           let date_str: String = row.get("DATE")?;
-                                           let parsed_date = NaiveDate::parse_from_str(&date_str, 
-                                                                                       "%d-%b-%y"
-                                                                        ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(0, 
-                                                                                                                                rusqlite::types::Type::Text, 
-                                                                                                                                Box::new(e)
-                                                                                                       )
-                                                                          )?;
+    let all_items_v:Vec<ItemF> = stmt.query_map([], 
+                                                |row| {
+                                                let date_str: String = row.get("DATE")?;
+                                                let parsed_date = NaiveDate::parse_from_str(&date_str, 
+                                                                                            "%d-%b-%y"
+                                                                             ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(0, 
+                                                                                                                                     rusqlite::types::Type::Text, 
+                                                                                                                                     Box::new(e)
+                                                                                                            )
+                                                                               )?;
     
-                                               RusqliteResult::Ok(ItemF {
+                                                RusqliteResult::Ok(ItemF {
                                                                          item: row.get("ITEM")?,
                                                                          date: Some(parsed_date),
-                                                                        }
+                                                                   }
                                                                 )
-                                          }
-                            )?; 
-                 
-    let mut all_items_v:Vec<ItemF> = Vec::new();
-    for i in items_iter {
-        match i {
-            Ok(item_) => all_items_v.push(item_),
-            Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                AppError::Database(e)
-                      ),
-        }
-    }
-    
-    let mut items_grouped: HashMap<(String, Option<NaiveDate>), Vec<ItemF>> = HashMap::new();
-    for i in all_items_v {
-        items_grouped.entry((i.item.clone(), i.date)).or_insert_with(Vec::new).push(i);
-    }
-    
-    let mut item_count: HashMap<Option<NaiveDate>, Vec<Count>> = HashMap::new();
-    for (i,list) in items_grouped {
-        item_count.entry(i.1).or_insert_with(Vec::new).push(Count::new(i.0, list.len()));
-    }
+                                                }
+                                      )?
+                                     .filter_map(|res| match res {Ok(item) => Some(item), Err(_) => None,})
+                                     .collect();
     
     println!("\n-- MOST FREQUENTED ITEM BY EACH DATE --");
-    for (i, list) in &item_count {
+    let mut items_grouped: HashMap<(String, Option<NaiveDate>), usize> = HashMap::new();
+    for i in all_items_v {
+        *items_grouped.entry((i.item, i.date)).or_insert(0)+=1;
+    }
+    
+    let mut date_count: HashMap<Option<NaiveDate>, Vec<Count>> = HashMap::new();
+    for (i, count) in items_grouped {
+        date_count.entry(i.1).or_insert_with(Vec::new).push(Count::new(i.0, count));
+    }
+    
+    for (i, list) in &date_count {
         let max_count = list.iter().map(|item| item.count).max();
         let max_items: Vec<&Count> = list.iter().filter(|item| {item.count == max_count.unwrap_or(0)}).collect();
-        println!("date: {:?}", i);
+        println!("\ndate: {:?}", i);
         for item in max_items {
-            println!("    item: {}; count: {}", item.item, item.count);
+            println!(" item: {}; count: {}", item.item, item.count);
         }
     }
 
