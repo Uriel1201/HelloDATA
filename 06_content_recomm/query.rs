@@ -10,6 +10,15 @@ pub enum AppError {
     DateParse(#[from] chrono::ParseError),
 }
 
+#[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
+
 // This struct is used to simulate the table in a database 
 #[derive(Debug)]
 struct Friend {
@@ -155,65 +164,80 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
+    println!("\n--- RAW DATA ---\nSCHEMA (FRIEND TABLE)");
+    let mut _stmt = conn.prepare("PRAGMA table_info('FRIENDS')")?;
+    let column_info_iter1 = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
+    
+    for c in column_info_iter1 {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
+    }
+    
+    let mut _stmt = conn.prepare("PRAGMA table_info('LIKES')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
+    
+    println!("SCHEMA (LIKES TABLE)");
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
+    }
+    println!("");
+    
     let mut stmt = conn.prepare("SELECT 
                                      * 
                                  FROM 
                                      FRIENDS"
                         )?;
-    let friends_iter = stmt.query_map([],
-                                    |row| {
-                                    RusqliteResult::Ok(Friend {
-                                                               user_id: row.get(0)?,
-                                                               friend:  row.get(1)?,
-                                                       }
-                                                    )
-                                    }
-                                 )?;
+                        
+    let all_friends_v:Vec<Friend> = stmt.query_map([],
+                                                   |row| {
+                                                   RusqliteResult::Ok(Friend {
+                                                                          user_id: row.get(0)?,
+                                                                          friend:  row.get(1)?,
+                                                                      }
+                                                   )
+                                                   }
+                                         )?.filter_map(Result::ok)
+                                           .collect();
+    
     let mut stmt = conn.prepare("SELECT 
                                      * 
                                  FROM 
                                      LIKES"
                         )?;
-    let likes_iter = stmt.query_map([],
-                                    |row| {
-                                    RusqliteResult::Ok(PageLike {
-                                                                 user_id:    row.get(0)?,
-                                                                 page_like:  row.get(1)?,
-                                                       }
-                                                    )
-                                    }
-                                 )?;
-    
-    println!("--- RAW DATA ---");
-    let mut all_friends_v:Vec<Friend> = Vec::new();
-    let mut all_likes_v:Vec<PageLike> = Vec::new();
-    
-    for f in friends_iter {
-        match f {
-            Ok(friend_v) => all_friends_v.push(friend_v),
-            Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                AppError::Database(e)
-                      ),
-        }
-    }
+    let all_likes_v:Vec<PageLike> = stmt.query_map([],
+                                                   |row| {
+                                                          RusqliteResult::Ok(PageLike {
+                                                                                 user_id:   row.get(0)?,
+                                                                                 page_like: row.get(1)?,
+                                                                             }
+                                                          )
+                                                          }
+                                         )?.filter_map(Result::ok)
+                                           .collect();
     for f in &all_friends_v {
         println!("Found: {:?}", f);
     }
-    
-    for li in likes_iter {
-        match li {
-            Ok(like_v) => all_likes_v.push(like_v),
-            Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                AppError::Database(e)
-                      ),
-        }
-    }
+
     for li in &all_likes_v {
         println!("Found: {:?}", li);
     }
     
-    println!("\n--- RECOMMENDATION ---");
-    
+    println!("\n--- RECOMMENDATIONS ---");
     let mut friend_likes:HashMap<i32, Vec<Recommendation>> = HashMap::new();
     for li in &all_likes_v {
         friend_likes.entry(li.user_id).or_insert_with(Vec::new).push(Recommendation::new(Some(li.page_like.clone())));
@@ -243,8 +267,8 @@ fn main() -> Result<(), AppError> {
     }
     
     for a in anti_unique {
-        println!("user_id: {} => recommendation: {:?}", a.0, a.1);
+        println!("user_id: {}; recommendation: {:?}", a.0, a.1);
     }
     
     Ok(())
-  }
+}
