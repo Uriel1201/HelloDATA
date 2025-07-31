@@ -8,6 +8,15 @@ pub enum AppError {
     Database(#[from] rusqlite::Error),
 }
 
+#[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
+
 // This struct is used to simulate the table in a database 
 #[derive(Debug)]
 struct Mobile {
@@ -145,63 +154,74 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
+    println!("\n--- RAW DATA ---\nSCHEMA (Mobile Table)");
+    let mut _stmt = conn.prepare("PRAGMA table_info('MOBILE')")?;
+    let column_info_iter1 = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
+    
+    for c in column_info_iter1 {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
+    }
+    
+    let mut _stmt = conn.prepare("PRAGMA table_info('WEB')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
+    
+    println!("SCHEMA (Web Table)");
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
+    }
+    
     let mut stmt = conn.prepare("SELECT 
                                      USER_ID 
                                  FROM 
                                      MOBILE"
                         )?;
                         
-    let mobile_iter = stmt.query_map([],
-                                     |row| {
-                                            RusqliteResult::Ok(User {
-                                                                     user_id: row.get("USER_ID")?,
-                                                               }
-                                                            )
-                                    }
-                           )?;
-                                 
+    let all_mobile_v:HashSet<User> = stmt.query_map([],
+                                                    |row| {
+                                                           RusqliteResult::Ok(User {
+                                                                                    user_id: row.get("USER_ID")?,
+                                                                              }
+                                                           )
+                                                    }
+                                          )?.filter_map(Result::ok)
+                                            .collect();
+    println!("\n(unique mobile users)");
+    for m in &all_mobile_v {
+        println!("Found: {:?}", m);
+    }
+    
     let mut stmt = conn.prepare("SELECT 
                                      USER_ID 
                                  FROM 
                                      WEB"
                         )?;
                         
-    let web_iter = stmt.query_map([],
-                                  |row| {
-                                    RusqliteResult::Ok(User {
-                                                             user_id: row.get("USER_ID")?,
-                                                       }
-                                                    )
-                                    }
-                        )?;
-    
-    println!("--- RAW DATA ---");
-    let mut all_mobile_v:HashSet<User> = HashSet::new();
-    let mut all_web_v:HashSet<User> = HashSet::new();
-    
-    for m in mobile_iter {
-        match m {
-                 Ok(mobile_v) => {all_mobile_v.insert(mobile_v);},
-                 Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                     AppError::Database(e)
-                           ),
-        }
-    }
-    
-    println!("(unique mobile users)");
-    for m in &all_mobile_v {
-        println!("Found: {:?}", m);
-    }
-    
-    for w in web_iter {
-        match w {
-                 Ok(web_v) => {all_web_v.insert(web_v);},
-                 Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                     AppError::Database(e)
-                           ),
-        }
-    }
-    println!("(unique web users)");
+    let all_web_v:HashSet<User> = stmt.query_map([],
+                                                 |row| {
+                                                        RusqliteResult::Ok(User {
+                                                                                 user_id: row.get("USER_ID")?,
+                                                                           }
+                                                        )
+                                                        }
+                                       )?.filter_map(Result::ok)
+                                         .collect();
+    println!("\n(unique web users)");
     for w in &all_web_v {
         println!("Found: {:?}", w);
     }
@@ -224,7 +244,7 @@ fn main() -> Result<(), AppError> {
     let rate_both:f64 = (both as f64) / (total as f64);
     
     println!("Total Users: {}", total);
-    println!("fraction of users using web or mobile =>\nboth: {}\nonly_web: {}\nonly_mobile: {}", rate_both, rate_web, rate_mobile);
+    println!("(Fraction of Users Using Web or Mobile)\nboth:        {}\nonly_web:    {}\nonly_mobile: {}", rate_both, rate_web, rate_mobile);
     
     Ok(())
 }
