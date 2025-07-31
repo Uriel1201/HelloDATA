@@ -11,6 +11,15 @@ pub enum AppError {
     DateParse(#[from] chrono::ParseError),
 }
 
+#[derive(Debug)]
+struct ColumnInfo {
+    col_id: i32,
+    name: String, 
+    #[allow(dead_code)] 
+    r#type: String, 
+    notnull: bool, 
+}
+
 // This struct is used to simulate the table in a database 
 #[derive(Debug)]
 struct User {
@@ -108,85 +117,75 @@ fn main() -> Result<(), AppError> {
     }
     tx.commit()?;
     
-    {
-     let mut stmt = conn.prepare("SELECT 
-                                      * 
-                                  FROM 
-                                      USERS")?;
-     let users_iter = stmt.query_map([],
-                                     |row| {
-                                            RusqliteResult::Ok( User {
-                                                                      user_id:          row.get(0)?,
-                                                                      product_id:       row.get(1)?,
-                                                                      transaction_date: row.get(2)?,
-                                                                     }
-                                                            )
-                                           }
-                           )?;
-                           
-     println!("\n--- USER'S DATA ---");
-     for u in users_iter {
-        println!("Found: {:?}", u.unwrap()); 
-     }
-    }
+    println!("--- RAW DATA ---\nSCHEMA");
+    let mut _stmt = conn.prepare("PRAGMA table_info('USERS')")?;
+    let column_info_iter = _stmt.query_map([], |row| {
+        RusqliteResult::Ok(ColumnInfo {
+            col_id: row.get(0)?,
+            name: row.get(1)?,
+            r#type: row.get(2)?,
+            notnull: row.get(3)?,
+        })
+    })?;
     
+    for c in column_info_iter {
+        let c = c?;
+        println!("column_id: {}; column_name: {}; type: {}; is_not_null: {}", c.col_id, c.name, c.r#type, c.notnull);
+    }
+    println!("");
+
     let mut stmt = conn.prepare("SELECT 
                                      USER_ID, 
                                      TRANSACTION_DATE 
                                  FROM 
                                      USERS")?;
-    let users_iter = stmt.query_map([], 
-                                    |row| {
-                                           let date_str: String = row.get("TRANSACTION_DATE")?;
-                                           let parsed_date = NaiveDate::parse_from_str(&date_str, 
-                                                                                       "%d-%b-%y"
-                                                                        ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(1, 
-                                                                                                                                rusqlite::types::Type::Text, 
-                                                                                                                                Box::new(e)
-                                                                                                       )
-                                                                          )?;
+    let all_users_v:Vec<UserF> = stmt.query_map([], 
+                                                |row| {
+                                                let date_str:String = row.get("TRANSACTION_DATE")?;
+                                                let parsed_date = NaiveDate::parse_from_str(&date_str, 
+                                                                                            "%d-%b-%y"
+                                                                  ).map_err(|e| rusqlite::Error::FromSqlConversionFailure(1, 
+                                                                                                                          rusqlite::types::Type::Text, 
+                                                                                                                          Box::new(e)
+                                                                                )
+                                                                    )?;
     
                                                RusqliteResult::Ok(UserF {
                                                                          user_id:          row.get("USER_ID")?,
                                                                          transaction_date: Some(parsed_date),
-                                                                        }
-                                                                )
-                                          }
-                            )?; 
-                 
-    let mut all_users_v:Vec<UserF> = Vec::new();
-    for u in users_iter {
-        match u {
-            Ok(user_v) => all_users_v.push(user_v),
-                          Err(e) => eprintln!("Hi my friend!, there's a problem: {:?}",
-                                              AppError::Database(e)
-                                    ),
-        }
-    } 
+                                                                  }
+                                               )
+                                               }
+                                      )?.filter_map(|res| match res {Ok(user) => Some(user), 
+                                                                     Err(e) => {eprintln!("Hi my friend!, there's a problem: {:?}",
+                                                                                          AppError::Database(e)
+                                                                                ); None},
+                                                                    }
+                                         ).collect();
     
+    for u in &all_users_v {
+        println!("Found: {:?}", u); 
+    }
     
+    println!("\n--- USERS BECOMING SUPERUSERS ---");
     let mut users_by_id:HashMap<i32, Vec<UserF>> = HashMap::new();
     for u in all_users_v {
         users_by_id.entry(u.user_id).or_insert_with(Vec::new).push(u);
     }
     
-    println!("\n--- USERS BECOMING SUPERUSERS ---");
-    
     for (id, user_list) in &users_by_id {
-    
         let mut valid_dates: Vec<NaiveDate> = user_list.iter()
                                                        .filter_map(|u| u.transaction_date)
                                                        .collect();
-
         valid_dates.sort();
         if valid_dates.len() >= 2 {
             let superuser = valid_dates[1];
 
-            println!("USER_ID {} => DATE: {} ",
+            println!("user_id {}; date: {} ",
                      id, superuser
             );
         } else {
-            println!("USER_ID {} => NONE",
+            println!("user_id {}; NONE",
                      id
             );
         } 
