@@ -55,7 +55,6 @@ impl PageLike {
     }
 }
 
-
 impl Recommendation {
     fn new(page: Option<String>) -> Self {
         Self {
@@ -77,7 +76,6 @@ macro_rules! like {
 }
 
 fn main() -> Result<(), AppError> {
-
     
     let mut conn = Connection::open_in_memory()?;
 
