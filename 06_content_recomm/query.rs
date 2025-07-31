@@ -257,7 +257,6 @@ fn main() -> Result<(), AppError> {
         anti_set.insert((li.user_id, Some(li.page_like)));
     }
     
-    
     let mut anti_unique:HashSet<(i32, Option<String>)> = HashSet::new();
     for (f, r) in recommendations {
         let anti_key = (f.user_id, r.page.clone());
