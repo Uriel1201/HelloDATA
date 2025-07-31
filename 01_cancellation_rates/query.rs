@@ -184,7 +184,6 @@ fn main() -> Result<(), AppError> {
     }
 
     let mut users_count:HashMap<i32, Count> = HashMap::new();
-   
     for (i, list) in id_actions {
         let result_count:&mut Count = users_count.entry(i).or_insert_with(|| Count::new(Some(0), Some(0), Some(0)));
         for v in list {
