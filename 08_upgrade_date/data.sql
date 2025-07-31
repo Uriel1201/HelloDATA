@@ -130,3 +130,76 @@ INSERT INTO EVENTS_P8
         *
     FROM
         NAMES;
+
+/* RUSQLITE. */
+
+/********************************************************************/
+CREATE TABLE 
+    USERS (USER_ID   INTEGER,
+           NAME      VARCHAR(9),
+           JOIN_DATE VARCHAR(9)
+    );
+    
+CREATE TABLE 
+    EVENTS (USER_ID     INTEGER,
+            TYPE        VARCHAR(2),
+            ACCESS_DATE VARCHAR(9)
+    );
+
+let all_users = vec![
+    user!(1,
+          "John",
+          "14-Feb-20"),
+    user!(2,
+          "Jane",
+          "14-Feb-20"),
+    user!(3,
+          "Jill",
+          "15-Feb-20"),
+    user!(4,
+          "Josh",
+          "15-Feb-20"),
+    user!(5,
+          "Jean",
+          "16-Feb-20"),
+    user!(6,
+          "Justin",
+          "17-Feb-20"),
+    user!(7,
+          "Jeremy",
+          "18-Feb-20"),
+];
+
+let all_events = vec![
+    event!(1,
+           "F1",
+           "1-Mar-20"),
+    event!(2,
+           "F2",
+           "2-Mar-20"),
+    event!(2,
+           "P",
+           "12-Mar-20"),
+    event!(3,
+           "F2",
+           "15-Mar-20"),
+    event!(4,
+           "F2",
+           "15-Mar-20"),
+    event!(1,
+           "P",
+           "16-Mar-20"),
+    event!(3,
+           "P",
+           "22-Mar-20"),
+];
+
+INSERT INTO 
+    USERS (USER_ID, NAME, JOIN_DATE)
+VALUES
+    (?1, ?2, ?3)
+
+INSERT INTO 
+    WEB (USER_ID, TYPE, ACCESS_DATE)
+VALUES
+    (?1, ?2, ?3)
