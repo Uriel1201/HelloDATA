@@ -66,8 +66,6 @@ macro_rules! web {
 }
 
 fn main() -> Result<(), AppError> {
-
-    
     let mut conn = Connection::open_in_memory()?;
 
     conn.execute("
