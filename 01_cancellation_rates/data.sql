@@ -7,9 +7,7 @@ return the publication and cancellation
 rate for each user. */
 
 /* ORACLE. */
-
 /********************************************************************/
-
 CREATE TABLE USERS_P1 (
     USER_ID INTEGER,
     ACTION  VARCHAR(9),
@@ -80,7 +78,6 @@ INSERT INTO USERS_P1
         NAMES;
 
 /* SQLITE. */
-
 /********************************************************************/
 CREATE TABLE 
     USERS (
