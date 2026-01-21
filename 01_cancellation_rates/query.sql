@@ -7,9 +7,7 @@ return the publication and cancellation
 rate for each user. */
 
 /* ORACLE. */
-
 /********************************************************************/
-
 -- Querying original data.
 SELECT
     *
@@ -64,7 +62,6 @@ FROM
     TOTALS;
 
 /* DUCKDB. */
-
 /********************************************************************/
 SELECT 
     * 
