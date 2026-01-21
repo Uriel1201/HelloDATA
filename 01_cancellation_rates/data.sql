@@ -119,10 +119,10 @@ let users = vec![
           "publish",
           "'08-jan-20"),
     ];
-"""
 
 INSERT INTO 
     USERS 
     (USER_ID, ACTION, DATES)
 VALUES
     (?1, ?2, ?3);
+"""
