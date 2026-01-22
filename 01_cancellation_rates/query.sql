@@ -61,6 +61,22 @@ SELECT
 FROM
     TOTALS;
 
+SELECT
+    ITS.PROBLEMATIC_USER
+FROM
+    USERS_01 MATCH_RECOGNIZE (
+        PARTITION BY USER_ID
+        ORDER BY
+            DATES
+        MEASURES
+            USER_ID AS PROBLEMATIC_USER  -- USER_ID ya está particionado
+    PATTERN ( A B ) DEFINE
+        A AS A.ACTION = 'start',
+        B AS B.ACTION = 'cancel'
+       -- C AS C.ACTION = 'start',
+       -- D AS D.ACTION = 'cancel'
+    ) ITS
+
 /* DUCKDB. */
 /********************************************************************/
 SELECT 
