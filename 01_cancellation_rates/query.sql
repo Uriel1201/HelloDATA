@@ -12,7 +12,7 @@ rate for each user. */
 SELECT
     *
 FROM
-    USERS_P1;
+    USERS_01;
 
         -- Returning rates for each user.
 WITH TOTALS ( -- Totals for each action 
@@ -48,7 +48,7 @@ WITH TOTALS ( -- Totals for each action
             END
         )
     FROM
-        USERS_P1
+        USERS_01
     GROUP BY
         USER_ID
 )
