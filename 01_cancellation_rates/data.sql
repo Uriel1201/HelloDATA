@@ -8,13 +8,13 @@ rate for each user. */
 
 /* ORACLE. */
 /********************************************************************/
-CREATE TABLE USERS_P1 (
+CREATE TABLE USERS_01 (
     USER_ID INTEGER,
     ACTION  VARCHAR(9),
     DATES   DATE
 );
 
-INSERT INTO USERS_P1
+INSERT INTO USERS_01
     WITH NAMES AS (
         SELECT
             1,
