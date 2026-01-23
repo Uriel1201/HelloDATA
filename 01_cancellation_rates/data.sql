@@ -59,6 +59,20 @@ INSERT INTO USERS_01
             DUAL
         UNION ALL
         SELECT
+            3,
+            'start',
+            '07-jan-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
+            3,
+            'cancel',
+            '08-jan-20'
+        FROM
+            DUAL
+        UNION ALL
+        SELECT
             1,
             'start',
             '07-jan-20'
